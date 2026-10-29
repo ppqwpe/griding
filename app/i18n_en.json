@@ -1,0 +1,919 @@
+{
+ "exact": {
+  "실사 얼굴 → 시댄스용 플레이트": "Live-action faces → plates for Seedance",
+  "① 플레이트 넣기": "① Add plate",
+  "② 사람 확인": "② Check people",
+  "③ 카드 골라 조합": "③ Pick and combine cards",
+  "④ 내보내기 고르기": "④ Choose exports",
+  "⑤ 실행하고 받기": "⑤ Run and download",
+  "연결 확인 중": "Checking connection",
+  "지금 이렇게": "How it",
+  "돌아갑니다": "works now",
+  "고르는 대로 바뀜": "Changes as you choose",
+  "단계 설명": "Step guide",
+  "사람 찾기": "Find people",
+  "영상 전체에서 머리를 찾아 사람마다 번호를 붙입니다. 옆모습과 뒤통수도 찾습니다.": "Finds heads across the whole video and numbers each person. Side views and the backs of heads are found too.",
+  "표정 찾기": "Find faces",
+  "표정 카드를 고르면 머리를 크게 키워 얼굴 점 478개를 찍습니다.": "If you pick a face card, the head is enlarged and 478 face points are placed.",
+  "카드 겹치기": "Stack cards",
+  "고른 순서대로 원본이나 검은 바탕 위에 겹칩니다. 나중에 고른 카드가 위로 갑니다.": "Cards are stacked in the order picked, over the original or a black background. Cards picked later go on top.",
+  "저장": "Save",
+  "원본과 같은 해상도, fps, 색공간, 소리로 mp4를 만듭니다. 카드별 투명 레이어(MOV)도 뺄 수 있습니다. 모든 처리는 이 PC에서 합니다.": "Makes an mp4 with the same resolution, fps, color space and audio as the original. A transparent layer (MOV) per card can also be exported. Everything is processed on this PC.",
+  "쓰는 모델 자세히": "Models in detail",
+  "이 PC 점검": "This PC check",
+  "플레이트 넣기": "Add plate",
+  "영상이나 이미지를 넣으세요. 여러 개를 넣으면 차례로 처리합니다.": "Add a video or image. If you add several, they are processed one by one.",
+  "여기에 끌어다 놓기": "Drag and drop here",
+  "클릭해서 골라도 됩니다 (mp4, mov, png, jpg)": "You can also click to choose (mp4, mov, png, jpg)",
+  "원본": "Original",
+  "플레이트를 넣으면 여기 나옵니다": "Your plate will show here",
+  "영상을 멈춘 곳의 프레임으로 미리보기를 만듭니다.": "The preview is made from the frame where the video is paused.",
+  "결과": "Result",
+  "카드를 고르고 [이 프레임 미리보기]": "Pick cards, then [Preview this frame]",
+  "실행하고 받기": "Run and download",
+  "이 프레임 미리보기": "Preview this frame",
+  "전체 실행": "Run all",
+  "다시 실행하면": "When running again",
+  "새 버전으로 쌓기 (_v2 · _v3)": "Save as a new version (_v2 · _v3)",
+  "같은 폴더에 덮어쓰기": "Overwrite in the same folder",
+  "작업 목록": "Job list",
+  "결과 폴더 열기": "Open result folder",
+  "목록 비우기": "Clear list",
+  "아직 넣은 플레이트가 없습니다.": "No plates added yet.",
+  "플레이트를 넣으면 나오는 사람을 찾아 번호를 붙입니다. 가릴 사람만 고르세요.": "Finds the people in your plate and numbers them. Pick only the people to cover.",
+  "다시 찾기": "Find again",
+  "모두 가리기": "Cover all",
+  "모두 빼기": "Uncover all",
+  "찾지 않으면 영상에 나오는 모든 사람을 가립니다.": "If you don't search, everyone in the video is covered.",
+  "카드 골라 조합하기": "Pick and combine cards",
+  "예시 조합을 누르거나 카드를 골라 쌓으세요. 색과 불투명도는 아래에서 바꿉니다.": "Click an example combo or pick cards to stack. Change colors and opacity below.",
+  "격자만 (시댄스)": "Grid only (Seedance)",
+  "가린 표정 가이드": "Covered face guide",
+  "가림 + 점 + 격자": "Cover + points + grid",
+  "검은 바탕 선 · 점": "Lines · points on black",
+  "예시 캐릭터입니다. 플레이트를 넣으면 그 플레이트로 바뀝니다.": "This is a sample character. It switches to your plate once you add one.",
+  "바탕": "Base",
+  "원본 위에": "Over original",
+  "검은 바탕": "Black background",
+  "쌓인 순서": "Stack order",
+  "아래 줄이 위에 덮임": "Lower rows cover upper ones",
+  "카드": "Cards",
+  "눌러서 쌓기 · 다시 누르면 빠짐": "Click to stack · click again to remove",
+  "고른 카드 설정": "Selected card settings",
+  "고른 카드만 보입니다": "Only selected cards are shown",
+  "격자": "Grid",
+  "세로줄": "Vertical lines",
+  "가로줄": "Horizontal lines",
+  "선 두께 % (머리 폭)": "Line thickness % (of head width)",
+  "칸 채우기 %": "Cell fill %",
+  "덮는 모양": "Cover shape",
+  "네모로 덮기": "Cover with rectangle",
+  "타원으로 자르기": "Crop to oval",
+  "격자 모양": "Grid pattern",
+  "격자 기본값으로": "Reset grid to defaults",
+  "가림 · 얼굴 윤곽": "Cover · face outline",
+  "얼굴 윤곽 넓히기 %": "Widen face outline %",
+  "가림 · 머리 전체": "Cover · whole head",
+  "따로 저장(_cover) 모양": "Shape of separate save (_cover)",
+  "타원": "Oval",
+  "네모": "Rectangle",
+  "표정 선 · 점": "Face lines · points",
+  "불투명도를 100%보다 낮추면 원본 얼굴이 비칩니다. 얼굴이 보이면 시댄스가 거절할 수 있습니다.": "Below 100% opacity, the original face shows through. Seedance may reject clips where a face is visible.",
+  "머리 찾기 · 넓히기 · 흔들림": "Head detection · widening · jitter",
+  "잘 안 잡힐 때만": "Only when detection is poor",
+  "머리 검출 모델": "Head detection model",
+  "빠름 · YOLO11s head (기본)": "Fast · YOLO11s head (default)",
+  "정확 · YOLO11m head (작은 머리, 겹친 사람에 강함 · 2~3배 느림)": "Accurate · YOLO11m head (better with small heads and overlapping people · 2–3x slower)",
+  "검출 민감도": "Detection sensitivity",
+  "놓쳐도 유지 (프레임)": "Hold when missed (frames)",
+  "위로 넓히기 %": "Widen upward %",
+  "옆으로 넓히기 %": "Widen sideways %",
+  "아래로 넓히기 %": "Widen downward %",
+  "흔들림 완화 %": "Jitter smoothing %",
+  "민감도는 낮을수록 많이 잡습니다. 머리를 놓치면 0.15, 엉뚱한 곳이 잡히면 0.35로 바꿔 보세요.": "Lower sensitivity catches more. If heads are missed, try 0.15; if wrong spots are caught, try 0.35.",
+  "내보내기 고르기": "Choose exports",
+  "만들 파일을 고르세요. 여러 개 골라도 됩니다.": "Choose the files to make. You can pick several.",
+  "조합 mp4 비트레이트": "Combo mp4 bitrate",
+  "고정 비트레이트(CBR)": "Constant bitrate (CBR)",
+  "고정 · 2K 까지 30Mbps / 4K 50Mbps (기본)": "Fixed · 30Mbps up to 2K / 50Mbps for 4K (default)",
+  "원본 영상 비트레이트 그대로 고정": "Fixed at the original video's bitrate",
+  "투명 레이어로 나오는 파일": "Files exported as transparent layers",
+  "편집기에서 원본 위에 이 순서로 쌓으면 조합과 같은 그림": "Stack them in this order over the original in an editor to get the same picture as the combo",
+  "입력 → 출력 규격": "Input → output specs",
+  "그 밖의 결과물": "Other outputs",
+  "확인용 파일과 예전 양식 파일을 하나씩 고릅니다.": "Pick check files and legacy-format files one by one.",
+  "결과는 결과 폴더의 01_이름 에 저장됩니다. 다시 실행하면 01_이름_v2 처럼 새로 쌓입니다. 설정은 _settings.json, 전체 요약은 verification.json 에 남습니다.": "Results are saved in 01_name in the result folder. Running again adds a new one like 01_name_v2. Settings are kept in _settings.json and the overall summary in verification.json.",
+  "작동 방식": "How it works",
+  "플레이트 파일 선택": "Choose plate file",
+  "지금 조합 예시": "Current combo preview",
+  "머리 폭에 대한 % — 가까운 얼굴은 굵게, 먼 얼굴은 가늘게": "% of head width: close faces get thick lines, far faces thin lines",
+  "먼저 칠하기 (아래에 깔림)": "Paint earlier (goes underneath)",
+  "먼저 칠하기": "Paint earlier",
+  "나중에 칠하기 (위에 덮음)": "Paint later (covers on top)",
+  "나중에 칠하기": "Paint later",
+  "빼기": "Remove",
+  "응답을 읽지 못했습니다": "Could not read the response",
+  "미리보기 실패": "Preview failed",
+  "검정": "Black",
+  "흰색": "White",
+  "회색": "Gray",
+  "빨강": "Red",
+  "초록": "Green",
+  "파랑": "Blue",
+  "노랑": "Yellow",
+  "색": "Color",
+  "직접 고르기": "Pick custom",
+  "색 직접 고르기": "Color: pick custom",
+  "색 불투명도": "Color opacity",
+  "불투명도": "Opacity",
+  "표정 인식": "Face detection",
+  "카드를 하나 이상 고르세요.": "Pick at least one card.",
+  "조합": "Combo",
+  "확인용 · 격자": "Check files · Grid",
+  "레이어 따로 · 표정": "Separate layer · Face",
+  "레이어 따로 · 가리기": "Separate layer · Cover",
+  "조합 영상": "Combo video",
+  "고른 카드를 다 겹친 한 개. 시댄스에 넣는 파일": "One file with all picked cards stacked. The file to feed to Seedance",
+  "H.264 고정 비트레이트 · 원본 해상도 · fps · 색공간 · 소리": "H.264 constant bitrate · original resolution · fps · color space · audio",
+  "카드별 투명 레이어": "Transparent layer per card",
+  "카드마다 따로, 배경 투명. AE · 프리미어에서 원본 위에 쌓기": "One per card, transparent background. Stack over the original in AE or Premiere",
+  "PNG 무손실 · RGBA · 원본 크기 · 소리 없음": "PNG lossless · RGBA · original size · no audio",
+  "확인용": "Check files",
+  "원본 | 결과 | 추적 3칸 비교 영상 · 정지 그림 · 9칸 시트": "Original | Result | Tracking 3-panel comparison video · still image · 9-frame sheet",
+  "H.264 · 1920 폭 · JPG": "H.264 · 1920 wide · JPG",
+  "이름": "name",
+  "원본 값을 몰라 기본 고정값": "Original value unknown, using the default fixed value",
+  "원본 값에 맞춤 (범위 1~100Mbps)": "Matched to the original (range 1–100Mbps)",
+  "해상도별 고정값으로 저장": "Saved at a fixed value per resolution",
+  "원본 플레이트 (넣은 파일 그대로 · 맨 아래)": "Original plate (the file as added · at the bottom)",
+  "③ 에서 카드를 고르면 카드마다 파일이 하나씩 생깁니다.": "Once you pick cards in ③, one file is made per card.",
+  "플레이트를 넣으면 실제 값으로": "Shows real values once you add a plate",
+  "규격 읽는 중…": "Reading specs…",
+  "· 아래 초록 줄은 실행 뒤 실제로 잰 값": "· Green rows below are values measured after the run",
+  "· 저장 규칙으로 미리 계산한 값": "· Values calculated in advance from the save rules",
+  "조합 mp4": "Combo mp4",
+  "해상도 · fps": "Resolution · fps",
+  "넣은 그대로": "As added",
+  "같게": "Same",
+  "색공간": "Color space",
+  "같은 공식 + 표시": "Same formula + tagged",
+  "RGB 그대로": "RGB as is",
+  "비트": "Bit depth",
+  "8bit PNG 무손실": "8bit PNG lossless",
+  "비트레이트": "Bitrate",
+  "원본 값": "Original value",
+  "고정 CBR (2K 30 · 4K 50Mbps)": "Fixed CBR (2K 30 · 4K 50Mbps)",
+  "무손실": "Lossless",
+  "소리": "Audio",
+  "있으면": "If present",
+  "그대로 복사": "Copied as is",
+  "없음": "None",
+  "실측": "Measured",
+  "· 모두 원본과 같음": "· All same as the original",
+  "입": "In",
+  "출": "Out",
+  "넣은 파일": "Added file",
+  "아직 없음": "None yet",
+  "영상 · 이미지를 넣으면 규격이 여기": "Specs show here once you add a video or image",
+  "머리 찾기": "Find heads",
+  "YOLO11m head (정확)": "YOLO11m head (accurate)",
+  "YOLO11s head (빠름)": "YOLO11s head (fast)",
+  "ONNX Runtime · 그래픽카드 · 옆모습 · 뒤통수도": "ONNX Runtime · Graphics card · Side views · Backs of heads too",
+  "ONNX Runtime · CPU · 옆모습 · 뒤통수도": "ONNX Runtime · CPU · Side views · Backs of heads too",
+  "그래픽카드": "Graphics card",
+  "옆모습": "Side views",
+  "뒤통수도": "Backs of heads too",
+  "사람 잇기": "Link people",
+  "ByteTrack 방식 (모델 없음)": "ByteTrack-style (no model)",
+  "프레임 사이 같은 사람에 같은 번호": "Same person gets the same number across frames",
+  "얼굴 점 478개 · CPU": "478 face points · CPU",
+  "얼굴 점 478개": "478 face points",
+  "안 씀 — 표정 카드를 안 골랐음": "Not used — no face card picked",
+  "카드를 고르세요": "Pick cards",
+  "저장 · FFmpeg": "Save · FFmpeg",
+  "원본 규격에 맞춰": "Matched to the original specs",
+  "조합 _combo.mp4": "Combo _combo.mp4",
+  "조합 _combo.png": "Combo _combo.png",
+  "투명 레이어 (원본 위에 번호 순서대로)": "Transparent layers (stack over the original in numbered order)",
+  "설정 · 기록": "Settings · records",
+  "✓ 원본 규격과 같음": "✓ matches the source spec",
+  "✓ 시댄스 입력 규칙 안 (200MB · 길이 · 크기 · 비율)": "✓ Within Seedance input rules (200MB · length · size · ratio)",
+  "받기": "Download",
+  "대기": "Waiting",
+  "가림": "Covered",
+  "안 가림": "Not covered",
+  "이미지": "Image",
+  "찾는 중…": "Searching…",
+  "플레이트를 넣으면 찾을 수 있습니다.": "You can search once you add a plate.",
+  "머리 찾기 설정이 바뀌어서 다시 찾아야 합니다.": "Head detection settings changed, so you need to search again.",
+  "찾지 않으면 모든 사람을 가립니다.": "If you don't search, everyone is covered.",
+  "모두 가림": "All covered",
+  "사람을 찾지 못했습니다. 머리 찾기 › 검출 민감도를 낮추거나 정확 모델로 바꿔 보세요.": "No people found. Try lowering Head detection › Detection sensitivity, or switch to the accurate model.",
+  "모두 가립니다. 빼려면 사람 카드를 누르세요.": "Everyone is covered. Click a person's card to uncover them.",
+  "아무도 고르지 않았습니다.": "No one is picked.",
+  "컷이 바뀌면 같은 사람도 새 번호를 받습니다.": "When the shot changes, the same person gets a new number.",
+  "모두 가립니다. 빼려면 사람 카드를 누르세요. 컷이 바뀌면 같은 사람도 새 번호를 받습니다.": "Everyone is covered. Click a person's card to uncover them. When the shot changes, the same person gets a new number.",
+  "아무도 고르지 않았습니다. 컷이 바뀌면 같은 사람도 새 번호를 받습니다.": "No one is picked. When the shot changes, the same person gets a new number.",
+  "폴더 열기": "Open folder",
+  "다시 실행": "Run again",
+  "이 플레이트만 지금 설정으로 다시 만듭니다": "Remakes only this plate with the current settings",
+  "이 형식(ProRes · HEVC 10비트 MOV 등)은 브라우저가 재생하지 못합니다.": "This format (ProRes, HEVC 10-bit MOV, etc.) can't be played by the browser.",
+  "사람 찾기 · 처리 · 저장은 정상으로 됩니다. 예시는 첫 프레임 기준입니다.": "Finding people, processing and saving work normally. Examples use the first frame.",
+  "· 규격 읽는 중…": "· Reading specs…",
+  "· 원본 규격과 같음": "· Same specs as the original",
+  "준비됨": "Ready",
+  "그래픽카드로 처리": "Processing on the graphics card",
+  "CPU로 처리": "Processing on the CPU",
+  "준비됨 · 그래픽카드로 처리": "Ready · Processing on the graphics card",
+  "준비됨 · CPU로 처리": "Ready · Processing on the CPU",
+  "앱이 꺼졌습니다": "The app is off",
+  "Griding.bat 을 다시 실행하세요": "Run Griding.bat again",
+  "앱이 꺼졌습니다 · Griding.bat 을 다시 실행하세요": "The app is off · Run Griding.bat again",
+  "④ 내보내기에서 하나 이상 고르세요": "Pick at least one in ④ Choose exports",
+  "③에서 카드를 하나 이상 고르세요": "Pick at least one card in ③",
+  "②에서 가릴 사람을 한 명 이상 고르세요": "Pick at least one person to cover in ②",
+  "나오는 사람 모두": "everyone in the clip",
+  "만들 것:": "Making:",
+  "이 프레임에선 표정을 못 찾아 점 · 선이 없습니다 (옆모습 · 뒤통수). 정면이 보이는 곳으로 옮겨 보세요.": "No face found in this frame, so there are no points or lines (side view or back of head). Move to a spot where the face is visible from the front.",
+  "예시 그림입니다. 플레이트를 넣으면 그 플레이트로 바뀝니다.": "This is a sample image. It switches to your plate once you add one.",
+  "이 프레임에서 머리를 못 찾아 예시 그림으로 보여 줍니다. 영상을 다른 위치로 옮겨 보세요.": "No head found in this frame, so a sample image is shown. Move the video to another position.",
+  "미리보기 만드는 중...": "Making preview...",
+  "마음에 들면 [전체 실행]": "If it looks good, click [Run all]",
+  "사람 찾는 중... (영상 전체를 훑습니다)": "Finding people... (scanning the whole video)",
+  "올리는 중": "Uploading",
+  "오류": "Error",
+  "완료": "Done",
+  "얼굴 윤곽을 조금 넓혀 덮습니다. 표정을 못 찾은 옆모습과 뒤통수는 머리 박스로 덮습니다": "Covers the face outline, slightly widened. Side views and backs of heads where no face was found are covered with the head box",
+  "귀와 머리카락까지 머리 전체를 덮습니다. 표정 인식 없이도 됩니다": "Covers the whole head, including ears and hair. Works without face detection",
+  "머리 위에 격자를 얹습니다": "Puts a grid over the head",
+  "표정 선": "Face lines",
+  "눈, 눈썹, 입, 코, 얼굴 윤곽을 선으로 그립니다": "Draws the eyes, eyebrows, mouth, nose and face outline as lines",
+  "표정 점": "Face points",
+  "얼굴 점 478개를 찍습니다": "Places 478 face points",
+  "추적 박스": "Tracking boxes",
+  "찾은 머리 박스와 번호. 초록은 찾은 것, 주황(HOLD)은 잠깐 놓쳐 유지한 것": "Detected head boxes and numbers. Green = detected, orange (HOLD) = briefly lost and held",
+  "고른 카드를 순서대로 겹친 결과 한 개 (원본 해상도 · fps · 소리)": "One result with the picked cards stacked in order (original resolution · fps · audio)",
+  "고른 카드마다 투명 배경 무손실 MOV 하나씩 (_layer1_grid.mov …, PNG 코덱 · 알파).": "One lossless MOV with a transparent background per picked card (_layer1_grid.mov …, PNG codec · alpha).",
+  "원본 위에 번호 순서대로 쌓으면 _combo 와 같고 H.264 압축이 없음. 이미지면 투명 PNG": "Stacked over the original in numbered order, it matches _combo with no H.264 compression. Transparent PNG for images",
+  "머리 위에 격자를 덮은 시댄스용 파일 (원본 해상도 · fps · 소리)": "Seedance file with a grid over the head (original resolution · fps · audio)",
+  "추적 확인": "Tracking check",
+  "원본 위 머리 박스 · 번호 (초록 = 검출, 주황 HOLD = 잠깐 놓쳐 유지)": "Head boxes and numbers over the original (green = detected, orange HOLD = briefly lost and held)",
+  "격자 매트": "Grid matte",
+  "검은 배경 + 흰 격자 (AE 에서 따로 합성)": "White grid on black (composite separately in AE)",
+  "비교 영상": "Comparison video",
+  "원본 | 결과(조합) | 추적 3칸, 칸마다 위 라벨": "Original | Result (combo) | Tracking in 3 panels, each labeled on top",
+  "표정 가이드": "Face guide",
+  "검은 배경 + 흰 표정 선 (눈 · 눈썹 · 입 · 코 · 얼굴 윤곽). 10/01 강아지 _face 와 같은 양식": "White face lines on black (eyes · eyebrows · mouth · nose · face outline). Same format as the 10/01 dog _face",
+  "표정 추적 확인": "Face tracking check",
+  "원본 위 초록 표정 선 + 얼굴 그물 (원본 소리)": "Green face lines + face mesh over the original (original audio)",
+  "검은 배경 + 흰 얼굴 점 478개 + 윤곽선. 프레임별 점 좌표는 _points.json 으로 같이 저장": "478 white face points + outline on black. Per-frame point coordinates are also saved as _points.json",
+  "frames[프레임][얼굴][점] = [x, y] 픽셀": "frames[frame][face][point] = [x, y] pixels",
+  "표정 점 확인": "Face points check",
+  "원본 위 초록 얼굴 점 + 윤곽선 (원본 소리)": "Green face points + outline over the original (original audio)",
+  "얼굴을 검게 가리고 그 위에 초록 표정 점 · 선 (원본 소리). 10/01 masked-face-guides 방식.": "Face covered in black with green face points and lines on top (original audio). Same method as the 10/01 masked-face-guides.",
+  "표정을 못 찾은 옆모습 · 뒤통수도 머리 박스로 가림": "Side views and backs of heads with no face found are also covered with the head box",
+  "머리 마스크": "Head mask",
+  "흰 머리 / 검은 배경 (AE 에서 가리기 · 교체할 때). 모양은 [가리기 모양]": "White head on black (for covering or replacing in AE). Shape follows [Cover shape]",
+  "가리기": "Cover",
+  "원본 위에 머리를 [가리기 색]으로 꽉 채움 (원본 소리). 10/01 _masked_green 과 같은 방식": "Head filled solid with [Cover color] over the original (original audio). Same method as the 10/01 _masked_green",
+  "미리보기": "Preview",
+  "비교 정지 이미지 (가운데 프레임)": "Comparison still image (middle frame)",
+  "밀착 시트": "Contact sheet",
+  "결과 프레임 9장을 3×3 으로 (영상만)": "9 result frames in a 3×3 grid (video only)",
+  "그래픽카드 (DirectML)": "Graphics card (DirectML)",
+  "머리 검출": "Head detection",
+  "YOLO11s head (빠름) · YOLO11m head (정확)": "YOLO11s head (fast) · YOLO11m head (accurate)",
+  "매 프레임 · 머리 위치 → 사람 번호 · 격자 · 가림 자리": "Every frame · head position → person number · grid · cover area",
+  "추적": "Tracking",
+  "점수 2단계 짝맞추기 (ByteTrack 방식)": "Two-stage score matching (ByteTrack-style)",
+  "Griding 안에 직접 구현 (모델 파일 없음)": "Built into Griding (no model file)",
+  "프레임 사이 같은 사람 잇기 · 3프레임 이상 이어져야 사람으로 셈": "Links the same person across frames · counted as a person only if seen for 3+ frames",
+  "Google MediaPipe · face_landmarker.task (얼굴 점 478개)": "Google MediaPipe · face_landmarker.task (478 face points)",
+  "표정 선 · 표정 점 · 가림·얼굴 윤곽 카드를 골랐을 때만": "Only when a Face lines, Face points or Cover·face outline card is picked",
+  "영상 읽기 · 저장": "Video read · save",
+  "FFmpeg · H.264 (조합) · PNG MOV (투명 레이어)": "FFmpeg · H.264 (combo) · PNG MOV (transparent layers)",
+  "imageio-ffmpeg 에 들어 있는 ffmpeg": "ffmpeg bundled in imageio-ffmpeg",
+  "원본 색공간(709/601) · 회전 · 가변 프레임을 읽어 그대로 맞춰 저장 · 소리는 다시 압축 않고 복사 · 저장 뒤 규격 대조": "Reads the original color space (709/601), rotation and variable frame rate and saves to match · audio is copied without recompressing · specs are checked after saving",
+  "만들 파일을 하나 이상 골라 주세요": "Pick at least one file to make",
+  "조합할 카드를 하나 이상 골라 주세요": "Pick at least one card to combine",
+  "작업을 찾지 못했습니다": "Job not found",
+  "잘못된 요청입니다": "Invalid request",
+  "이 PC 의 Griding 화면에서만 쓸 수 있습니다": "Can only be used from the Griding screen on this PC",
+  "파일이 없습니다": "File not found",
+  "없는 주소입니다": "Address not found",
+  "운영체제": "Operating system",
+  "Griding 는 Windows 10/11 용입니다": "Griding is for Windows 10/11",
+  "Windows 10 이상을 권장합니다": "Windows 10 or later is recommended",
+  "CPU · 메모리": "CPU · Memory",
+  "메모리 8GB 미만 — 4K · 긴 영상은 느리거나 멈출 수 있음": "Under 8GB memory — 4K and long videos may be slow or stall",
+  "코어가 적어 처리가 느릴 수 있음": "Few cores, so processing may be slow",
+  "프로그램 부품": "Program parts",
+  "없음:": "Missing:",
+  "Griding 폴더를 통째로 다시 복사하세요 (일부만 옮기면 이렇게 됩니다).": "Copy the whole Griding folder again (moving only part of it causes this).",
+  "그래도 안 되면 'Microsoft Visual C++ 재배포 패키지(x64)'를 설치하세요": "If that doesn't help, install the 'Microsoft Visual C++ Redistributable (x64)'",
+  "Visual C++ 런타임": "Visual C++ runtime",
+  "앱": "App",
+  "윈도우": "Windows",
+  "'Microsoft Visual C++ 재배포 패키지(x64)'를 설치하면 확실합니다": "Installing the 'Microsoft Visual C++ Redistributable (x64)' will fix it",
+  "영상 저장 (ffmpeg)": "Video saving (ffmpeg)",
+  "Griding 폴더를 통째로 다시 복사하세요": "Copy the whole Griding folder again",
+  "Griding 폴더를 다시 복사하세요": "Copy the Griding folder again",
+  "모델 파일": "Model files",
+  "머리 검출 · 빠름": "Head detection · fast",
+  "앱을 켤 수 없음": "The app can't start",
+  "머리 검출 · 정확": "Head detection · accurate",
+  "'정확' 모델을 못 씀 (빠름만)": "Can't use the 'accurate' model (fast only)",
+  "표정 카드(가림·얼굴 윤곽 · 표정 선 · 점)를 못 씀": "Can't use face cards (Cover·face outline · Face lines · points)",
+  "예시 얼굴": "Sample face",
+  "카드 예시 그림의 얼굴 점이 안 보임": "Face points won't show in the card sample images",
+  "예시 캐릭터": "Sample character",
+  "카드 예시가 그려 만든 머리로 바뀜": "Card samples use a drawn head instead",
+  "이름을 못 읽음": "Could not read the name",
+  "그래픽카드를 쓰려면 Griding.bat 으로 켜세요": "To use the graphics card, start with Griding.bat",
+  "DirectML 없음": "DirectML not available",
+  "그래픽카드 실행 시험 실패 → CPU": "Graphics card test failed → CPU",
+  "CPU 로도 결과는 같고 느리기만 합니다. 그래픽카드 드라이버를 최신으로 올리면 빨라질 수 있어요": "The result is the same on CPU, only slower. Updating the graphics driver may speed it up",
+  "표정 인식 (MediaPipe)": "Face detection (MediaPipe)",
+  "켜짐 · CPU": "On · CPU",
+  "표정 카드만 못 씁니다. 격자 · 가림·머리 전체는 됩니다. 아주 오래된 CPU(AVX 없음)면 이렇게 될 수 있어요": "Only face cards are unavailable. Grid and Cover·whole head still work. This can happen on a very old CPU (no AVX)",
+  "저장 폴더": "Save folders",
+  "임시": "Temp",
+  "Griding 폴더를 바탕화면이나 문서로 옮겨서 다시 실행하세요": "Move the Griding folder to the Desktop or Documents and run again",
+  "공간이 5GB 미만 — 긴 영상 · 투명 레이어는 용량이 큽니다": "Under 5GB free — long videos and transparent layers take a lot of space",
+  "→ 켤 수 없음": "→ Can't start",
+  "→ 사용 가능": "→ Ready to use",
+  "HDR 원본 — 결과 mp4 는 8비트라 띠가 생길 수 있음. 투명 레이어로 합성 권장": "HDR original — the result mp4 is 8-bit, so banding may appear. Compositing with transparent layers is recommended",
+  "가로 · 세로가 홀수 — mp4 는 1px 늘려 짝수로 저장 (투명 레이어는 원본 크기 그대로)": "Odd width or height — mp4 is stretched by 1px to even (transparent layers keep the original size)",
+  "소리 없음": "no audio",
+  "원본 (넣은 파일)": "Original (added file)",
+  "조합 영상 _combo.mp4": "Combo video _combo.mp4",
+  "투명 레이어 _layerN.mov": "Transparent layers _layerN.mov",
+  "(표시 없음 → 짐작)": "(not tagged → guessed)",
+  "해상도": "Resolution",
+  "H.264 는 짝수만 → 1px 늘림": "H.264 needs even sizes → stretched by 1px",
+  "가변 → 고정으로 맞춤": "Variable → set to fixed",
+  "길이": "Length",
+  "코덱": "Codec",
+  "PNG 무손실": "PNG lossless",
+  "시댄스 · 재생용 압축": "Compressed for Seedance and playback",
+  "모름": "Unknown",
+  "무손실 (용량은 그림에 따라)": "Lossless (file size depends on the picture)",
+  "고정 비트레이트로 저장": "Saved at a constant bitrate",
+  "비트 · 채널": "Bits · channels",
+  "8bit · RGBA (투명)": "8bit · RGBA (transparent)",
+  "8비트로 줄어듦 — 원본 화질은 투명 레이어로": "Reduced to 8-bit — keep the original quality with the transparent layers",
+  "RGB 그대로 (변환 없음)": "RGB as is (no conversion)",
+  "회전": "Rotation",
+  "바로 선 화면": "Upright picture",
+  "회전 정보를 적용해 저장": "Saved with the rotation applied",
+  "픽셀 비율": "Pixel ratio",
+  "없음 (그림만)": "None (picture only)",
+  "레이어는 그림만": "Layers are picture only",
+  "형식": "Format",
+  "PNG (투명)": "PNG (transparent)",
+  "채널": "Channels",
+  "RGBA (투명)": "RGBA (transparent)",
+  "조합 이미지 _combo.png": "Combo image _combo.png",
+  "투명 레이어 _layerN.png": "Transparent layers _layerN.png",
+  "표정 카드(가림 · 얼굴 윤곽, 표정 선, 표정 점)를 빼고": "Remove the face cards (Cover · face outline, Face lines, Face points) and",
+  "가림 · 머리 전체나 격자로 다시 실행해 보세요.": "run again with Cover · whole head or Grid.",
+  "크기": "Size",
+  "만들 결과물이 없습니다": "Nothing to make",
+  "프레임을 하나도 읽지 못했습니다": "Could not read any frames",
+  "끝": "Finished",
+  "사람 찾기 끝": "Finding people finished",
+  "대기 중": "Waiting",
+  "빈 파일입니다": "The file is empty",
+  "파일이 너무 큽니다 (8GB 까지)": "The file is too large (up to 8GB)",
+  "결과 폴더의 옛 결과를 지우거나 공간을 비운 뒤 다시 넣어 주세요": "Delete old results in the result folder or free up space, then add the file again",
+  "올리는 중 끊겼습니다. 다시 넣어 주세요": "The upload was interrupted. Please add the file again",
+  "파일을 다시 넣어 주세요": "Please add the file again",
+  "파일을 다시 넣어 주세요 (앱을 다시 켰다면 올린 파일이 지워졌습니다)": "Please add the file again (if the app was restarted, uploaded files were cleared)",
+  "확장자 없음": "no extension",
+  "프레임을 읽지 못했습니다": "Could not read the frame",
+  "세로줄 + 가로줄 (기본)": "Vertical + horizontal lines (default)",
+  "세로줄만": "Vertical lines only",
+  "가로줄만 (스캔라인 느낌)": "Horizontal lines only (scanline look)",
+  "대각선 격자": "Diagonal grid",
+  "45도로 엇갈린 마름모 격자": "Diamond grid crossed at 45 degrees",
+  "X 십자": "X cross",
+  "대각선 X + 가운데 십자": "Diagonal X + center cross",
+  "점": "Dots",
+  "칸마다 동그라미": "A circle in each cell",
+  "체크": "Checker",
+  "바둑판처럼 칸을 번갈아 채움": "Fills cells alternately like a checkerboard",
+  "박스 채우기": "Fill box",
+  "머리를 통째로 칠함": "Paints the whole head",
+  "검정 · 타원": "Black · Oval",
+  "검정 · 네모": "Black · Rectangle",
+  "초록 · 타원": "Green · Oval",
+  "초록 · 네모": "Green · Rectangle",
+  "사람 확인": "Check people",
+  "Griding 폴더를 통째로 다시 복사하세요 (app\\model 폴더)": "Copy the whole Griding folder again (app\\model folder)",
+  "고른 카드마다 투명 배경 무손실 MOV 하나씩 (_layer1_grid.mov …, PNG 코덱 · 알파). 원본 위에 번호 순서대로 쌓으면 _combo 와 같고 H.264 압축이 없음. 이미지면 투명 PNG": "One lossless MOV with a transparent background per picked card (_layer1_grid.mov …, PNG codec with alpha). Stacked over the original in number order it matches _combo, without H.264 compression. For images: transparent PNG",
+  "선 색 · 불투명도": "Line color · opacity",
+  "가림 색 · 불투명도": "Cover color · opacity",
+  "선 · 점 색": "Line · point color",
+  "화면 언어": "Language",
+  "모두": "All",
+  "원본 규격과 같음": "matches the source spec"
+ },
+ "templates": [
+  {
+   "ko": "요청 실패 {}",
+   "en": "Request failed {0}"
+  },
+  {
+   "ko": "올리기 실패 {}",
+   "en": "Upload failed {0}"
+  },
+  {
+   "ko": "{} 직접 고르기",
+   "en": "{0}: pick custom"
+  },
+  {
+   "ko": "{} 불투명도",
+   "en": "{0} opacity"
+  },
+  {
+   "ko": "{} (카드를 고르세요)",
+   "en": "{0} (pick cards)"
+  },
+  {
+   "ko": "바탕 · {}",
+   "en": "Base · {0}"
+  },
+  {
+   "ko": "{} 고정 (CBR)",
+   "en": "{0} fixed (CBR)"
+  },
+  {
+   "ko": "{}프레임 읽음",
+   "en": "Read {0} frames"
+  },
+  {
+   "ko": "{}프레임",
+   "en": "{0} frames"
+  },
+  {
+   "ko": "· 원본과 다른 곳 {}줄 (노란 칸에 이유)",
+   "en": "· {0} rows differ from the original (reason in yellow cells)"
+  },
+  {
+   "ko": "{} 위에 {}장",
+   "en": "{1} cards on {0}"
+  },
+  {
+   "ko": "조합 _combo.{}",
+   "en": "Combo _combo.{0}"
+  },
+  {
+   "ko": "투명 레이어 ×{}",
+   "en": "Transparent layers ×{0}"
+  },
+  {
+   "ko": "확인용 ×{}",
+   "en": "Check files ×{0}"
+  },
+  {
+   "ko": "그 밖의 결과물 ×{}",
+   "en": "Other outputs ×{0}"
+  },
+  {
+   "ko": "소리 {}",
+   "en": "audio {0}"
+  },
+  {
+   "ko": "시댄스에 그대로 못 넣음: {}",
+   "en": "Can't go into Seedance as is: {0}"
+  },
+  {
+   "ko": "{}명",
+   "en": "{0} people"
+  },
+  {
+   "ko": "사람 {}명",
+   "en": "{0} people"
+  },
+  {
+   "ko": "한 화면에 최대 {}명",
+   "en": "up to {0} on screen at once"
+  },
+  {
+   "ko": "한 화면 최대 {}명",
+   "en": "up to {0} on screen at once"
+  },
+  {
+   "ko": "{}명 찾음",
+   "en": "{0} found"
+  },
+  {
+   "ko": "컷 {}개",
+   "en": "{0} shots"
+  },
+  {
+   "ko": "컷 {}",
+   "en": "Shot {0}"
+  },
+  {
+   "ko": "#{}만 가림",
+   "en": "only #{0} covered"
+  },
+  {
+   "ko": "{}명만 가립니다.",
+   "en": "Only {0} people are covered."
+  },
+  {
+   "ko": "{}명만 가립니다. 컷이 바뀌면 같은 사람도 새 번호를 받습니다.",
+   "en": "Only {0} people are covered. When the shot changes, the same person gets a new number."
+  },
+  {
+   "ko": "{} 받기",
+   "en": "Download {0}"
+  },
+  {
+   "ko": "· 규격 다름: {}",
+   "en": "· Specs differ: {0}"
+  },
+  {
+   "ko": "· 알아둘 것 {}개",
+   "en": "· {0} notes"
+  },
+  {
+   "ko": "알아둘 것 {}개",
+   "en": "{0} notes"
+  },
+  {
+   "ko": "· {}개 모두 정상 (눌러서 보기)",
+   "en": "· All {0} OK (click to view)"
+  },
+  {
+   "ko": "({}개 · {})",
+   "en": "({0} files · {1})"
+  },
+  {
+   "ko": "{}명 모두",
+   "en": "All {0} people"
+  },
+  {
+   "ko": "투명 레이어 {}개",
+   "en": "{0} transparent layers"
+  },
+  {
+   "ko": "넣은 플레이트의 지금 프레임(머리 {}개)으로 만든 예시입니다. 영상을 옮기면 예시도 바뀝니다.",
+   "en": "Sample made from the current frame of your plate ({0} heads). It changes as you move the video."
+  },
+  {
+   "ko": "예시를 만들지 못했습니다: {}",
+   "en": "Could not make the sample: {0}"
+  },
+  {
+   "ko": "미리보기 (한 프레임) · {}",
+   "en": "Preview (one frame) · {0}"
+  },
+  {
+   "ko": "사람 {}명을 찾았습니다. 가릴 사람을 고른 뒤 ③에서 카드를 고르세요.",
+   "en": "Found {0} people. Pick who to cover, then pick cards in ③."
+  },
+  {
+   "ko": "사람 {}명을 찾았습니다 (컷 {}개). 가릴 사람을 고른 뒤 ③에서 카드를 고르세요.",
+   "en": "Found {0} people ({1} shots). Pick who to cover, then pick cards in ③."
+  },
+  {
+   "ko": "완료 · {} · {}초 · 사람 {}명",
+   "en": "Done · {0} · {1}s · {2} people"
+  },
+  {
+   "ko": "{}초",
+   "en": "{0}s"
+  },
+  {
+   "ko": "규격 {}/{}",
+   "en": "spec {0}/{1}"
+  },
+  {
+   "ko": "규격이 원본과 다른 파일이 있습니다: {}",
+   "en": "Some files have specs different from the original: {0}"
+  },
+  {
+   "ko": "{}개 완료. 결과 칸 위 탭에서 파일을 바꿔 볼 수 있습니다. 저장 위치: {}",
+   "en": "{0} done. Use the tabs above the result panel to switch files. Saved to: {1}"
+  },
+  {
+   "ko": "{}개 완료. 결과 칸 위 탭에서 파일을 바꿔 볼 수 있습니다. 투명 레이어 {}개는 결과 폴더에 있습니다 (편집기에서 원본 위에 번호 순서대로). 저장 위치: {}",
+   "en": "{0} done. Use the tabs above the result panel to switch files. {1} transparent layers are in the result folder (stack them over the original in numbered order in an editor). Saved to: {2}"
+  },
+  {
+   "ko": "{}개는 영상 · 이미지가 아니라서 뺐습니다",
+   "en": "{0} files were skipped because they are not videos or images"
+  },
+  {
+   "ko": "처리 중 {}%",
+   "en": "Processing {0}%"
+  },
+  {
+   "ko": "앱을 시작하지 못했습니다: {}",
+   "en": "Could not start the app: {0}"
+  },
+  {
+   "ko": "이미지 저장 실패: {}",
+   "en": "Failed to save image: {0}"
+  },
+  {
+   "ko": "{} 사람 찾기",
+   "en": "Finding people · {0}"
+  },
+  {
+   "ko": "앱 오류: {}",
+   "en": "App error: {0}"
+  },
+  {
+   "ko": "{} · {}스레드 · 메모리 {}GB",
+   "en": "{0} · {1} threads · {2}GB memory"
+  },
+  {
+   "ko": "{}스레드",
+   "en": "{0} threads"
+  },
+  {
+   "ko": "메모리 {}GB",
+   "en": "{0}GB memory"
+  },
+  {
+   "ko": "ffmpeg 를 실행하지 못함 ({})",
+   "en": "Could not run ffmpeg ({0})"
+  },
+  {
+   "ko": "{} · 없는 인코더: {}",
+   "en": "{0} · missing encoders: {1}"
+  },
+  {
+   "ko": "없는 인코더: {}",
+   "en": "missing encoders: {0}"
+  },
+  {
+   "ko": "{} · H.264 · PNG(투명 레이어) · AAC",
+   "en": "{0} · H.264 · PNG (transparent layers) · AAC"
+  },
+  {
+   "ko": "{} 없음 → {}",
+   "en": "{0} missing → {1}"
+  },
+  {
+   "ko": "{} · CPU 로만 실행 (Griding_CPU.bat)",
+   "en": "{0} · running on CPU only (Griding_CPU.bat)"
+  },
+  {
+   "ko": "{} · DirectML 로 머리 찾기",
+   "en": "{0} · finding heads with DirectML"
+  },
+  {
+   "ko": "켜지 못함 ({}: {})",
+   "en": "Could not start ({0}: {1})"
+  },
+  {
+   "ko": "결과 → {} · 남은 공간 {}GB",
+   "en": "Results → {0} · {1}GB free"
+  },
+  {
+   "ko": "남은 공간 {}GB",
+   "en": "{0}GB free"
+  },
+  {
+   "ko": "쓸 수 없음: {}",
+   "en": "Not writable: {0}"
+  },
+  {
+   "ko": "앱 폴더에 쓸 수 없어 {} 폴더를 대신 위치로 옮겼습니다",
+   "en": "Could not write to the app folder, so the {0} folder was moved to a substitute location"
+  },
+  {
+   "ko": "점검 중 오류: {}: {}",
+   "en": "Error during check: {0}: {1}"
+  },
+  {
+   "ko": "{}비트 원본 → 결과 mp4 는 8비트. 화질을 지키려면 '카드별 투명 레이어'를 원본 위에 합성",
+   "en": "{0}-bit original → result mp4 is 8-bit. To keep quality, composite the 'Transparent layer per card' over the original"
+  },
+  {
+   "ko": "가변 프레임 (평균 {} · 기준 {} fps) → 결과는 고정 {} fps 로 맞춤",
+   "en": "Variable frame rate (average {0} · base {1} fps) → result is set to a fixed {2} fps"
+  },
+  {
+   "ko": "픽셀이 정사각형이 아님 (SAR {}) — 결과에도 같은 SAR 표시",
+   "en": "Pixels are not square (SAR {0}) — the result is tagged with the same SAR"
+  },
+  {
+   "ko": "회전 정보 {}° — 돌려서 바로 선 화면({}×{})으로 처리",
+   "en": "Rotation tag {0}° — processed as the upright picture ({1}×{2})"
+  },
+  {
+   "ko": "색공간 표시 없음 → {} 로 가정",
+   "en": "No color space tag → assuming {0}"
+  },
+  {
+   "ko": "소리 {} 는 mp4 에 그대로 못 넣어 AAC 로 변환",
+   "en": "Audio {0} can't go into mp4 as is, so it is converted to AAC"
+  },
+  {
+   "ko": "시댄스 넣기: {}",
+   "en": "Seedance input: {0}"
+  },
+  {
+   "ko": "소리 {} {}kHz",
+   "en": "audio {0} {1}kHz"
+  },
+  {
+   "ko": "{}fps",
+   "en": "{0}fps"
+  },
+  {
+   "ko": "{}fps (가변)",
+   "en": "{0}fps (variable)"
+  },
+  {
+   "ko": "{}초 (같은 프레임 수)",
+   "en": "{0}s (same frame count)"
+  },
+  {
+   "ko": "(가변 · 기준 {})",
+   "en": "(variable · base {0})"
+  },
+  {
+   "ko": "{} 그대로 복사",
+   "en": "{0} copied as is"
+  },
+  {
+   "ko": "{} 는 mp4 에 못 넣어 변환",
+   "en": "{0} can't go into mp4, so it is converted"
+  },
+  {
+   "ko": "{} · {} (표시 붙임)",
+   "en": "{0} · {1} (tagged)"
+  },
+  {
+   "ko": "용량 {}MB > {}MB",
+   "en": "Size {0}MB > {1}MB"
+  },
+  {
+   "ko": "길이 {}초 < {}초",
+   "en": "Length {0}s < {1}s"
+  },
+  {
+   "ko": "길이 {}초 — 2.0 은 15초 · 2.5 는 30초까지 (잘라서 넣기)",
+   "en": "Length {0}s — 2.0 allows up to 15s, 2.5 up to 30s (trim before adding)"
+  },
+  {
+   "ko": "길이 {}초 — 2.5 만 됨 (2.0 은 15초까지)",
+   "en": "Length {0}s — only 2.5 works (2.0 allows up to 15s)"
+  },
+  {
+   "ko": "크기 {}×{} — 한 변 {}~{}px",
+   "en": "Size {0}×{1} — each side {2}–{3}px"
+  },
+  {
+   "ko": "가로÷세로 {} — {}~{} 만",
+   "en": "Width÷height {0} — only {1}–{2} allowed"
+  },
+  {
+   "ko": "프레임 {} ≠ 원본 {}",
+   "en": "Frames {0} ≠ original {1}"
+  },
+  {
+   "ko": "크기 {}×{} ≠ 원본 {}×{}",
+   "en": "Size {0}×{1} ≠ original {2}×{3}"
+  },
+  {
+   "ko": "이 PC 에서 표정 인식을 켜지 못했습니다 ({}).",
+   "en": "Face detection could not be started on this PC ({0})."
+  },
+  {
+   "ko": "이 PC 에서 표정 인식을 켜지 못했습니다 ({}). 표정 카드(가림 · 얼굴 윤곽, 표정 선, 표정 점)를 빼고 가림 · 머리 전체나 격자로 다시 실행해 보세요.",
+   "en": "Face detection could not be started on this PC ({0}). Remove the face cards (Cover · face outline, Face lines, Face points) and run again with Cover · whole head or Grid."
+  },
+  {
+   "ko": "그리는 중 {}/{}",
+   "en": "Drawing {0}/{1}"
+  },
+  {
+   "ko": "사람 찾기 {}/{}",
+   "en": "Finding people {0}/{1}"
+  },
+  {
+   "ko": "{} · 시작",
+   "en": "{0} · started"
+  },
+  {
+   "ko": "{} 완료 · {}초 · 사람 {}명",
+   "en": "{0} done · {1}s · {2} people"
+  },
+  {
+   "ko": "{} · 사람 {}명 찾음",
+   "en": "{0} · {1} people found"
+  },
+  {
+   "ko": "지원하지 않는 파일입니다: {}",
+   "en": "Unsupported file: {0}"
+  },
+  {
+   "ko": "디스크 공간이 모자랍니다 (남은 {}GB · 필요 {}GB 이상).",
+   "en": "Not enough disk space ({0}GB free · {1}GB or more needed)."
+  },
+  {
+   "ko": "저장하지 못했습니다 ({}). 디스크 공간을 확인해 주세요",
+   "en": "Could not save ({0}). Check your disk space"
+  },
+  {
+   "ko": "파일이 없습니다: {}",
+   "en": "File not found: {0}"
+  },
+  {
+   "ko": "지원하지 않는 파일입니다 ({}). 영상: mp4·mov 등, 이미지: png·jpg 등",
+   "en": "Unsupported file ({0}). Video: mp4, mov, etc. Image: png, jpg, etc."
+  },
+  {
+   "ko": "{}×{} 이미지",
+   "en": "{0}×{1} image"
+  },
+  {
+   "ko": "영상을 읽지 못했습니다: {}",
+   "en": "Could not read the video: {0}"
+  },
+  {
+   "ko": "이미지를 읽지 못했습니다: {}",
+   "en": "Could not read the image: {0}"
+  },
+  {
+   "ko": "채널 수가 다릅니다: {} (필요 {})",
+   "en": "Channel count differs: {0} (need {1})"
+  },
+  {
+   "ko": "프레임 크기가 다릅니다: {}x{} ≠ {}",
+   "en": "Frame size differs: {0}x{1} ≠ {2}"
+  },
+  {
+   "ko": "영상 저장 중 멈춤: {} — {}",
+   "en": "Video saving stalled: {0} — {1}"
+  },
+  {
+   "ko": "영상 저장 실패: {} — {}",
+   "en": "Video saving failed: {0} — {1}"
+  },
+  {
+   "ko": "모르는 모양: {}",
+   "en": "Unknown pattern: {0}"
+  },
+  {
+   "ko": "머리 검출 모델이 없습니다: {}",
+   "en": "Head detection model not found: {0}"
+  },
+  {
+   "ko": "표정 모델이 없습니다: {}",
+   "en": "Face model not found: {0}"
+  },
+  {
+   "ko": "결과\\{} 폴더 열기",
+   "en": "Open result\\{0} folder"
+  },
+  {
+   "ko": "결과\\{}\\{}",
+   "en": "Result\\{0}\\{1}"
+  },
+  {
+   "ko": "{} 앱",
+   "en": "{0} (bundled)"
+  },
+  {
+   "ko": "표정 인식 {}MB",
+   "en": "Face landmarks {0}MB"
+  },
+  {
+   "ko": "{} 검정",
+   "en": "{0}: black"
+  },
+  {
+   "ko": "{} 흰색",
+   "en": "{0}: white"
+  },
+  {
+   "ko": "{} 회색",
+   "en": "{0}: gray"
+  },
+  {
+   "ko": "{} 빨강",
+   "en": "{0}: red"
+  },
+  {
+   "ko": "{} 초록",
+   "en": "{0}: green"
+  },
+  {
+   "ko": "{} 파랑",
+   "en": "{0}: blue"
+  },
+  {
+   "ko": "{} 노랑",
+   "en": "{0}: yellow"
+  }
+ ]
+}

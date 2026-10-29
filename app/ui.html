@@ -245,6 +245,9 @@
   main { margin: 0 auto; grid-template-columns: minmax(0, 1fr) 500px; }
   @media (max-width: 1040px) { main { grid-template-columns: 1fr; } }
   .view { max-height: 46vh; }
+  .seg.lang button { padding: 4px 10px; font-size: 12px; }
+  #langSeg { margin-left: auto; }
+  #langSeg + #status { margin-left: 0; }
   .rerun { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 12.5px; color: var(--dim); flex-wrap: wrap; }
   .rerun .seg button { padding: 5px 11px; font-size: 12.5px; }
   td.act button { background: none; border: 0; color: var(--text); font-size: 12px; margin-left: 10px; cursor: pointer; text-decoration: underline; padding: 0; }
@@ -284,6 +287,10 @@
     <span class="step" data-step="3">③ 카드 골라 조합</span>
     <span class="step" data-step="4">④ 내보내기 고르기</span>
     <span class="step" data-step="5">⑤ 실행하고 받기</span>
+  </div>
+  <div class="seg lang" id="langSeg" title="화면 언어">
+    <button type="button" data-lang="ko">한국어</button>
+    <button type="button" data-lang="en">English</button>
   </div>
   <span id="status">연결 확인 중</span>
 </div></header>
@@ -510,6 +517,129 @@
 <script>
 "use strict";
 const $ = (id) => document.getElementById(id);
+
+/** 한/영 전환 — 화면에 그려진 글자를 사전(app/i18n_en.json)으로 바꾼다.
+ *  앱 코드는 늘 한국어로 그리고, 영어일 때만 바뀐 글자를 지켜보다가(MutationObserver) 영어로 덮는다.
+ *  원래 한국어는 글자 조각마다 기억해 두어 한국어로 돌리면 그대로 돌아온다. */
+class I18n {
+  static KEY = "griding-lang";
+  static SEPS = [" · ", " → ", " + ", " | ", ": ", " — "];
+  static ATTRS = ["title", "alt", "aria-label", "placeholder"];
+  static KO = /[가-힣]/;
+  constructor() {
+    this.lang = "ko"; this.exact = new Map(); this.templates = []; this.ko = new WeakMap(); this.attrKo = new WeakMap();
+    this.busy = false; this.observer = new MutationObserver((list) => this.#onMutate(list));
+  }
+  async load() {
+    try {
+      const d = await (await fetch("/i18n.json")).json();
+      for (const [k, v] of Object.entries(d.exact || {})) this.exact.set(k, v);
+      for (const t of d.templates || []) {
+        const parts = t.ko.split("{}").map(s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+        this.templates.push({ re: new RegExp("^" + parts.join("(.+?)") + "$"), en: t.en, fixed: t.ko.replace(/\{\}/g, "").length, sep: I18n.SEPS.some(x => t.ko.includes(x)) });
+      }
+      this.templates.sort((a, b) => b.fixed - a.fixed);   // 글자가 많이 정해진 틀부터 (예: '사람 {}명' 이 '{}명' 보다 먼저)
+      // 가운뎃점 등이 들어 있는 이름(예: '가림 · 얼굴 윤곽')은 조각으로 나누기 전에 통째로 바꿔야 한다
+      this.joined = [...this.exact.keys()].filter(k => I18n.SEPS.some(s => k.includes(s))).sort((a, b) => b.length - a.length);
+    } catch { this.exact.clear(); }
+    let saved = "ko";
+    try { saved = localStorage.getItem(I18n.KEY) || "ko"; } catch {}
+    this.set(saved === "en" ? "en" : "ko");
+  }
+  set(lang) {
+    this.lang = lang;
+    try { localStorage.setItem(I18n.KEY, lang); } catch {}
+    document.documentElement.lang = lang;
+    document.querySelectorAll("#langSeg button").forEach(b => b.classList.toggle("sel", b.dataset.lang === lang));
+    this.observer.disconnect();
+    this.#apply(document.body);
+    if (lang === "ko") { this.ko = new WeakMap(); this.attrKo = new WeakMap(); }   // 한국어로 돌린 뒤엔 앱이 고쳐 쓴 글자가 새 원본
+    if (lang === "en") this.observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: I18n.ATTRS });
+  }
+  /** 한 덩어리 글자 → 영어 (못 찾은 조각은 한국어 그대로) */
+  tr(s) {
+    const lead = s.match(/^\s*/)[0], tail = s.match(/\s*$/)[0], core = s.trim();
+    if (!core || !I18n.KO.test(core)) return s;
+    return lead + this.#whole(core) + tail;
+  }
+  #one(s) {
+    if (this.exact.has(s)) return this.exact.get(s);
+    const joinedText = I18n.SEPS.some(x => s.includes(x));   // 구분자로 이어 붙인 글이면 구분자가 든 틀만 (아니면 '{}명' 이 통째로 삼킴)
+    for (const t of this.templates) {
+      if (joinedText && !t.sep) continue;
+      const m = s.match(t.re);
+      if (m) return t.en.replace(/\{(\d+)\}/g, (_, i) => this.#whole((m[+i + 1] || "").trim()) || m[+i + 1]);
+    }
+    return null;
+  }
+  #whole(s) {
+    if (!I18n.KO.test(s)) return s;
+    const hit = this.#one(s);
+    if (hit !== null) return hit;
+    // 이름 덩어리를 자리표로 감싼 뒤 구분자로 나눠 조각마다 바꾼다
+    const keep = [];
+    let x = s;
+    for (const k of this.joined) if (x.includes(k)) x = x.split(k).join(`\u0001${keep.push(this.exact.get(k)) - 1}\u0002`);
+    return this.#split(x, keep, 0);
+  }
+  #split(x, keep, i) {
+    if (i >= I18n.SEPS.length) return this.#piece(x, keep);
+    const sep = I18n.SEPS[i];
+    if (!x.includes(sep)) return this.#split(x, keep, i + 1);
+    return x.split(sep).map(p => {
+      const one = this.#piece(p, keep);
+      return I18n.KO.test(one) ? this.#split(p, keep, i + 1) : one;
+    }).join(sep);
+  }
+  #piece(p, keep) {
+    const restored = p.replace(/\u0001(\d+)\u0002/g, (_, i) => keep[+i]);
+    if (!I18n.KO.test(restored)) return restored;
+    const t = p.trim(), lead = p.match(/^\s*/)[0], tail = p.match(/\s*$/)[0];
+    const hit = this.#one(t.replace(/\u0001(\d+)\u0002/g, (_, i) => keep[+i]));
+    return hit !== null ? lead + hit + tail : restored;
+  }
+  #textNodes(root) {
+    const out = [];
+    if (root.nodeType === Node.TEXT_NODE) return [root];
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentNode && (/^(SCRIPT|STYLE)$/.test(n.parentNode.nodeName) || n.parentNode.closest?.("#langSeg button"))
+                       ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+    for (let n = w.nextNode(); n; n = w.nextNode()) out.push(n);
+    return out;
+  }
+  #apply(root) {
+    this.busy = true;
+    for (const n of this.#textNodes(root)) {
+      const ko = this.ko.has(n) ? this.ko.get(n) : n.nodeValue;
+      if (!this.ko.has(n)) { if (!I18n.KO.test(ko)) continue; this.ko.set(n, ko); }
+      const want = this.lang === "en" ? this.tr(ko) : ko;
+      if (n.nodeValue !== want) n.nodeValue = want;
+    }
+    const els = root.nodeType === Node.ELEMENT_NODE ? [root, ...root.querySelectorAll("*")] : [];
+    for (const el of els) {
+      for (const a of I18n.ATTRS) {
+        if (!el.hasAttribute(a)) continue;
+        const saved = this.attrKo.get(el) || {};
+        const ko = saved[a] !== undefined ? saved[a] : el.getAttribute(a);
+        if (saved[a] === undefined) { if (!I18n.KO.test(ko)) continue; saved[a] = ko; this.attrKo.set(el, saved); }
+        const want = this.lang === "en" ? this.tr(ko) : ko;
+        if (el.getAttribute(a) !== want) el.setAttribute(a, want);
+      }
+    }
+    this.busy = false;
+  }
+  #onMutate(list) {
+    if (this.busy) return;
+    this.observer.disconnect();
+    for (const m of list) {
+      if (m.type === "characterData") this.ko.delete(m.target);            // 앱이 글자를 새로 썼다 → 새 한국어로 기억
+      if (m.type === "attributes") { const s = this.attrKo.get(m.target); if (s) delete s[m.attributeName]; }
+      if (m.type === "childList") m.addedNodes.forEach(n => this.#apply(n));
+      else this.#apply(m.target);
+    }
+    this.observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: I18n.ATTRS });
+  }
+}
+const i18n = new I18n();
 
 /** 서버와 주고받기 */
 class Api {
@@ -1194,6 +1324,8 @@ class App {
     this.busy = false; this.galleryTimer = null; this.ticket = 0;
   }
   async start() {
+    document.querySelectorAll("#langSeg button").forEach(b => b.onclick = () => i18n.set(b.dataset.lang));
+    await i18n.load();
     const info = await this.api.info();
     this.info = info; this.outDir = info.out;
     const saved = this.memory.load() || {};

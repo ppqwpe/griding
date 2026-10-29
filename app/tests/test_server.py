@@ -62,9 +62,17 @@ class ServerTest(unittest.TestCase):
         self.assertEqual([m["name"] for m in info["models"]], ["머리 검출", "추적", "표정 인식", "영상 읽기 · 저장"])
         self.assertEqual(info["defaults"]["cover_alpha"], 1.0)
         self.assertEqual(info["defaults"]["bitrate"], "fixed")
-        for icon, kind in (("/favicon.ico", "image/x-icon"), ("/icon.png", "image/png")):
+        for icon, kind in (("/favicon.ico", "image/x-icon"), ("/icon.png", "image/png"), ("/name.png", "image/png")):
             st, h, raw = self.call("GET", icon)
             self.assertEqual((st, h["Content-Type"]), (200, kind))
+        st, _, raw = self.call("GET", "/i18n.json")   # 영어 화면 사전
+        d = json.loads(raw)
+        self.assertEqual(st, 200)
+        self.assertEqual(d["exact"].get("격자"), "Grid")
+        for t in d["templates"]:   # {} 개수와 {0}{1}… 번호가 맞아야 바꿔 끼울 수 있다
+            n = t["ko"].count("{}")
+            used = {int(i) for i in __import__("re").findall(r"\{(\d+)\}", t["en"])}
+            self.assertTrue(used <= set(range(n)), t)
 
     def test_upload_rejects_bad_files(self):
         bad = self.tmp / "a.exe"

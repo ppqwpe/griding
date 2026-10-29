@@ -307,6 +307,9 @@ class RequestHandler(BaseHTTPRequestHandler):
             return self._send(200, self.app.ui(), CONTENT_TYPES[".html"])
         if path == "/api/info":
             return self._send(200, self.app.info())
+        if path == "/i18n.json":   # 영어 화면용 사전
+            f = config.APP_DIR / "i18n_en.json"
+            return self._send_file(f) if f.is_file() else self._send(200, {"exact": {}, "templates": []})
         if path in ("/favicon.ico", "/icon.png", "/name.png"):   # 아이콘 · 화면 왼쪽 위 픽셀 이름
             icon = DesktopShortcut.ICON
             return self._send_file(icon if path.endswith(".ico") else icon.with_name("griding_text.png") if path == "/name.png" else icon.with_suffix(".png"))
