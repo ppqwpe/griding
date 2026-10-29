@@ -1,0 +1,1434 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Griding</title>
+<link rel="icon" type="image/png" href="/icon.png">
+<style>
+  :root {
+    --bg: #121212; --panel: #1b1b1b; --panel2: #232323; --line: #2e2e2e; --line2: #3a3a3a;
+    --text: #ededed; --dim: #a0a0a0; --faint: #6c6c6c;
+    --accent: #e0322a; --accent-soft: #3a1917; --ok: #3fb950; --warn: #e3b341;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 14px/1.55 "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif; }
+  button, input, select { font: inherit; }
+
+  /* ── 머리 ── */
+  header.top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 12px 22px;
+               background: rgba(18,18,18,.92); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand img { width: 28px; height: 28px; }
+  .brand img.name { width: auto; height: 27px; image-rendering: pixelated; margin-right: 4px; }
+  .brand span { color: var(--dim); font-size: 13px; }
+  .steps { display: flex; gap: 6px; flex-wrap: wrap; }
+  .step { padding: 4px 12px; border-radius: 999px; background: var(--panel2); color: var(--dim); font-size: 13px; border: 1px solid var(--line); }
+  .step.now { background: var(--accent-soft); color: #fff; border-color: var(--accent); }
+  .step.done { color: var(--ok); border-color: #24442b; }
+  #status { margin-left: auto; color: var(--dim); font-size: 12px; white-space: nowrap; }
+  #status.on::before { content: "● "; color: var(--ok); }
+  #status.off::before { content: "● "; color: var(--accent); }
+
+  /* ── 작동 방식 · 모델 ── */
+  .how { margin: 14px 22px 0; padding: 12px 16px; border: 1px solid var(--line); border-radius: var(--radius); background: #171717; }
+  .how-row { display: flex; gap: 16px; align-items: flex-start; }
+  .how-t { font-size: 12.5px; font-weight: 700; color: var(--text); white-space: nowrap; padding-top: 2px; min-width: 88px; }
+  .how ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; counter-reset: s; flex: 1; }
+  .how li { counter-increment: s; display: grid; gap: 2px; font-size: 12px; color: var(--dim); line-height: 1.45; padding-left: 26px; position: relative; }
+  .how li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 18px; height: 18px; border-radius: 50%;
+                    background: var(--panel2); border: 1px solid var(--line2); color: var(--text); font-size: 11px; display: grid; place-items: center; }
+  .how li b { color: var(--text); font-size: 12.5px; }
+  .models { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .models .list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; }
+  .model { font-size: 12px; color: var(--dim); line-height: 1.45; }
+  .chk b.ok { color: #3fb950; } .chk b.warn { color: #d29922; } .chk b.fail { color: #ff7b72; }
+  .chk .fix { color: var(--text); }
+  .notes { font-size: 12px; color: #d29922; margin-top: 4px; line-height: 1.5; }
+  .model b { color: var(--text); font-size: 12.5px; }
+  .model .tag { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line2); color: #cfcfcf; margin: 2px 0; }
+  @media (max-width: 1040px) { .how { margin: 12px 16px 0; } .how-row { flex-direction: column; gap: 8px; } .how ol { grid-template-columns: 1fr 1fr; } .models .list { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .how ol { grid-template-columns: 1fr; } }
+
+  /* ── 틀 ── */
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(380px, 480px); gap: 18px; padding: 18px 22px 40px; align-items: start; }
+  .work { position: sticky; top: 72px; display: grid; gap: 16px; }
+  @media (max-width: 1040px) { main { grid-template-columns: 1fr; padding: 14px 16px 40px; } .work { position: static; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+  .panel + .panel { margin-top: 14px; }
+  h2 { font-size: 15px; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+  h2 .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; flex: none; }
+  .sub { color: var(--dim); font-size: 12.5px; margin: 0 0 12px; }
+  .faint { color: var(--faint); font-size: 12px; }
+  .note { font-size: 12px; color: var(--dim); margin: 6px 0 0; min-height: 18px; }
+  .h4 { font-size: 12.5px; color: var(--text); font-weight: 600; margin: 16px 0 8px; display: flex; gap: 6px; align-items: baseline; }
+
+  /* ── 플레이트 ── */
+  #drop { border: 2px dashed #444; border-radius: 10px; padding: 22px 16px; text-align: center; color: var(--dim); cursor: pointer; transition: border-color .15s, background .15s; }
+  #drop:hover, #drop:focus-visible { border-color: #666; outline: none; }
+  #drop.over { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
+  #drop b { color: var(--text); font-size: 15px; display: block; margin-bottom: 2px; }
+  .stage { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  @media (max-width: 640px) { .stage { grid-template-columns: 1fr; } }
+  .viewhead { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; min-height: 28px; flex-wrap: wrap; }
+  .viewhead .t { font-size: 12px; color: var(--dim); font-weight: 600; margin-right: 4px; }
+  .view { background: #000; border-radius: 8px; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .view video, .view img { max-width: 100%; max-height: 100%; }
+  .view .ph { color: #555; font-size: 13px; text-align: center; padding: 12px; }
+  .cap { font-size: 12px; color: var(--dim); margin: 6px 2px 0; word-break: break-all; min-height: 18px; }
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tab { padding: 3px 9px; border-radius: 6px; border: 1px solid var(--line2); background: var(--panel2); color: var(--dim); font-size: 12px; cursor: pointer; }
+  .tab.sel { background: var(--accent-soft); color: #fff; border-color: var(--accent); }
+  .btns { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .btn { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--line2); background: #262626; color: var(--text); font-weight: 700; cursor: pointer; }
+  .btn:hover:not(:disabled) { background: #2d2d2d; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-size: 15px; }
+  .btn.primary:hover:not(:disabled) { background: #ee3d34; }
+  .btn.small { flex: 0 0 auto; padding: 6px 10px; font-size: 12px; font-weight: 500; }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .bar { height: 6px; background: #0d0d0d; border-radius: 3px; overflow: hidden; margin-top: 12px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+  #msg { margin-top: 8px; font-size: 13px; color: var(--dim); min-height: 20px; white-space: pre-wrap; }
+  #msg.err { color: #ff7b72; }
+  .summary { font-size: 12.5px; color: var(--dim); margin-top: 6px; }
+  .summary b { color: var(--text); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  td { padding: 8px 6px; border-top: 1px solid var(--line); vertical-align: middle; }
+  tr.sel td { background: #241f1e; }
+  td.name { word-break: break-all; cursor: pointer; }
+  td.st { width: 170px; color: var(--dim); font-size: 12px; }
+  td.st.ok { color: var(--ok); } td.st.err { color: #ff7b72; } td.st.warn { color: var(--warn); }
+  td.act { width: 1%; white-space: nowrap; text-align: right; }
+  td.act a { color: var(--text); font-size: 12px; margin-left: 10px; }
+  .empty { color: #666; font-size: 13px; padding: 8px 2px; }
+
+  /* ── 조합 ── */
+  .combo-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: var(--panel2); border-radius: 10px; display: block; }
+  .combo-title { font-size: 13px; margin-top: 8px; color: var(--text); font-weight: 600; }
+  .seg { display: inline-flex; border: 1px solid var(--line2); border-radius: 8px; overflow: hidden; }
+  .seg button { background: var(--panel2); border: 0; color: var(--dim); padding: 7px 14px; cursor: pointer; font-size: 13px; }
+  .seg button.sel { background: var(--accent); color: #fff; }
+  .lcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .lcard { position: relative; background: var(--panel2); border: 2px solid transparent; border-radius: 10px; padding: 0; cursor: pointer; color: var(--text); text-align: left; overflow: hidden; }
+  .lcard img { display: block; width: 100%; aspect-ratio: 4/3; object-fit: cover; background: var(--panel2); }
+  .lcard .t { padding: 6px 8px 2px; font-size: 12.5px; font-weight: 700; }
+  .lcard .d { padding: 0 8px 8px; font-size: 11px; color: var(--dim); line-height: 1.35; }
+  .lcard .num { position: absolute; top: 6px; left: 6px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff;
+                font-size: 12px; font-weight: 700; display: none; place-items: center; box-shadow: 0 0 0 2px #000; }
+  .lcard.sel { border-color: var(--accent); }
+  .lcard.sel .num { display: grid; }
+  .lcard .face { position: absolute; top: 6px; right: 6px; font-size: 10px; padding: 1px 6px; border-radius: 999px; background: rgba(0,0,0,.7); color: #9be6a6; }
+  .lcard:focus-visible { outline: 2px solid #fff; }
+  @media (max-width: 480px) { .lcards { grid-template-columns: 1fr 1fr; } }
+  .stack { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .stack li { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: center; background: var(--panel2); border: 1px solid var(--line2);
+              border-radius: 8px; padding: 6px 8px; font-size: 13px; }
+  .stack li .k { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+  .stack li.base .k { background: #444; }
+  .stack li .ops { display: flex; gap: 4px; }
+  .stack li .ops button { background: #2c2c2c; border: 1px solid var(--line2); color: var(--text); border-radius: 6px; width: 28px; height: 26px; cursor: pointer; }
+  .stack li .ops button:disabled { opacity: .3; cursor: default; }
+  .stack-empty { font-size: 12.5px; color: #ff9b94; padding: 6px 2px; }
+  .people { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 12px; }
+  .person { position: relative; background: var(--panel2); border: 2px solid var(--accent); border-radius: 10px; padding: 0; cursor: pointer;
+            color: var(--text); overflow: hidden; text-align: left; }
+  .person img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: #000; }
+  .person .t { padding: 5px 7px 0; font-size: 13px; font-weight: 700; }
+  .person .d { padding: 0 7px 7px; font-size: 11px; color: var(--dim); }
+  .person .tag { position: absolute; top: 6px; left: 6px; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px;
+                 background: var(--accent); color: #fff; }
+  .person.off { border-color: var(--line2); opacity: .55; }
+  .person.off .tag { background: #444; }
+  .stale { color: var(--warn); }
+  .quick { display: flex; gap: 6px; flex-wrap: wrap; }
+  .quick button { background: var(--panel2); border: 1px solid var(--line2); color: var(--text); border-radius: 999px; padding: 4px 11px; font-size: 12px; cursor: pointer; }
+  .quick button:hover { border-color: #666; }
+  details.sec { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
+  details.sec > summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text); list-style: none; display: flex; align-items: center; gap: 8px; }
+  details.sec > summary::-webkit-details-marker { display: none; }
+  details.sec > summary::before { content: "▸"; color: var(--dim); transition: transform .15s; }
+  details.sec[open] > summary::before { transform: rotate(90deg); }
+  details.sec > summary .faint { font-weight: 400; }
+  details.sec .used { font-size: 11px; padding: 0 7px; border-radius: 999px; background: var(--accent-soft); color: #ffb3ae; border: 1px solid #5a2522; font-weight: 600; display: none; }
+  details.sec.active .used { display: inline-block; }
+  .nums { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .nums label { display: grid; gap: 4px; font-size: 12px; color: var(--dim); }
+  .nums input, .nums select { width: 100%; background: #101010; color: var(--text); border: 1px solid var(--line2); border-radius: 7px; padding: 8px 9px; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .nums select { font-size: 14px; }
+  .nums input:focus, .nums select:focus { outline: none; border-color: var(--accent); }
+  .nums input[type=color] { height: 40px; padding: 3px; }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .card { background: var(--panel2); border: 2px solid transparent; border-radius: 8px; padding: 0; cursor: pointer; color: var(--text); overflow: hidden; text-align: left; }
+  .card img { display: block; width: 100%; aspect-ratio: 4/3; object-fit: cover; background: var(--panel2); }
+  .card .t { padding: 4px 6px 5px; font-size: 12px; font-weight: 600; }
+  .card.sel { border-color: var(--accent); }
+  .files { display: grid; gap: 6px; font-size: 13px; }
+  .files .grp { margin-top: 8px; font-size: 12px; color: var(--dim); font-weight: 600; }
+  .files label { display: grid; grid-template-columns: 18px 1fr; gap: 6px; align-items: start; cursor: pointer; }
+  .files small { display: block; color: var(--dim); font-size: 11.5px; }
+  .files input { accent-color: var(--accent); margin-top: 3px; }
+  /* ── 흐름도 ── */
+  .flow { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; row-gap: 10px; }
+  .fnode { flex: 1 1 130px; min-width: 120px; background: var(--panel2); border: 1px solid var(--line2); border-radius: 10px; padding: 8px 10px;
+           font-size: 11.5px; color: var(--dim); line-height: 1.4; position: relative; }
+  .fnode .ft { font-size: 12.5px; font-weight: 700; color: var(--text); display: flex; gap: 6px; align-items: center; }
+  .fnode .ft i { font-style: normal; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px;
+                 display: inline-grid; place-items: center; flex: none; }
+  .fnode .fm { color: #d8d8d8; margin-top: 3px; }
+  .fnode .fv { margin-top: 3px; }
+  .fnode.off { opacity: .45; }
+  .fnode.io { background: #1d2420; border-color: #2c4434; }
+  .fnode.io .ft i { background: #2f7d43; }
+  .farrow { flex: 0 0 22px; display: grid; place-items: center; color: var(--faint); font-size: 16px; }
+  .fouts { display: grid; gap: 4px; margin-top: 4px; }
+  .fout { font-size: 11px; color: var(--text); background: #232f27; border: 1px solid #2c4434; border-radius: 6px; padding: 2px 6px; }
+  .fout.off { color: var(--faint); background: transparent; border-style: dashed; }
+  .tag2 { display: inline-block; font-size: 10.5px; padding: 0 6px; border-radius: 999px; background: #2a2a2a; border: 1px solid var(--line2); color: #cfcfcf; margin: 2px 2px 0 0; }
+  @media (max-width: 1040px) { .farrow { display: none; } .fnode { flex-basis: 45%; margin: 0 4px; } }
+
+  /* ── 내보내기 ── */
+  .xcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  @media (max-width: 480px) { .xcards { grid-template-columns: 1fr; } }
+  .xcard { text-align: left; background: var(--panel2); border: 2px solid var(--line2); border-radius: 10px; padding: 10px; cursor: pointer; color: var(--text); position: relative; }
+  .xcard.sel { border-color: var(--accent); background: #2a1c1b; }
+  .xcard .xt { font-size: 13px; font-weight: 700; padding-right: 22px; }
+  .xcard .xf { font-family: Consolas, monospace; font-size: 11px; color: #ffb3ae; margin-top: 2px; word-break: break-all; }
+  .xcard .xd { font-size: 11.5px; color: var(--dim); margin-top: 4px; line-height: 1.4; }
+  .xcard .xs { font-size: 11px; color: #cfcfcf; margin-top: 6px; }
+  .xcard .tick { position: absolute; top: 8px; right: 8px; width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--line2); display: grid; place-items: center; font-size: 12px; color: transparent; }
+  .xcard.sel .tick { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .lfiles { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .lfiles li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: center; font-size: 12.5px; background: #161616;
+               border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
+  .lfiles li .k { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+  .lfiles li.base .k { background: #444; }
+  .lfiles code { font-size: 11px; }
+  .spec { overflow-x: auto; }
+  .spec table { font-size: 12px; min-width: 420px; }
+  .spec th { text-align: left; font-weight: 600; color: var(--dim); padding: 6px; border-bottom: 1px solid var(--line2); font-size: 11.5px; white-space: nowrap; }
+  .spec td { padding: 5px 6px; border-top: 1px solid var(--line); }
+  .spec td.l { color: var(--dim); white-space: nowrap; }
+  .spec td.same::before { content: "= "; color: var(--ok); }
+  .spec td.diff { color: var(--warn); }
+  .spec td.diff small { display: block; color: var(--faint); font-size: 10.5px; }
+  .spec .measured td { background: #18201a; }
+  .rfiles { margin-top: 10px; display: grid; gap: 4px; }
+  .rfiles .grp { font-size: 11.5px; color: var(--dim); font-weight: 600; margin-top: 6px; }
+  .rfile { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; font-size: 12px; background: #161616; border: 1px solid var(--line);
+           border-radius: 8px; padding: 5px 8px; }
+  .rfile .nm { word-break: break-all; }
+  .rfile .sp { color: var(--dim); font-size: 11px; }
+  .rfile .ok { color: var(--ok); } .rfile .bad { color: #ff7b72; }
+  .rfile a { color: var(--text); font-size: 12px; margin-left: 8px; }
+  code { font-family: Consolas, monospace; font-size: 11.5px; color: #c9c9c9; background: #262626; padding: 0 4px; border-radius: 4px; }
+  /* ── 상태 캡슐 — 단계 · 연결 · 흐름 · 쌓인 순서 · 결과 파일을 둥근 캡슐로 (색은 위 그대로) ── */
+  .step { display: inline-flex; align-items: center; gap: 6px; }
+  .step::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--line2); flex: none; }
+  .step.now::before { background: var(--accent); }
+  .step.done::before { background: var(--ok); }
+  #status { padding: 4px 12px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line); }
+  .fnode { border-radius: 16px; }
+  .stack li, .lfiles li { border-radius: 999px; }
+  .stack li .ops button { border-radius: 50%; }
+  .rfile { border-radius: 16px; padding: 7px 8px 7px 14px; }
+  .rfile a { background: var(--panel2); border: 1px solid var(--line2); border-radius: 999px; padding: 3px 12px; text-decoration: none; }
+  .rfile a:hover { border-color: var(--accent); }
+
+  /* ── 화면 폭 고정: 큰 모니터에서도 늘어나지 않고 가운데 ── */
+  :root { --page: 1440px; }
+  header.top > *, .how, main { max-width: var(--page); }
+  header.top { justify-content: center; }
+  header.top .inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; width: 100%; max-width: var(--page); }
+  .how { margin-left: auto !important; margin-right: auto !important; }
+  main { margin: 0 auto; grid-template-columns: minmax(0, 1fr) 500px; }
+  @media (max-width: 1040px) { main { grid-template-columns: 1fr; } }
+  .view { max-height: 46vh; }
+  .rerun { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 12.5px; color: var(--dim); flex-wrap: wrap; }
+  .rerun .seg button { padding: 5px 11px; font-size: 12.5px; }
+  td.act button { background: none; border: 0; color: var(--text); font-size: 12px; margin-left: 10px; cursor: pointer; text-decoration: underline; padding: 0; }
+
+  /* ── ③ 조합: 예시 그림 + 쌓인 순서 나란히 · 고른 카드 설정 ── */
+  .quick { margin-bottom: 12px; }
+  .combo-row { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+  @media (max-width: 520px) { .combo-row { grid-template-columns: 1fr; } }
+  .combo-side .stack li { font-size: 12.5px; padding: 4px 6px; }
+  .cset { background: var(--panel2); border: 1px solid var(--line2); border-radius: 12px; padding: 12px; margin-top: 10px; }
+  .cset-t { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .cset-t::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .cset .nums { margin-top: 10px; }
+  .cset .h4 { margin-top: 12px; }
+  /* 색 고르기: 팔레트 + 직접 고르기 + 불투명도 */
+  .cf-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--dim); margin-bottom: 6px; }
+  .cf-head b { color: var(--text); font-weight: 600; font-family: Consolas, monospace; font-size: 11.5px; }
+  .cf-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .cf-sw { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line2); cursor: pointer; padding: 0; }
+  .cf-sw.sel { border-color: #fff; box-shadow: 0 0 0 2px var(--accent); }
+  .cf-custom { position: relative; width: 26px; height: 26px; border-radius: 50%; border: 2px dashed var(--line2); display: grid; place-items: center;
+               font-size: 13px; color: var(--dim); cursor: pointer; overflow: hidden; }
+  .cf-custom input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .cf-custom.sel { border-style: solid; border-color: #fff; box-shadow: 0 0 0 2px var(--accent); }
+  .cf-alpha { display: grid; grid-template-columns: auto 1fr 44px; gap: 8px; align-items: center; margin-top: 8px; font-size: 12px; color: var(--dim); }
+  .cf-alpha input { accent-color: var(--accent); width: 100%; }
+  .cf-alpha b { text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
+  #specBox > summary .faint { font-weight: 400; }
+</style>
+</head>
+<body>
+<header class="top"><div class="inner">
+  <div class="brand"><img src="/icon.png" alt=""><img class="name" src="/name.png" alt="Griding"><span>실사 얼굴 → 시댄스용 플레이트</span></div>
+  <div class="steps">
+    <span class="step now" data-step="1">① 플레이트 넣기</span>
+    <span class="step" data-step="2">② 사람 확인</span>
+    <span class="step" data-step="3">③ 카드 골라 조합</span>
+    <span class="step" data-step="4">④ 내보내기 고르기</span>
+    <span class="step" data-step="5">⑤ 실행하고 받기</span>
+  </div>
+  <span id="status">연결 확인 중</span>
+</div></header>
+
+<section class="how" aria-label="작동 방식">
+  <div class="how-row">
+    <div class="how-t">지금 이렇게<br>돌아갑니다<br><span class="faint" style="font-weight:400">고르는 대로 바뀜</span></div>
+    <div class="flow" id="flow" style="flex:1"></div>
+  </div>
+  <details class="how-row models">
+    <summary class="how-t" style="cursor:pointer">단계 설명</summary>
+    <ol>
+      <li><b>사람 찾기</b><span>영상 전체에서 머리를 찾아 사람마다 번호를 붙입니다. 옆모습과 뒤통수도 찾습니다.</span></li>
+      <li><b>표정 찾기</b><span>표정 카드를 고르면 머리를 크게 키워 얼굴 점 478개를 찍습니다.</span></li>
+      <li><b>카드 겹치기</b><span>고른 순서대로 원본이나 검은 바탕 위에 겹칩니다. 나중에 고른 카드가 위로 갑니다.</span></li>
+      <li><b>저장</b><span>원본과 같은 해상도, fps, 색공간, 소리로 mp4를 만듭니다. 카드별 투명 레이어(MOV)도 뺄 수 있습니다. 모든 처리는 이 PC에서 합니다.</span></li>
+    </ol>
+  </details>
+  <details class="how-row models">
+    <summary class="how-t" style="cursor:pointer">쓰는 모델 자세히</summary>
+    <div class="list" id="models"></div>
+  </details>
+  <details class="how-row models" id="syscheckBox">
+    <summary class="how-t" style="cursor:pointer">이 PC 점검 <span class="faint" id="syscheckSum"></span></summary>
+    <div class="list" id="syscheck"></div>
+  </details>
+</section>
+
+<main>
+  <!-- 왼쪽: 작업대 -->
+  <div class="work">
+    <section class="panel">
+      <h2><span class="n">1</span>플레이트 넣기</h2>
+      <p class="sub">영상이나 이미지를 넣으세요. 여러 개를 넣으면 차례로 처리합니다.</p>
+      <div id="drop" tabindex="0" role="button" aria-label="플레이트 파일 선택">
+        <b>여기에 끌어다 놓기</b>클릭해서 골라도 됩니다 (mp4, mov, png, jpg)
+        <input type="file" id="file" accept="video/*,image/*" multiple hidden></div>
+      <div class="stage">
+        <div>
+          <div class="viewhead"><span class="t">원본</span></div>
+          <div class="view" id="srcView"><span class="ph">플레이트를 넣으면 여기 나옵니다</span></div>
+          <div class="cap" id="srcCap">영상을 멈춘 곳의 프레임으로 미리보기를 만듭니다.</div>
+          <div class="notes" id="srcNotes"></div>
+        </div>
+        <div>
+          <div class="viewhead"><span class="t">결과</span><div class="tabs" id="resultTabs"></div></div>
+          <div class="view" id="outView"><span class="ph">카드를 고르고 [이 프레임 미리보기]</span></div>
+          <div class="cap" id="outCap"></div>
+        </div>
+      </div>
+      <h2 style="margin-top:16px"><span class="n">5</span>실행하고 받기</h2>
+      <div class="summary" id="summary"></div>
+      <div class="btns">
+        <button class="btn" id="previewBtn" type="button" disabled>이 프레임 미리보기</button>
+        <button class="btn primary" id="runBtn" type="button" disabled>전체 실행</button>
+      </div>
+      <div class="rerun">다시 실행하면
+        <div class="seg" id="saveSeg">
+          <button type="button" data-mode="version">새 버전으로 쌓기 (_v2 · _v3)</button>
+          <button type="button" data-mode="overwrite">같은 폴더에 덮어쓰기</button>
+        </div>
+      </div>
+      <div class="bar"><i id="bar"></i></div>
+      <div id="msg"></div>
+      <div class="rfiles" id="outFiles"></div>
+    </section>
+
+    <section class="panel">
+      <div style="display:flex;align-items:center;gap:8px"><h2 style="margin:0;flex:1">작업 목록</h2>
+        <button class="btn small" id="openOut" type="button">결과 폴더 열기</button>
+        <button class="btn small" id="clear" type="button">목록 비우기</button></div>
+      <table id="list"><tbody></tbody></table>
+      <div class="empty" id="emptyList">아직 넣은 플레이트가 없습니다.</div>
+    </section>
+  </div>
+
+  <!-- 오른쪽: 조합 -->
+  <div>
+    <section class="panel" id="peoplePanel">
+      <h2><span class="n">2</span>사람 확인 <span class="faint" id="peopleCount"></span></h2>
+      <p class="sub">플레이트를 넣으면 나오는 사람을 찾아 번호를 붙입니다. 가릴 사람만 고르세요.</p>
+      <div class="btns" style="margin-top:0">
+        <button class="btn" id="scanBtn" type="button" disabled>다시 찾기</button>
+      </div>
+      <div class="people" id="people"></div>
+      <div class="quick" id="peopleOps" hidden style="margin-top:8px">
+        <button type="button" data-all="1">모두 가리기</button>
+        <button type="button" data-all="0">모두 빼기</button>
+      </div>
+      <p class="note" id="peopleNote">찾지 않으면 영상에 나오는 모든 사람을 가립니다.</p>
+    </section>
+
+    <section class="panel">
+      <h2><span class="n">3</span>카드 골라 조합하기</h2>
+      <p class="sub">예시 조합을 누르거나 카드를 골라 쌓으세요. 색과 불투명도는 아래에서 바꿉니다.</p>
+
+      <div class="quick" id="quick">
+        <button type="button" data-recipe="grid" data-base="original">격자만 (시댄스)</button>
+        <button type="button" data-recipe="cover_face,lines,points" data-base="original">가린 표정 가이드</button>
+        <button type="button" data-recipe="cover_face,points,grid" data-base="original">가림 + 점 + 격자</button>
+        <button type="button" data-recipe="lines,points" data-base="black">검은 바탕 선 · 점</button>
+      </div>
+
+      <div class="combo-row">
+        <div class="combo-view">
+          <img class="combo-img" id="comboImg" alt="지금 조합 예시">
+          <div class="combo-title" id="comboTitle"></div>
+          <p class="note" id="galleryNote">예시 캐릭터입니다. 플레이트를 넣으면 그 플레이트로 바뀝니다.</p>
+        </div>
+        <div class="combo-side">
+          <div class="h4" style="margin-top:0">바탕</div>
+          <div class="seg" id="baseSeg">
+            <button type="button" data-base="original">원본 위에</button>
+            <button type="button" data-base="black">검은 바탕</button>
+          </div>
+          <div class="h4">쌓인 순서 <span class="faint">아래 줄이 위에 덮임</span></div>
+          <ul class="stack" id="stack"></ul>
+        </div>
+      </div>
+
+      <div class="h4">카드 <span class="faint">눌러서 쌓기 · 다시 누르면 빠짐</span></div>
+      <div class="lcards" id="layerCards"></div>
+
+      <div id="cardSettings" hidden>
+        <div class="h4">고른 카드 설정 <span class="faint">고른 카드만 보입니다</span></div>
+
+        <div class="cset" data-for="grid">
+          <div class="cset-t">격자</div>
+          <div class="colorfield" data-color="color" data-alpha="alpha" data-label="선 색 · 불투명도"></div>
+          <div class="nums">
+            <label>세로줄 <input type="number" id="cols" min="1" max="32" step="1"></label>
+            <label>가로줄 <input type="number" id="rows" min="1" max="32" step="1"></label>
+            <label title="머리 폭에 대한 % — 가까운 얼굴은 굵게, 먼 얼굴은 가늘게">선 두께 % (머리 폭)<input type="number" id="thickness" min="0.1" max="20" step="0.1"></label>
+            <label>칸 채우기 % <input type="number" id="fill_alpha" data-pct min="0" max="100" step="5"></label>
+            <label style="grid-column: 1 / -1">덮는 모양
+              <select id="clip"><option value="box">네모로 덮기</option><option value="mask">타원으로 자르기</option></select></label>
+          </div>
+          <div class="h4">격자 모양</div>
+          <div class="cards" id="patternCards"></div>
+          <div class="btns"><button class="btn small" id="reset" type="button">격자 기본값으로</button></div>
+        </div>
+
+        <div class="cset" data-for="cover_face">
+          <div class="cset-t">가림 · 얼굴 윤곽</div>
+          <div class="colorfield" data-color="cover_color" data-alpha="cover_alpha" data-label="가림 색 · 불투명도"></div>
+          <div class="nums">
+            <label style="grid-column: 1 / -1">얼굴 윤곽 넓히기 % <input type="number" id="mask_grow" data-pct min="0" max="100" step="2"></label>
+          </div>
+        </div>
+
+        <div class="cset" data-for="cover_head">
+          <div class="cset-t">가림 · 머리 전체</div>
+          <div class="colorfield" data-color="head_cover_color" data-alpha="head_cover_alpha" data-label="가림 색 · 불투명도"></div>
+          <div class="nums">
+            <label style="grid-column: 1 / -1">따로 저장(_cover) 모양
+              <select id="mask_shape"><option value="oval">타원</option><option value="box">네모</option></select></label>
+          </div>
+        </div>
+
+        <div class="cset" data-for="lines,points">
+          <div class="cset-t">표정 선 · 점</div>
+          <div class="colorfield" data-color="guide_color" data-label="선 · 점 색"></div>
+        </div>
+
+        <p class="note" id="opacityNote">불투명도를 100%보다 낮추면 원본 얼굴이 비칩니다. 얼굴이 보이면 시댄스가 거절할 수 있습니다.</p>
+        <input type="hidden" id="mask_source" value="face">
+      </div>
+
+      <details class="sec">
+        <summary>머리 찾기 · 넓히기 · 흔들림 <span class="faint">잘 안 잡힐 때만</span></summary>
+        <div class="nums">
+          <label style="grid-column: 1 / -1">머리 검출 모델
+            <select id="model">
+              <option value="fast">빠름 · YOLO11s head (기본)</option>
+              <option value="accurate">정확 · YOLO11m head (작은 머리, 겹친 사람에 강함 · 2~3배 느림)</option>
+            </select></label>
+          <label>검출 민감도 <input type="number" id="threshold" min="0.01" max="0.95" step="0.01"></label>
+          <label>놓쳐도 유지 (프레임) <input type="number" id="hold" min="0" max="240" step="1"></label>
+          <label>위로 넓히기 % <input type="number" id="expand_top" data-pct min="-50" max="200" step="5"></label>
+          <label>옆으로 넓히기 % <input type="number" id="expand_x" data-pct min="-50" max="200" step="5"></label>
+          <label>아래로 넓히기 % <input type="number" id="expand_bottom" data-pct min="-50" max="200" step="5"></label>
+          <label>흔들림 완화 % <input type="number" id="smooth" data-pct min="0" max="95" step="5"></label>
+        </div>
+        <p class="note">민감도는 낮을수록 많이 잡습니다. 머리를 놓치면 0.15, 엉뚱한 곳이 잡히면 0.35로 바꿔 보세요.</p>
+      </details>
+    </section>
+
+
+    <section class="panel" id="exportPanel">
+      <h2><span class="n">4</span>내보내기 고르기</h2>
+      <p class="sub">만들 파일을 고르세요. 여러 개 골라도 됩니다.</p>
+      <div class="xcards" id="xcards"></div>
+
+      <div class="nums" style="margin-top:10px">
+        <label style="grid-column: 1 / -1">조합 mp4 비트레이트 <span class="faint">고정 비트레이트(CBR)</span>
+          <select id="bitrate">
+            <option value="fixed">고정 · 2K 까지 30Mbps / 4K 50Mbps (기본)</option>
+            <option value="source">원본 영상 비트레이트 그대로 고정</option>
+          </select></label>
+      </div>
+
+      <div id="layerBox" hidden>
+        <div class="h4">투명 레이어로 나오는 파일 <span class="faint">편집기에서 원본 위에 이 순서로 쌓으면 조합과 같은 그림</span></div>
+        <ol class="lfiles" id="layerFiles"></ol>
+      </div>
+
+      <details class="sec" id="specBox">
+        <summary>입력 → 출력 규격 <span class="faint" id="specNote"></span></summary>
+        <p class="note" id="specState"></p>
+        <div class="spec" id="specTable"></div>
+      </details>
+
+      <details class="sec">
+        <summary>그 밖의 결과물 <span class="faint" id="filesCount"></span></summary>
+        <p class="sub" style="margin-top:8px">확인용 파일과 예전 양식 파일을 하나씩 고릅니다.</p>
+        <div class="files" id="files"></div>
+      </details>
+    </section>
+
+    <p class="faint" style="margin:10px 2px">결과는 결과 폴더의 01_이름 에 저장됩니다. 다시 실행하면 01_이름_v2 처럼 새로 쌓입니다. 설정은 _settings.json, 전체 요약은 verification.json 에 남습니다.</p>
+  </div>
+</main>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+
+/** 서버와 주고받기 */
+class Api {
+  async json(url, body) {
+    const r = await fetch(url, body === undefined ? {} : { method: "POST", body: JSON.stringify(body) });
+    const j = await r.json().catch(() => ({ error: "응답을 읽지 못했습니다" }));
+    if (!r.ok) throw new Error(j.error || `요청 실패 ${r.status}`);
+    return j;
+  }
+  info() { return this.json("/api/info"); }
+  gallery(body) { return this.json("/api/gallery", body); }
+  run(body) { return this.json("/api/run", body); }
+  job(id) { return this.json("/api/job/" + id); }
+  open(folder) { return this.json("/api/open", { folder }); }
+  async upload(file) {
+    const r = await fetch("/api/upload", { method: "POST", headers: { "X-Filename": encodeURIComponent(file.name) }, body: file });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || `올리기 실패 ${r.status}`);
+    return j;
+  }
+  async preview(body) {
+    const r = await fetch("/api/preview", { method: "POST", body: JSON.stringify(body) });
+    if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "미리보기 실패");
+    return URL.createObjectURL(await r.blob());
+  }
+  fileUrl(folder, name) { return "/files/" + encodeURIComponent(folder) + "/" + encodeURIComponent(name); }
+}
+
+/** 브라우저에 설정 기억 (사생활 모드 등에서 실패해도 앱은 동작) */
+class Memory {
+  constructor(key) { this.key = key; }
+  load() { try { return JSON.parse(localStorage.getItem(this.key) || "null"); } catch { return null; } }
+  save(v) { try { localStorage.setItem(this.key, JSON.stringify(v)); } catch {} }
+}
+
+/** 숫자 · 색 설정 폼. data-pct 칸은 화면에선 %, 서버에는 0~1 */
+class SettingsForm {
+  static KEYS = ["cols","rows","color","alpha","fill_alpha","thickness","clip","threshold","expand_top","expand_x","expand_bottom","smooth","hold",
+                 "cover_color","cover_alpha","head_cover_color","head_cover_alpha","mask_shape","mask_source","mask_grow","guide_color","model","bitrate"];
+  static DETECT = ["model","threshold","hold","smooth"];   // 이 값이 바뀌면 사람 찾기를 다시 해야 함
+  static GRID = ["cols","rows","color","alpha","fill_alpha","thickness","clip"];
+  constructor(defaults, onChange) {
+    this.defaults = defaults; this.pattern = defaults.pattern; this.onChange = onChange;
+    for (const k of SettingsForm.KEYS) {
+      const el = $(k);
+      el.addEventListener("input", () => { if (this.#valid(el)) this.onChange("form"); });
+      el.addEventListener("change", () => { this.#clamp(el); this.onChange("form"); });
+    }
+    $("reset").onclick = () => {
+      const d = { pattern: this.defaults.pattern }; for (const k of SettingsForm.GRID) d[k] = this.defaults[k];
+      this.apply(d); this.onChange("reset");
+    };
+  }
+  #isNum(el) { return el.type === "number" || el.type === "range"; }
+  #valid(el) { return !this.#isNum(el) || (el.value !== "" && !Number.isNaN(parseFloat(el.value))); }
+  #clamp(el) {
+    if (!this.#isNum(el)) return;
+    let v = parseFloat(el.value);
+    if (Number.isNaN(v)) v = this.#toField(el, this.defaults[el.id]);
+    v = Math.min(Math.max(v, parseFloat(el.min)), parseFloat(el.max));
+    if (el.step === "1") v = Math.round(v);
+    el.value = String(+v.toFixed(2));
+  }
+  #toField(el, v) { return el.hasAttribute("data-pct") ? Math.round(v * 1000) / 10 : v; }
+  #fromField(el) {
+    if (!this.#isNum(el)) return el.value;
+    const v = parseFloat(el.value);
+    const n = Number.isNaN(v) ? this.defaults[el.id] : (el.hasAttribute("data-pct") ? v / 100 : v);
+    return el.step === "1" ? Math.round(n) : n;
+  }
+  apply(values) {
+    for (const k of SettingsForm.KEYS) {
+      if (values[k] === undefined) continue;
+      const el = $(k);
+      el.value = el.type === "color" ? String(values[k]).toLowerCase() : this.#isNum(el) ? String(this.#toField(el, values[k])) : values[k];
+    }
+    if (values.pattern) this.pattern = values.pattern;
+    ColorField.syncAll();
+  }
+  values() {
+    const o = { pattern: this.pattern };
+    for (const k of SettingsForm.KEYS) o[k] = this.#fromField($(k));
+    return o;
+  }
+}
+
+/** 색 고르기 한 칸 — 팔레트 동그라미 + 직접 고르기 + (있으면) 불투명도 밀대.
+ *  안에 만드는 <input> 의 id 가 설정 키라서 SettingsForm 이 그대로 읽고 쓴다. */
+class ColorField {
+  static PALETTE = [["검정", "#000000"], ["흰색", "#ffffff"], ["회색", "#808080"], ["빨강", "#dc281e"],
+                    ["초록", "#00ff00"], ["파랑", "#1e64dc"], ["노랑", "#ffd400"]];
+  static all = [];
+  static mountAll() { document.querySelectorAll(".colorfield").forEach(el => ColorField.all.push(new ColorField(el))); }
+  static syncAll() { ColorField.all.forEach(f => f.sync()); }
+  constructor(el) {
+    const { color, alpha, label } = el.dataset;
+    el.innerHTML = `<div class="cf-head"><span></span><b></b></div><div class="cf-row"></div>`;
+    el.querySelector(".cf-head span").textContent = label || "색";
+    const row = el.querySelector(".cf-row");
+    this.swatches = ColorField.PALETTE.map(([name, hex]) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "cf-sw"; b.style.background = hex; b.title = name; b.dataset.hex = hex;
+      b.setAttribute("aria-label", `${label || "색"} ${name}`);
+      b.onclick = () => this.set(hex);
+      row.appendChild(b);
+      return b;
+    });
+    this.custom = document.createElement("label");
+    this.custom.className = "cf-custom"; this.custom.title = "직접 고르기"; this.custom.textContent = "+";
+    this.input = document.createElement("input");
+    this.input.type = "color"; this.input.id = color; this.input.setAttribute("aria-label", `${label || "색"} 직접 고르기`);
+    this.custom.appendChild(this.input); row.appendChild(this.custom);
+    this.input.addEventListener("input", () => this.sync());
+    this.hex = el.querySelector(".cf-head b");
+    if (alpha) {
+      const a = document.createElement("div");
+      a.className = "cf-alpha";
+      a.innerHTML = `<span>불투명도</span><input type="range" id="${alpha}" data-pct min="0" max="100" step="5"><b></b>`;
+      el.appendChild(a);
+      this.alpha = a.querySelector("input"); this.pct = a.querySelector("b");
+      this.alpha.setAttribute("aria-label", `${label || "색"} 불투명도`);
+      this.alpha.addEventListener("input", () => this.sync());
+    }
+  }
+  set(hex) {
+    this.input.value = hex;
+    this.sync();
+    this.input.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+  sync() {
+    const v = this.input.value.toLowerCase();
+    let hit = false;
+    this.swatches.forEach(s => { const on = s.dataset.hex === v; s.classList.toggle("sel", on); hit = hit || on; });
+    this.custom.classList.toggle("sel", !hit);
+    this.custom.style.background = hit ? "" : v;
+    this.custom.firstChild.textContent = hit ? "+" : "";
+    this.hex.textContent = v.toUpperCase();
+    if (this.alpha) this.pct.textContent = `${this.alpha.value}%`;
+  }
+}
+
+/** 조합 — 바탕 + 쌓은 카드 순서의 주인 */
+class RecipeBuilder {
+  constructor(layers, saved, onChange) {
+    this.layers = Object.fromEntries(layers.map(l => [l.key, l]));
+    this.order = layers.map(l => l.key);
+    this.recipe = (saved && saved.recipe || []).filter(k => this.layers[k]);   // 격자도 고를 때만
+    this.base = saved && saved.base === "black" ? "black" : "original";
+    this.onChange = onChange;
+    this.images = {};
+    $("baseSeg").querySelectorAll("button").forEach(b => b.onclick = () => this.setBase(b.dataset.base));
+    $("quick").querySelectorAll("button").forEach(b => b.onclick = () => this.set(b.dataset.recipe.split(","), b.dataset.base));
+    this.render();
+  }
+  toggle(key) {
+    const i = this.recipe.indexOf(key);
+    if (i >= 0) this.recipe.splice(i, 1); else this.recipe.push(key);
+    this.changed();
+  }
+  move(i, d) {
+    const j = i + d;
+    if (j < 0 || j >= this.recipe.length) return;
+    [this.recipe[i], this.recipe[j]] = [this.recipe[j], this.recipe[i]];
+    this.changed();
+  }
+  set(keys, base) { this.recipe = keys.filter(k => this.layers[k]); if (base) this.base = base; this.changed(); }
+  setBase(b) { this.base = b; this.changed(); }
+  changed() { this.render(); this.onChange(); }
+  needsFaces() { return this.recipe.some(k => this.layers[k].needs_faces); }
+  title() {
+    const base = this.base === "black" ? "검은 바탕" : "원본";
+    return this.recipe.length ? `${base} + ${this.recipe.map(k => this.layers[k].label).join(" → ")}` : `${base} (카드를 고르세요)`;
+  }
+  setImages(cards) { for (const c of cards) this.images[c.key] = c.image; this.renderCards(); }
+  render() {
+    $("baseSeg").querySelectorAll("button").forEach(b => b.classList.toggle("sel", b.dataset.base === this.base));
+    this.renderCards(); this.renderStack();
+    $("comboTitle").textContent = this.title();
+    // 고른 카드에 필요한 설정 칸만 보인다
+    let any = false;
+    document.querySelectorAll(".cset").forEach(c => {
+      const on = c.dataset.for.split(",").some(k => this.recipe.includes(k));
+      c.hidden = !on; any = any || on;
+    });
+    $("cardSettings").hidden = !any;
+    $("opacityNote").hidden = !this.recipe.some(k => k === "cover_face" || k === "cover_head");
+  }
+  renderCards() {
+    const box = $("layerCards");
+    box.innerHTML = "";
+    for (const k of this.order) {
+      const l = this.layers[k], n = this.recipe.indexOf(k);
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "lcard" + (n >= 0 ? " sel" : "");
+      b.setAttribute("aria-pressed", n >= 0);
+      b.innerHTML = `<span class="num">${n + 1}</span>${l.needs_faces ? '<span class="face">표정 인식</span>' : ""}
+        <img alt="" ${this.images[k] ? `src="${this.images[k]}"` : ""}><div class="t"></div><div class="d"></div>`;
+      b.querySelector(".t").textContent = l.label;
+      b.querySelector(".d").textContent = l.description;
+      b.onclick = () => this.toggle(k);
+      box.appendChild(b);
+    }
+  }
+  renderStack() {
+    const ul = $("stack");
+    ul.innerHTML = `<li class="base"><span class="k">0</span><span>바탕 · ${this.base === "black" ? "검은 바탕" : "원본"}</span><span></span></li>`;
+    this.recipe.forEach((k, i) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="k">${i + 1}</span><span></span><span class="ops">
+        <button type="button" title="먼저 칠하기 (아래에 깔림)" aria-label="먼저 칠하기">↑</button>
+        <button type="button" title="나중에 칠하기 (위에 덮음)" aria-label="나중에 칠하기">↓</button>
+        <button type="button" title="빼기" aria-label="빼기">✕</button></span>`;
+      li.children[1].textContent = this.layers[k].label;
+      const [up, down, del] = li.querySelectorAll("button");
+      up.disabled = i === 0; down.disabled = i === this.recipe.length - 1;
+      up.onclick = () => this.move(i, -1); down.onclick = () => this.move(i, 1); del.onclick = () => this.toggle(k);
+      ul.appendChild(li);
+    });
+    if (!this.recipe.length) ul.insertAdjacentHTML("beforeend", '<li class="stack-empty" style="display:block;background:none;border:0">카드를 하나 이상 고르세요.</li>');
+  }
+}
+
+/** 모양 · 가리기 색 카드 */
+class CardGrid {
+  constructor(el, idKey, onPick) { this.el = el; this.idKey = idKey; this.onPick = onPick; this.selected = null; }
+  render(items) {
+    this.el.innerHTML = "";
+    for (const it of items) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "card"; b.dataset.id = it[this.idKey]; b.title = it.description || "";
+      b.innerHTML = `<img alt="" src="${it.image}"><div class="t"></div>`;
+      b.querySelector(".t").textContent = it.name || it.label;
+      b.onclick = () => { this.select(it[this.idKey]); this.onPick(it); };
+      this.el.appendChild(b);
+    }
+    this.select(this.selected);
+  }
+  select(id) { this.selected = id; this.el.querySelectorAll(".card").forEach(c => c.classList.toggle("sel", c.dataset.id === id)); }
+}
+
+/** 함께 저장할 파일 (조합 결과 + 확인용 + 레이어 따로) */
+class FilePicker {
+  static GROUPS = { combo: "조합", grid: "확인용 · 격자", face: "레이어 따로 · 표정", mask: "레이어 따로 · 가리기" };
+  constructor(outputs, saved, known, onChange) {
+    this.outputs = Object.fromEntries(outputs.map(o => [o.key, o]));
+    this.all = outputs.map(o => o.key);
+    let html = "", last = null;
+    for (const o of outputs) {
+      if (o.group !== last) { html += `<div class="grp">${FilePicker.GROUPS[o.group] || o.group}</div>`; last = o.group; }
+      html += `<label><input type="checkbox" value="${o.key}"><span>${o.label} <code>_${o.key}</code><small>${o.description}</small></span></label>`;
+    }
+    $("files").innerHTML = html;
+    const seen = new Set(known || []);          // 저장 뒤 새로 생긴 파일은 기본값대로
+    const on = new Set(saved || []);
+    for (const o of outputs) if (!seen.has(o.key) && o.default) on.add(o.key);
+    $("files").querySelectorAll("input").forEach(c => c.checked = on.has(c.value));
+    $("files").addEventListener("change", onChange);
+  }
+  keys() { return [...$("files").querySelectorAll("input:checked")].map(c => c.value); }
+  label(key) { return (this.outputs[key] || {}).label || key; }
+}
+
+/** 내보내기 — 큰 카드 3장(조합 · 투명 레이어 · 확인용)이 아래 낱개 목록(FilePicker)을 대신 켜고 끈다 */
+class ExportPanel {
+  static KINDS = [
+    { id: "combo", keys: ["combo"], title: "조합 영상", file: "_combo.mp4", desc: "고른 카드를 다 겹친 한 개. 시댄스에 넣는 파일", spec: "H.264 고정 비트레이트 · 원본 해상도 · fps · 색공간 · 소리" },
+    { id: "layers", keys: ["layers"], title: "카드별 투명 레이어", file: "_layer1 … N.mov", desc: "카드마다 따로, 배경 투명. AE · 프리미어에서 원본 위에 쌓기", spec: "PNG 무손실 · RGBA · 원본 크기 · 소리 없음" },
+    { id: "check", keys: ["compare", "preview", "contact"], title: "확인용", file: "_compare · _preview · _contact", desc: "원본 | 결과 | 추적 3칸 비교 영상 · 정지 그림 · 9칸 시트", spec: "H.264 · 1920 폭 · JPG" },
+  ];
+  constructor(files, onChange) {
+    this.files = files; this.onChange = onChange;
+    $("xcards").innerHTML = "";
+    for (const k of ExportPanel.KINDS) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "xcard"; b.dataset.id = k.id;
+      b.innerHTML = `<span class="tick">✓</span><div class="xt"></div><div class="xf"></div><div class="xd"></div><div class="xs"></div>`;
+      b.querySelector(".xt").textContent = k.title; b.querySelector(".xf").textContent = k.file;
+      b.querySelector(".xd").textContent = k.desc; b.querySelector(".xs").textContent = k.spec;
+      b.onclick = () => this.toggle(k);
+      $("xcards").appendChild(b);
+    }
+  }
+  isOn(k) { const keys = this.files.keys(); return k.keys.every(x => keys.includes(x)); }
+  toggle(k) {
+    const on = !this.isOn(k);
+    $("files").querySelectorAll("input").forEach(c => { if (k.keys.includes(c.value)) c.checked = on; });
+    this.onChange();
+  }
+  on(id) { return this.isOn(ExportPanel.KINDS.find(k => k.id === id)); }
+  render(recipe, plate) {
+    $("xcards").querySelectorAll(".xcard").forEach(b => { const on = this.isOn(ExportPanel.KINDS.find(k => k.id === b.dataset.id)); b.classList.toggle("sel", on); b.setAttribute("aria-pressed", on); });
+    this.renderLayers(recipe, plate);
+    this.renderSpec(plate);
+  }
+  stem(plate) { return plate ? plate.file.name.replace(/\.[^.]+$/, "") : "이름"; }
+  static mbps(k) { return `${+(k / 1000).toFixed(1)}Mbps`; }
+  /** 규격표 비트레이트 줄 — 서버는 두 방식 값을 다 주고, 여기서 고른 방식으로 조합 칸을 채운다 */
+  bitrateRow(r, b) {
+    if (!b) return r;
+    const mode = $("bitrate").value, k = b.options[mode];
+    const same = !!b.input && Math.abs(k - b.input) < 500;
+    const note = mode === "source" && !b.input ? "원본 값을 몰라 기본 고정값" : same ? "" : mode === "source" ? "원본 값에 맞춤 (범위 1~100Mbps)" : "해상도별 고정값으로 저장";
+    return { ...r, combo: `${ExportPanel.mbps(k)} 고정 (CBR)`, same: { ...r.same, combo: !note }, why: { ...r.why, combo: note } };
+  }
+  renderLayers(recipe, plate) {
+    const on = this.on("layers");
+    $("layerBox").hidden = !on;
+    if (!on) return;
+    const ul = $("layerFiles"), ext = plate && !plate.isVideo ? ".png" : ".mov";
+    ul.innerHTML = `<li class="base"><span class="k">0</span><span>원본 플레이트 (넣은 파일 그대로 · 맨 아래)</span></li>`;
+    recipe.recipe.forEach((k, i) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="k">${i + 1}</span><span></span>`;
+      li.children[1].innerHTML = `<b></b> <code></code>`;
+      li.querySelector("b").textContent = recipe.layers[k].label;
+      li.querySelector("code").textContent = `${this.stem(plate)}_layer${i + 1}_${k}${ext}`;
+      ul.appendChild(li);
+    });
+    if (!recipe.recipe.length) ul.insertAdjacentHTML("beforeend", '<li class="stack-empty" style="display:block">③ 에서 카드를 고르면 카드마다 파일이 하나씩 생깁니다.</li>');
+  }
+  renderSpec(plate) {
+    const table = plate && plate.spec && plate.spec.table;
+    const cols = ["input", ...(this.on("combo") ? ["combo"] : []), ...(this.on("layers") ? ["layers"] : [])];
+    const box = $("specTable");
+    const measured = plate && plate.result && plate.result.checks;
+    $("specState").textContent = !plate ? "플레이트를 넣으면 실제 값으로" : !table ? "규격 읽는 중…" : measured ? "· 아래 초록 줄은 실행 뒤 실제로 잰 값" : "· 저장 규칙으로 미리 계산한 값";
+    if (!table) {
+      box.innerHTML = `<table><tr><th></th><th>원본</th><th>조합 mp4</th><th>투명 레이어</th></tr>
+        <tr><td class="l">해상도 · fps</td><td>넣은 그대로</td><td class="same">같게</td><td class="same">같게</td></tr>
+        <tr><td class="l">색공간</td><td>709 / 601</td><td class="same">같은 공식 + 표시</td><td>RGB 그대로</td></tr>
+        <tr><td class="l">비트</td><td>8 / 10</td><td>8bit H.264</td><td>8bit PNG 무손실</td></tr>
+        <tr><td class="l">비트레이트</td><td>원본 값</td><td>고정 CBR (2K 30 · 4K 50Mbps)</td><td>무손실</td></tr>
+        <tr><td class="l">소리</td><td>있으면</td><td class="same">그대로 복사</td><td>없음</td></tr></table>`;
+      $("specNote").textContent = "";
+      return;
+    }
+    const tbl = document.createElement("table");
+    const head = document.createElement("tr");
+    head.innerHTML = "<th></th>" + cols.map(c => `<th></th>`).join("");
+    cols.forEach((c, i) => head.children[i + 1].textContent = table.columns[c]);
+    tbl.appendChild(head);
+    for (const r0 of table.rows) {
+      const r = r0.key === "bitrate" ? this.bitrateRow(r0, table.bitrate) : r0;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td class="l"></td>` + cols.map(() => "<td></td>").join("");
+      tr.children[0].textContent = r.label;
+      cols.forEach((c, i) => {
+        const td = tr.children[i + 1];
+        td.textContent = r[c];
+        if (c !== "input") {
+          td.className = r.same[c] ? "same" : "diff";
+          if (!r.same[c] && r.why[c]) { const s = document.createElement("small"); s.textContent = r.why[c]; td.appendChild(s); }
+        }
+      });
+      tbl.appendChild(tr);
+    }
+    if (measured) {
+      const pick = (re) => Object.entries(measured).find(([f]) => re.test(f));
+      const combo = pick(/_combo\./), layer = pick(/_layer\d+_/);
+      const cell = (m) => m ? `${m[1].ok ? "✓" : "✗"} ${m[1].frames}프레임 · ${m[1].size[0]}×${m[1].size[1]} · ${m[1].fps}fps` : "-";
+      const tr = document.createElement("tr"); tr.className = "measured";
+      tr.innerHTML = `<td class="l">실측</td>` + cols.map(() => "<td></td>").join("");
+      cols.forEach((c, i) => tr.children[i + 1].textContent = c === "input" ? `${plate.result.frames}프레임 읽음` : cell(c === "combo" ? combo : layer));
+      tbl.appendChild(tr);
+    }
+    box.innerHTML = ""; box.appendChild(tbl);
+    const rows = table.rows.map(r => r.key === "bitrate" ? this.bitrateRow(r, table.bitrate) : r);
+    const diffs = rows.filter(r => cols.some(c => c !== "input" && !r.same[c])).length;
+    $("specNote").textContent = diffs ? `· 원본과 다른 곳 ${diffs}줄 (노란 칸에 이유)` : "· 모두 원본과 같음";
+  }
+}
+
+/** 지금 설정으로 돌아가는 흐름 — 입력 → 모델 → 카드 → 출력 */
+class FlowView {
+  node(n, title, model, value, cls = "") {
+    const d = document.createElement("div");
+    d.className = "fnode " + cls;
+    d.innerHTML = `<div class="ft"><i></i><span></span></div><div class="fm"></div><div class="fv"></div>`;
+    d.querySelector("i").textContent = n; d.querySelector(".ft span").textContent = title;
+    d.querySelector(".fm").textContent = model;
+    if (value instanceof Node) d.querySelector(".fv").appendChild(value); else d.querySelector(".fv").textContent = value;
+    return d;
+  }
+  render(s) {
+    const box = $("flow"); box.innerHTML = "";
+    const arrow = () => { const a = document.createElement("div"); a.className = "farrow"; a.textContent = "→"; return a; };
+    const spec = s.plate && s.plate.spec;
+    const nodes = [
+      this.node("입", "넣은 파일", s.plate ? s.plate.file.name : "아직 없음",
+                spec ? spec.summary : (s.plate ? "규격 읽는 중…" : "영상 · 이미지를 넣으면 규격이 여기"), "io"),
+      this.node(1, "머리 찾기", s.model === "accurate" ? "YOLO11m head (정확)" : "YOLO11s head (빠름)",
+                `ONNX Runtime · ${s.device === "GPU" ? "그래픽카드" : "CPU"} · 옆모습 · 뒤통수도`),
+      this.node(2, "사람 잇기", "ByteTrack 방식 (모델 없음)", s.people || "프레임 사이 같은 사람에 같은 번호"),
+      this.node(3, "표정 찾기", "MediaPipe Face Landmarker", s.needsFaces ? "얼굴 점 478개 · CPU" : "안 씀 — 표정 카드를 안 골랐음", s.needsFaces ? "" : "off"),
+      this.node(4, "카드 겹치기", s.recipe.length ? `${s.base} 위에 ${s.recipe.length}장` : "카드를 고르세요", s.recipe.join(" → ") || "-", s.recipe.length ? "" : "off"),
+    ];
+    const outs = document.createElement("div"); outs.className = "fouts";
+    for (const o of s.outputs) { const c = document.createElement("div"); c.className = "fout" + (o.on ? "" : " off"); c.textContent = o.text; outs.appendChild(c); }
+    nodes.push(this.node("출", "저장 · FFmpeg", "원본 규격에 맞춰", outs, "io"));
+    nodes.forEach((n, i) => { if (i) box.appendChild(arrow()); box.appendChild(n); });
+  }
+}
+
+/** 실행 결과 파일 — 묶어서 보여 주고 규격 대조 · 받기 */
+class ResultFiles {
+  constructor(api) { this.api = api; }
+  clear() { $("outFiles").innerHTML = ""; }
+  render(r) {
+    const box = $("outFiles"); box.innerHTML = "";
+    if (!r) return;
+    const groups = [["조합", f => /_combo\./.test(f)], ["투명 레이어 (원본 위에 번호 순서대로)", f => /_layer\d+_/.test(f)],
+                    ["확인용", f => /_(compare|preview|contact)\./.test(f)], ["설정 · 기록", f => /\.json$/i.test(f)], ["그 밖의 결과물", () => true]];
+    const left = [...r.files];
+    for (const [name, test] of groups) {
+      const fs = left.filter(test); if (!fs.length) continue;
+      fs.forEach(f => left.splice(left.indexOf(f), 1));
+      const g = document.createElement("div"); g.className = "grp"; g.textContent = name; box.appendChild(g);
+      for (const f of fs) {
+        const c = (r.checks || {})[f];
+        const row = document.createElement("div"); row.className = "rfile";
+        row.innerHTML = `<div><div class="nm"></div><div class="sp"></div></div><div class="act"></div>`;
+        row.querySelector(".nm").textContent = f;
+        const sp = row.querySelector(".sp");
+        if (c) {
+          const m = document.createElement("span"); m.className = c.ok ? "ok" : "bad";
+          m.textContent = c.ok ? "✓ 원본 규격과 같음 " : `✗ ${c.problems.join(", ")} `;
+          sp.append(m, `${c.frames}프레임 · ${c.size[0]}×${c.size[1]} · ${c.fps}fps · ${c.codec} ${c.pix_fmt}${c.kbps && c.codec === "h264" ? " · " + ExportPanel.mbps(c.kbps) : ""}${c.audio ? " · 소리 " + c.audio : ""} · ${c.megabytes}MB`);
+          if (/_combo\./.test(f)) {
+            const sd = document.createElement("div");
+            sd.className = (c.seedance || []).length ? "bad" : "ok";
+            sd.textContent = (c.seedance || []).length ? "시댄스에 그대로 못 넣음: " + c.seedance.join(" · ") : "✓ 시댄스 입력 규칙 안 (200MB · 길이 · 크기 · 비율)";
+            sp.appendChild(sd);
+          }
+        }
+        const a = document.createElement("a"); a.href = this.api.fileUrl(r.folder, f); a.download = f; a.textContent = "받기";
+        row.querySelector(".act").appendChild(a);
+        box.appendChild(row);
+      }
+    }
+    const o = document.createElement("a"); o.href = "#"; o.textContent = `결과\\${r.folder} 폴더 열기`;
+    o.style.cssText = "font-size:12px;color:var(--text);margin-top:4px"; o.onclick = (e) => { e.preventDefault(); this.api.open(r.folder); };
+    box.appendChild(o);
+  }
+}
+
+/** 넣은 플레이트 하나 */
+class Plate {
+  constructor(file) {
+    this.file = file; this.id = null; this.state = "wait"; this.msg = "대기"; this.result = null; this.url = URL.createObjectURL(file);
+    this.scan = null;      // { key, result } — 사람 찾기 결과 (검출 설정이 같을 때만 유효)
+    this.chosen = null;    // 가릴 사람 번호 Set. null = 모두
+    this._uploading = null;
+  }
+  get isVideo() { return this.file.type.startsWith("video") || /\.(mp4|mov|mkv|webm|avi|m4v)$/i.test(this.file.name); }
+  /** 올리기는 한 번만 (올리는 중에 또 부르면 같은 약속을 돌려줌) */
+  ensureUploaded(api) {
+    if (this.id) return Promise.resolve(this.id);
+    if (!this._uploading) this._uploading = api.upload(this.file).then(j => { this.spec = j.spec || null; if (Plate.onSpec) Plate.onSpec(this); return (this.id = j.id); }).finally(() => { this._uploading = null; });
+    return this._uploading;
+  }
+  /** 앱을 다시 켜서 서버에서 지워졌으면 한 번 더 올리고 다시 시도 */
+  async withUpload(api, fn) {
+    await this.ensureUploaded(api);
+    try { return await fn(this.id); }
+    catch (e) {
+      if (!/다시 넣어/.test(e.message)) throw e;
+      this.id = null; this.scan = null;
+      await this.ensureUploaded(api);
+      return fn(this.id);
+    }
+  }
+  scanFor(key) { return this.scan && this.scan.key === key ? this.scan.result : null; }
+  people(key) {
+    const r = this.scanFor(key);
+    if (!r || !this.chosen || this.chosen.size === r.people.length) return [];   // [] = 모두
+    return [...this.chosen].sort((a, b) => a - b);
+  }
+}
+
+/** 사람 패널 — 찾은 사람 카드 · 가릴 사람 고르기 */
+class PeoplePanel {
+  constructor(onChange) {
+    this.onChange = onChange; this.plate = null; this.key = "";
+    $("peopleOps").querySelectorAll("button").forEach(b => b.onclick = () => this.setAll(b.dataset.all === "1"));
+  }
+  show(plate, key) { this.plate = plate; this.key = key; this.render(); }
+  setAll(on) {
+    const r = this.plate && this.plate.scanFor(this.key); if (!r) return;
+    this.plate.chosen = new Set(on ? r.people.map(p => p.id) : []);
+    this.render(); this.onChange();
+  }
+  toggle(id) {
+    const r = this.plate.scanFor(this.key);
+    if (!this.plate.chosen) this.plate.chosen = new Set(r.people.map(p => p.id));
+    this.plate.chosen.has(id) ? this.plate.chosen.delete(id) : this.plate.chosen.add(id);
+    this.render(); this.onChange();
+  }
+  static time(sec) { if (sec == null) return ""; const m = Math.floor(sec / 60), s = Math.floor(sec % 60); return `${m}:${String(s).padStart(2, "0")}`; }
+  render() {
+    const p = this.plate, box = $("people");
+    $("scanBtn").disabled = !p || (typeof app !== "undefined" && app.busy);
+    box.innerHTML = "";
+    const r = p && p.scanFor(this.key);
+    $("peopleOps").hidden = !r || !r.people.length;
+    if (!p) { $("peopleCount").textContent = ""; $("peopleNote").textContent = "플레이트를 넣으면 찾을 수 있습니다."; return; }
+    if (!r) {
+      $("peopleCount").textContent = "";
+      $("peopleNote").innerHTML = p.scan ? '<span class="stale">머리 찾기 설정이 바뀌어서 다시 찾아야 합니다.</span> 찾지 않으면 모든 사람을 가립니다.'
+                                         : "찾지 않으면 영상에 나오는 모든 사람을 가립니다.";
+      return;
+    }
+    const chosen = p.chosen || new Set(r.people.map(x => x.id));
+    $("peopleCount").textContent = `${r.count}명 · 한 화면에 최대 ${r.max_together}명` + (r.shots > 1 ? ` · 컷 ${r.shots}개` : "");
+    for (const person of r.people) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "person" + (chosen.has(person.id) ? "" : " off");
+      b.setAttribute("aria-pressed", chosen.has(person.id));
+      b.innerHTML = `<span class="tag">#${person.id}</span><img alt=""><div class="t"></div><div class="d"></div>`;
+      if (person.thumb) b.querySelector("img").src = person.thumb;
+      b.querySelector(".t").textContent = chosen.has(person.id) ? "가림" : "안 가림";
+      b.querySelector(".d").textContent = person.start_sec != null
+        ? `${r.shots > 1 ? `컷 ${person.shot} · ` : ""}${PeoplePanel.time(person.start_sec)}–${PeoplePanel.time(person.end_sec)} · ${person.frames}프레임` : "이미지";
+      b.onclick = () => this.toggle(person.id);
+      box.appendChild(b);
+    }
+    const n = chosen.size;
+    $("peopleNote").textContent = !r.count ? "사람을 찾지 못했습니다. 머리 찾기 › 검출 민감도를 낮추거나 정확 모델로 바꿔 보세요."
+      : (n === r.count ? "모두 가립니다. 빼려면 사람 카드를 누르세요." : n ? `${n}명만 가립니다.` : "아무도 고르지 않았습니다.")
+        + (r.shots > 1 ? " 컷이 바뀌면 같은 사람도 새 번호를 받습니다." : "");
+  }
+}
+
+/** 작업 목록 */
+class PlateList {
+  constructor(api, onSelect, onReject, labelOf, onRerun) {
+    this.api = api; this.items = []; this.selected = -1; this.onSelect = onSelect; this.onReject = onReject; this.labelOf = labelOf; this.onRerun = onRerun;
+  }
+  add(files) {
+    const ok = files.filter(f => /^(video|image)\//.test(f.type) || /\.(mp4|mov|mkv|webm|avi|m4v|png|jpe?g|webp|bmp)$/i.test(f.name));
+    const before = this.items.length;
+    ok.forEach(f => this.items.push(new Plate(f)));
+    if (ok.length < files.length) this.onReject(files.length - ok.length);
+    if (this.selected < 0 && this.items.length) this.select(before); else this.render();
+    return ok.length;
+  }
+  get current() { return this.items[this.selected]; }
+  select(i) {
+    const same = i === this.selected;   // 같은 플레이트를 다시 고르면 영상을 새로 만들지 않음 (보던 위치 유지)
+    this.selected = i; this.render();
+    if (!same) this.onSelect(this.items[i]);
+  }
+  clear() { this.items = []; this.selected = -1; this.render(); }
+  pending() { return this.items.filter(p => p.state !== "done" && p.state !== "run"); }
+  render() {
+    const tb = $("list").querySelector("tbody");
+    $("emptyList").style.display = this.items.length ? "none" : "block";
+    tb.innerHTML = "";
+    this.items.forEach((p, i) => {
+      const tr = document.createElement("tr");
+      if (i === this.selected) tr.className = "sel";
+      const cls = p.state === "done" ? (p.result.empty ? "warn" : "ok") : p.state === "error" ? "err" : "";
+      tr.innerHTML = `<td class="name"></td><td class="st ${cls}"></td><td class="act"></td>`;
+      tr.querySelector(".name").textContent = p.file.name;
+      tr.querySelector(".name").onclick = () => this.select(i);
+      tr.querySelector(".st").textContent = p.msg;
+      if (p.state === "done") {
+        const a = document.createElement("a");
+        a.href = this.api.fileUrl(p.result.folder, p.result.main); a.download = p.result.main;
+        a.textContent = `${this.labelOf(p.result.main)} 받기`;
+        const o = document.createElement("a");
+        o.href = "#"; o.textContent = "폴더 열기"; o.onclick = (e) => { e.preventDefault(); this.api.open(p.result.folder); };
+        tr.querySelector(".act").append(a, o);
+      }
+      if (p.state === "done" || p.state === "error") {
+        const again = document.createElement("button");
+        again.type = "button"; again.textContent = "다시 실행"; again.title = "이 플레이트만 지금 설정으로 다시 만듭니다";
+        again.onclick = () => this.onRerun(p);
+        tr.querySelector(".act").append(again);
+      }
+      tb.appendChild(tr);
+    });
+  }
+}
+
+/** 원본 · 결과 화면 (결과는 파일 탭으로 바꿔 보기) */
+class Viewer {
+  constructor(api, labelOf) { this.api = api; this.labelOf = labelOf; }
+  // 파일 이름 끝의 _종류 로 이름을 붙인다 (긴 이름부터 맞춤: face_overlay 가 overlay 보다 먼저)
+  static keyOf(f) { return (f.match(/_(layer\d+_\w+?|face_overlay|points_overlay|facegrid|combo|compare|overlay|matte|preview|contact|masked|face|points|cover|headmask)\.\w+$/) || [, f])[1]; }
+  showSource(p) {
+    if (!p) { $("srcView").innerHTML = '<span class="ph">플레이트를 넣으면 여기 나옵니다</span>'; $("srcCap").textContent = ""; $("srcNotes").innerHTML = ""; return; }
+    $("srcView").innerHTML = p.isVideo ? `<video src="${p.url}" controls muted playsinline></video>` : `<img alt="" src="${p.url}">`;
+    const v = this.video();
+    if (v) v.onerror = () => {   // ProRes · HEVC 10비트 MOV 등은 브라우저가 못 틀 뿐, 처리는 ffmpeg 가 정상으로 한다
+      $("srcView").innerHTML = '<span class="ph">이 형식(ProRes · HEVC 10비트 MOV 등)은 브라우저가 재생하지 못합니다.<br>사람 찾기 · 처리 · 저장은 정상으로 됩니다. 예시는 첫 프레임 기준입니다.</span>';
+    };
+    this.showSpec(p);
+  }
+  /** 넣은 파일 규격 (올린 뒤 서버가 읽은 값) + 알아둘 점 */
+  showSpec(p) {
+    const s = p && p.spec;
+    $("srcCap").textContent = `${p.file.name} · ${(p.file.size / 1048576).toFixed(1)}MB` + (s && s.summary ? ` · ${s.summary}` : (p.id ? "" : " · 규격 읽는 중…"));
+    $("srcNotes").innerHTML = "";
+    for (const n of (s && s.notes) || []) { const d = document.createElement("div"); d.textContent = "! " + n; $("srcNotes").appendChild(d); }
+  }
+  currentTime() { const v = this.video(); return v ? v.currentTime : 0; }
+  video() { return $("srcView").querySelector("video"); }
+  showImage(url, cap) { $("resultTabs").innerHTML = ""; $("outView").innerHTML = `<img alt="" src="${url}">`; $("outCap").textContent = cap; }
+  showResult(r) {
+    const media = r.files.filter(f => /\.(mp4|jpg|png)$/i.test(f));
+    const tabs = $("resultTabs");
+    tabs.innerHTML = "";
+    const show = (f) => {
+      const url = this.api.fileUrl(r.folder, f);
+      $("outView").innerHTML = /\.mp4$/i.test(f) ? `<video src="${url}" controls autoplay muted loop playsinline></video>` : `<img alt="" src="${url}">`;
+      const c = (r.checks || {})[f];
+      $("outCap").textContent = `결과\\${r.folder}\\${f}` + (c ? ` · ${c.frames}프레임 · ${c.size[0]}×${c.size[1]} · ${c.fps}fps · ${c.codec}` +
+        (c.ok ? " · 원본 규격과 같음" : ` · 규격 다름: ${c.problems.join(", ")}`) : "");
+      tabs.querySelectorAll(".tab").forEach(t => t.classList.toggle("sel", t.dataset.f === f));
+    };
+    for (const f of media) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "tab"; b.dataset.f = f; b.textContent = this.labelOf(Viewer.keyOf(f));
+      b.onclick = () => show(f);
+      tabs.appendChild(b);
+    }
+    show(media.find(f => /_combo\./.test(f)) || r.main);
+  }
+  clearResult() { $("resultTabs").innerHTML = ""; $("outView").innerHTML = '<span class="ph">카드를 고르고 [이 프레임 미리보기]</span>'; $("outCap").textContent = ""; }
+}
+
+/** 단계 표시 */
+class Stepper {
+  set(step) {
+    document.querySelectorAll(".step").forEach(s => { const n = +s.dataset.step; s.classList.toggle("now", n === step); s.classList.toggle("done", n < step); });
+  }
+}
+
+/** 쓰는 모델 표시 */
+class ModelPanel {
+  render(models) {
+    $("models").innerHTML = "";
+    for (const m of models) {
+      const d = document.createElement("div");
+      d.className = "model";
+      d.innerHTML = `<b></b> · <span class="m"></span><br><span class="tag"></span> <span class="tag"></span><br><span class="w"></span>`;
+      d.querySelector("b").textContent = m.name;
+      d.querySelector(".m").textContent = m.model;
+      const [t1, t2] = d.querySelectorAll(".tag"); t1.textContent = m.runs_on; t2.textContent = m.license;
+      d.querySelector(".w").textContent = `${m.when} — ${m.source}`;
+      $("models").appendChild(d);
+    }
+  }
+}
+
+/** 이 PC 점검 — 켤 때 서버가 본 있는 것 · 없는 것 */
+class SystemPanel {
+  static MARK = { ok: "✓", warn: "!", fail: "✗" };
+  render(sys) {
+    const box = $("syscheck"); box.innerHTML = "";
+    const items = (sys && sys.results) || [];
+    const warn = items.filter(r => r.status !== "ok").length;
+    $("syscheckSum").textContent = items.length ? (warn ? `· 알아둘 것 ${warn}개` : `· ${items.length}개 모두 정상 (눌러서 보기)`) : "";
+    $("syscheckBox").open = warn > 0;   // 문제가 있을 때만 펼쳐 둔다
+    for (const r of items) {
+      const d = document.createElement("div");
+      d.className = "model chk";
+      d.innerHTML = `<b></b> <b class="nm"></b><br><span class="w"></span>`;
+      const [mark, nm] = d.querySelectorAll("b");
+      mark.className = r.status; mark.textContent = SystemPanel.MARK[r.status] || "?";
+      nm.textContent = r.name; d.querySelector(".w").textContent = r.detail;
+      if (r.fix && r.status !== "ok") { const f = document.createElement("div"); f.className = "fix"; f.textContent = "→ " + r.fix; d.appendChild(f); }
+      box.appendChild(d);
+    }
+  }
+}
+
+/** 앱 */
+class App {
+  constructor() {
+    this.api = new Api(); this.memory = new Memory("facegrid-v3"); this.stepper = new Stepper(); this.modelPanel = new ModelPanel();
+    this.busy = false; this.galleryTimer = null; this.ticket = 0;
+  }
+  async start() {
+    const info = await this.api.info();
+    this.info = info; this.outDir = info.out;
+    const saved = this.memory.load() || {};
+    const sv = saved.values;
+    if (sv && String(sv.guide_color || "").toUpperCase() === "#50E650") delete sv.guide_color;   // 예전 기본값 → 새 기본 빨강
+    if (sv && sv.head_cover_color === undefined && sv.cover_color) { sv.head_cover_color = sv.cover_color; sv.head_cover_alpha = sv.cover_alpha ?? 1; }   // 예전엔 가림 색이 하나
+    ColorField.mountAll();
+    this.form = new SettingsForm(info.defaults, (why) => this.onFormChange(why));
+    this.form.apply({ ...info.defaults, ...(saved.values || {}) });
+    this.lastValues = this.form.values();
+    this.recipe = new RecipeBuilder(info.layers, saved, () => this.onRecipeChange());
+    this.files = new FilePicker(info.outputs, saved.outputs, saved.known_outputs, () => { this.save(); this.updateSummary(); });
+    this.exporter = new ExportPanel(this.files, () => { this.save(); this.updateSummary(); this.stepper.set(4); });
+    this.flow = new FlowView(); this.resultFiles = new ResultFiles(this.api);
+    this.viewer = new Viewer(this.api, (k) => this.files.label(k));
+    this.patternGrid = new CardGrid($("patternCards"), "key", (it) => this.pickPattern(it));
+    this.coverGrid = null;
+    this.patternGrid.selected = this.form.pattern;
+    this.list = new PlateList(this.api, (p) => this.onSelect(p), (n) => this.message(`${n}개는 영상 · 이미지가 아니라서 뺐습니다`, true),
+                              (file) => this.files.label(Viewer.keyOf(file)), (p) => this.runAll(p));
+    this.saveMode = saved.save_mode === "overwrite" ? "overwrite" : "version";
+    const paintSave = () => $("saveSeg").querySelectorAll("button").forEach(b => b.classList.toggle("sel", b.dataset.mode === this.saveMode));
+    $("saveSeg").querySelectorAll("button").forEach(b => b.onclick = () => { this.saveMode = b.dataset.mode; paintSave(); this.save(); });
+    paintSave();
+    this.modelPanel.render(info.models);
+    new SystemPanel().render(info.system);
+    Plate.onSpec = (p) => { if (p === this.list.current) { this.viewer.showSpec(p); this.updateSummary(); } };
+    this.peoplePanel = new PeoplePanel(() => { this.updateSummary(); this.scheduleGallery(); });
+    this.peoplePanel.show(null, this.scanKey());
+    if (info.detect_models && !info.detect_models.accurate) $("model").querySelector('[value=accurate]').disabled = true;
+    $("scanBtn").onclick = () => this.scanPeople();
+    this.bindDrop();
+    $("previewBtn").onclick = () => this.preview();
+    $("runBtn").onclick = () => this.runAll();
+    $("openOut").onclick = () => this.api.open("");
+    $("clear").onclick = () => this.clear();
+    this.status(info); this.updateSummary();
+    setInterval(() => this.api.info().then(i => this.status(i)).catch(() => this.status(null)), 10000);
+    await this.refreshGallery();
+  }
+  status(info) {
+    if (info) { $("status").textContent = "준비됨 · " + (info.device === "GPU" ? "그래픽카드로 처리" : "CPU로 처리"); $("status").className = "on"; }
+    else { $("status").textContent = "앱이 꺼졌습니다 · Griding.bat 을 다시 실행하세요"; $("status").className = "off"; }
+  }
+  scanKey() { const v = this.form.values(); return JSON.stringify(SettingsForm.DETECT.map(k => v[k])); }
+  settings() {
+    const p = this.list && this.list.current;
+    return p ? this.settingsFor(p) : { ...this.form.values(), recipe: this.recipe.recipe, base: this.recipe.base, people: [] };
+  }
+  settingsFor(p) { return { ...this.form.values(), recipe: this.recipe.recipe, base: this.recipe.base, people: p.people(this.scanKey()) }; }
+  save() { this.memory.save({ values: this.form.values(), recipe: this.recipe.recipe, base: this.recipe.base, outputs: this.files.keys(), known_outputs: this.files.all, save_mode: this.saveMode }); }
+  message(t, err) { $("msg").textContent = t; $("msg").className = err ? "err" : ""; }
+  bar(p) { $("bar").style.width = Math.round(p * 100) + "%"; }
+  problem() {
+    const keys = this.files.keys();
+    if (!keys.length) return "④ 내보내기에서 하나 이상 고르세요";
+    if ((keys.includes("combo") || keys.includes("layers")) && !this.recipe.recipe.length) return "③에서 카드를 하나 이상 고르세요";
+    const p = this.list && this.list.current, r = p && p.scanFor(this.scanKey());
+    if (r && p.chosen && p.chosen.size === 0) return "②에서 가릴 사람을 한 명 이상 고르세요";
+    return "";
+  }
+  updateSummary() {
+    const keys = this.files.keys(), bad = this.problem();
+    $("filesCount").textContent = `(${keys.length}개 · ${keys.map(k => "_" + k).join(" ")})`;
+    const p = this.list && this.list.current, r = p && p.scanFor(this.scanKey());
+    const ids = p ? p.people(this.scanKey()) : [];
+    const who = !r ? "나오는 사람 모두" : ids.length ? `#${ids.join(", #")}` : `${r.count}명 모두`;
+    $("summary").innerHTML = bad ? `<span style="color:#ff7b72">${bad}</span>`
+      : `만들 것: <b>${this.recipe.title()}</b> <span class="faint">· ${who} · ` +
+        [keys.includes("combo") && "조합 영상", keys.includes("layers") && `투명 레이어 ${this.recipe.recipe.length}개`, keys.some(k => ["compare", "preview", "contact"].includes(k)) && "확인용"]
+          .filter(Boolean).join(" + ") + `</span>`;
+    $("runBtn").disabled = this.busy || !!bad || !(this.list && this.list.items.length);
+    this.exporter.render(this.recipe, p);
+    const ext = p && !p.isVideo ? "png" : "mp4", lext = p && !p.isVideo ? "png" : "mov";
+    const checkN = ["compare", "preview", "contact"].filter(k => keys.includes(k)).length;
+    const otherN = keys.filter(k => !["combo", "layers", "compare", "preview", "contact"].includes(k)).length;
+    this.flow.render({
+      plate: p, model: this.form.values().model, device: this.info.device, needsFaces: this.recipe.needsFaces(),
+      base: this.recipe.base === "black" ? "검은 바탕" : "원본",
+      recipe: this.recipe.recipe.map(k => this.recipe.layers[k].label),
+      people: r ? `${r.count}명 찾음 · 한 화면 최대 ${r.max_together}명` + (p.people(this.scanKey()).length ? ` · #${p.people(this.scanKey()).join(", #")}만 가림` : " · 모두 가림") : "",
+      outputs: [
+        { on: keys.includes("combo"), text: `조합 _combo.${ext} · ${ext === "mp4" ? "H.264" : "PNG"}` },
+        { on: keys.includes("layers"), text: `투명 레이어 ×${this.recipe.recipe.length} · _layerN.${lext} · 무손실` },
+        { on: checkN > 0, text: `확인용 ×${checkN}` },
+        ...(otherN ? [{ on: true, text: `그 밖의 결과물 ×${otherN}` }] : []),
+      ],
+    });
+  }
+
+  // 설정
+  pickPattern(it) { this.form.apply({ pattern: it.key }); this.onFormChange("pattern"); }
+  onFormChange(why) {
+    const v = this.form.values();
+    const changed = Object.keys(v).some(k => v[k] !== this.lastValues[k]) || why === "reset";
+    const detectChanged = SettingsForm.DETECT.some(k => v[k] !== this.lastValues[k]);
+    const bitrateChanged = v.bitrate !== this.lastValues.bitrate;
+    this.lastValues = v;
+    this.patternGrid.select(this.form.pattern); this.save();
+    if (bitrateChanged) this.updateSummary();
+    if (detectChanged) { this.peoplePanel.show(this.list.current, this.scanKey()); this.updateSummary(); this.autoScan(900); }
+    if (changed) this.scheduleGallery();
+  }
+  onRecipeChange() { this.save(); this.updateSummary(); this.scheduleGallery(); }
+
+  // 예시 그림
+  scheduleGallery() { clearTimeout(this.galleryTimer); this.galleryTimer = setTimeout(() => this.refreshGallery(), 250); }
+  async refreshGallery() {
+    const p = this.list && this.list.current;
+    const ticket = ++this.ticket;   // 늦게 온 옛 응답은 버림
+    try {
+      const ask = (id) => this.api.gallery({ id, t: this.viewer.currentTime(), settings: this.settings() });
+      const g = p ? await p.withUpload(this.api, ask) : await ask(undefined);
+      if (ticket !== this.ticket) return;
+      $("comboImg").src = g.combo;
+      this.recipe.setImages(g.cards);
+      this.patternGrid.render(g.patterns);
+      const faceNote = g.from_plate && g.found && !g.face_found && this.recipe.needsFaces()
+        ? " 이 프레임에선 표정을 못 찾아 점 · 선이 없습니다 (옆모습 · 뒤통수). 정면이 보이는 곳으로 옮겨 보세요." : "";
+      $("galleryNote").textContent = (!g.from_plate ? "예시 그림입니다. 플레이트를 넣으면 그 플레이트로 바뀝니다."
+        : g.found ? `넣은 플레이트의 지금 프레임(머리 ${g.heads_here}개)으로 만든 예시입니다. 영상을 옮기면 예시도 바뀝니다.`
+        : "이 프레임에서 머리를 못 찾아 예시 그림으로 보여 줍니다. 영상을 다른 위치로 옮겨 보세요.") + faceNote;
+    } catch (e) { $("galleryNote").textContent = "예시를 만들지 못했습니다: " + e.message; }
+  }
+
+  // 파일
+  bindDrop() {
+    const d = $("drop");
+    d.onclick = () => $("file").click();
+    d.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("file").click(); } };
+    $("file").onchange = (e) => { this.addFiles([...e.target.files]); e.target.value = ""; };
+    d.ondragover = (e) => { e.preventDefault(); d.classList.add("over"); };
+    d.ondragleave = () => d.classList.remove("over");
+    d.ondrop = (e) => { e.preventDefault(); d.classList.remove("over"); this.addFiles([...e.dataTransfer.files]); };
+  }
+  addFiles(files) { if (this.list.add(files)) { $("previewBtn").disabled = this.busy; this.updateSummary(); this.stepper.set(2); this.autoScan(300); } }
+  /** 아직 이 설정으로 훑지 않았으면 자동으로 사람 찾기 */
+  autoScan(delay = 0) {
+    clearTimeout(this.scanTimer);
+    this.scanTimer = setTimeout(() => {
+      const p = this.list.current;
+      if (p && !p.scanFor(this.scanKey()) && !this.busy) this.scanPeople();
+    }, delay);
+  }
+  onSelect(p) {
+    this.peoplePanel.show(p, this.scanKey()); this.updateSummary();
+    if (p) this.autoScan(300);
+    this.viewer.showSource(p);
+    if (p && p.result) this.viewer.showResult(p.result); else this.viewer.clearResult();
+    this.resultFiles.render(p && p.result);
+    if (p) { const v = this.viewer.video(); if (v) v.addEventListener("seeked", () => this.scheduleGallery()); this.refreshGallery(); }
+  }
+  clear() {
+    if (this.busy) return;
+    this.list.clear(); this.viewer.showSource(null); this.viewer.clearResult(); this.resultFiles.clear(); this.peoplePanel.show(null, this.scanKey());
+    $("previewBtn").disabled = true; this.updateSummary(); this.stepper.set(1); this.refreshGallery();
+  }
+
+  // 실행
+  async preview() {
+    const p = this.list.current; if (!p) return;
+    $("previewBtn").disabled = true;
+    try {
+      this.message("미리보기 만드는 중...");
+      const url = await p.withUpload(this.api, (id) => this.api.preview({ id, settings: this.settings(), t: this.viewer.currentTime() }));
+      this.viewer.showImage(url, "미리보기 (한 프레임) · " + this.recipe.title());
+      this.message("마음에 들면 [전체 실행]");
+      this.stepper.set(5);
+    } catch (e) { this.message(e.message, true); }
+    $("previewBtn").disabled = this.busy;
+  }
+  async scanPeople() {
+    const p = this.list.current; if (!p || this.busy) return;
+    const key = this.scanKey();
+    this.busy = true; $("scanBtn").disabled = $("runBtn").disabled = true;
+    try {
+      this.message("사람 찾는 중... (영상 전체를 훑습니다)"); this.stepper.set(2);
+      $("peopleCount").textContent = "찾는 중…";
+      const job = await p.withUpload(this.api, (id) => this.api.json("/api/scan", { id, settings: this.settings() }));
+      const r = await this.follow(job.id, p, 1, 1, false);
+      p.scan = { key, result: r }; p.chosen = null;
+      this.message(`사람 ${r.count}명을 찾았습니다${r.shots > 1 ? ` (컷 ${r.shots}개)` : ""}. 가릴 사람을 고른 뒤 ③에서 카드를 고르세요.`); this.bar(1);
+      this.stepper.set(3);
+    } catch (e) { this.message(e.message, true); }
+    this.busy = false; this.peoplePanel.show(p, key); this.updateSummary();
+    if (this.scanKey() !== key) this.autoScan(0);      // 찾는 동안 설정이 또 바뀌었으면 다시
+  }
+  async runAll(only) {
+    if (this.busy) return;
+    const bad = this.problem(); if (bad) return this.message(bad, true);
+    let todo = only ? [only] : this.list.pending();
+    if (!todo.length) todo = [...this.list.items];   // 다 끝났으면 전부 다시 (저장 방식대로 새 버전 · 덮어쓰기)
+    if (!todo.length) return;
+    this.busy = true; $("runBtn").disabled = $("previewBtn").disabled = true; this.stepper.set(5);
+    let k = 0, fail = 0;
+    for (const p of todo) {
+      k++;
+      try {
+        p.state = "run"; p.msg = "올리는 중"; this.list.render();
+        const previous = p.result ? p.result.folder : "";
+        const job = await p.withUpload(this.api, (id) => this.api.run({ id, settings: this.settingsFor(p), outputs: this.files.keys(), previous, save_mode: this.saveMode }));
+        const r = await this.follow(job.id, p, k, todo.length);
+        p.state = "done"; p.result = r;
+        const checks = Object.values(r.checks || {}), okN = checks.filter(c => c.ok).length;
+        p.msg = `완료 · ${r.folder} · ${Math.round(r.seconds)}초 · 사람 ${(r.people_used || []).length}명` + (checks.length ? ` · 규격 ${okN}/${checks.length}` : "");
+        if (okN < checks.length) this.message("규격이 원본과 다른 파일이 있습니다: " + Object.entries(r.checks).filter(([, c]) => !c.ok).map(([f, c]) => `${f} (${c.problems.join(", ")})`).join(" · "), true);
+        const i = this.list.items.indexOf(p);
+        if (i === this.list.selected) { this.list.render(); this.viewer.showResult(r); this.resultFiles.render(r); this.updateSummary(); } else this.list.select(i);
+      } catch (e) { fail++; p.state = "error"; p.msg = "오류"; this.message(e.message, true); this.list.render(); }
+    }
+    this.bar(1);
+    const done = this.list.items.filter(p => p.state === "done").length;
+    const layers = this.list.items.reduce((n, p) => n + ((p.result && p.result.files) || []).filter(f => /_layer\d+_.*\.(mov|png)$/i.test(f)).length, 0);
+    if (!fail) this.message(`${done}개 완료. 결과 칸 위 탭에서 파일을 바꿔 볼 수 있습니다` +
+      (layers ? `. 투명 레이어 ${layers}개는 결과 폴더에 있습니다 (편집기에서 원본 위에 번호 순서대로)` : "") + `. 저장 위치: ${this.outDir}`);
+    this.busy = false; $("previewBtn").disabled = false; this.updateSummary(); this.peoplePanel.render();
+  }
+  async follow(id, p, k, n, showInList = true) {
+    while (true) {
+      await new Promise(r => setTimeout(r, 700));
+      const s = await this.api.job(id);
+      this.bar((k - 1 + s.progress) / n);
+      this.message(`${k}/${n} · ${s.msg}`);
+      if (showInList) {
+        p.msg = s.state === "running" ? `처리 중 ${Math.round(s.progress * 100)}%` : s.state === "queued" ? "대기" : p.msg;
+        this.list.render();
+      }
+      if (s.state === "error") throw new Error(s.msg);
+      if (s.state === "done") return s.result;
+    }
+  }
+}
+
+const app = new App();
+app.start().catch(e => { app.message("앱을 시작하지 못했습니다: " + e.message, true); app.status(null); });
+</script>
+</body>
+</html>
