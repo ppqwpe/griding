@@ -440,7 +440,8 @@
   "나올 파일:": "Output files:",
   "2K 까지 30": "30 up to 2K",
   "4K 50Mbps": "50Mbps for 4K",
-  "고정 (CBR)": "constant (CBR)"
+  "고정 (CBR)": "constant (CBR)",
+  "AGPL-3.0 (Ultralytics 학습 · 저작자 표기 없음)": "AGPL-3.0 (trained with Ultralytics; not stated by the authors)"
  },
  "templates": [
   {

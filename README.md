@@ -60,12 +60,12 @@ To change the logo, edit `app/tools/make_logo.py` and run it. For the sample cha
 Keep `main` releasable at all times. Make changes on a separate branch, and merge into `main` once the tests pass.
 To ship, build the zip with `build_zip.py` and attach it to a new GitHub Release with a version number (v1.1 and so on). People then just download it from that page.
 
-## Models
+## Models and licenses
 
 | Step | Model | License |
 |---|---|---|
-| Head detection | YOLO11s / YOLO11m head (deepghs/real_head_detection, ONNX) | AGPL-3.0 |
+| Head detection | YOLO11s / YOLO11m head (deepghs/real_head_detection, ONNX) | Not stated by the authors; trained with Ultralytics (AGPL-3.0), so treat as AGPL-3.0 |
 | Face landmarks | Google MediaPipe Face Landmarker (478 points) | Apache-2.0 |
-| Read / write video | FFmpeg 7.1 (gyan.dev essentials build, bundled with imageio-ffmpeg 0.6.0) | [to check: license of this build] |
+| Read / write video | FFmpeg 7.1 (gyan.dev essentials build, bundled with imageio-ffmpeg 0.6.0) | GPL-3.0 |
 
-The head-detection models are AGPL-3.0, so their terms apply if you share the app outside your team.
+Every bundled library and its license is listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

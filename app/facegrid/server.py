@@ -102,7 +102,7 @@ class FaceGridApp:
         return [
             {"name": "머리 검출", "model": "YOLO11s head (빠름) · YOLO11m head (정확)",
              "source": "deepghs/real_head_detection · head_detect_v0_s_yv11 / _m_yv11 (Hugging Face)",
-             "runs_on": f"ONNX Runtime · {dev}", "license": "AGPL-3.0", "when": "매 프레임 · 머리 위치 → 사람 번호 · 격자 · 가림 자리"},
+             "runs_on": f"ONNX Runtime · {dev}", "license": "AGPL-3.0 (Ultralytics 학습 · 저작자 표기 없음)", "when": "매 프레임 · 머리 위치 → 사람 번호 · 격자 · 가림 자리"},
             {"name": "추적", "model": "점수 2단계 짝맞추기 (ByteTrack 방식)", "source": "Griding 안에 직접 구현 (모델 파일 없음)",
              "runs_on": "CPU", "license": "-", "when": "프레임 사이 같은 사람 잇기 · 3프레임 이상 이어져야 사람으로 셈"},
             {"name": "표정 인식", "model": "MediaPipe Face Landmarker", "source": "Google MediaPipe · face_landmarker.task (얼굴 점 478개)",
