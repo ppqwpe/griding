@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 SKIP = {ROOT / "결과", ROOT / "app" / "work", ROOT / ".git"}
-SKIP_NAMES = {"__pycache__", ".gitignore"}
+SKIP_NAMES = {"__pycache__", ".gitignore", ".gitattributes"}
 NEEDED = (ROOT / "app" / "python" / "python.exe", ROOT / "app" / "lib")
 
 
@@ -23,7 +23,7 @@ def files() -> list[Path]:
     for p in sorted(ROOT.rglob("*")):
         if any(p == s or s in p.parents for s in SKIP) or any(part in SKIP_NAMES for part in p.parts):
             continue
-        if p.is_file() and p.suffix != ".zip":
+        if p.is_file() and not (p.parent == ROOT and p.suffix == ".zip"):   # 맨 위의 옛 배포 zip 만 뺀다 (python312.zip 은 꼭 필요)
             out.append(p)
     return out
 
