@@ -33,7 +33,7 @@
   #status.off::before { content: "● "; color: var(--accent); }
 
   /* ── 작동 방식 · 모델 ── */
-  .how { margin: 14px 22px 0; padding: 12px 16px; border: 1px solid var(--line); border-radius: var(--radius); background: #171717; }
+  .how { margin: 0 22px 30px; padding: 12px 16px; border: 1px solid var(--line); border-radius: var(--radius); background: #171717; }
   .how-row { display: flex; gap: 16px; align-items: flex-start; }
   .how-t { font-size: 12.5px; font-weight: 700; color: var(--text); white-space: nowrap; padding-top: 2px; min-width: 88px; }
   .how ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; counter-reset: s; flex: 1; }
@@ -276,18 +276,37 @@
   .cf-alpha input { accent-color: var(--accent); width: 100%; }
   .cf-alpha b { text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
   #specBox > summary .faint { font-weight: 400; }
+  .how-sum { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--dim); list-style: none; }
+  .how-sum::-webkit-details-marker { display: none; }
+  .how-sum::before { content: "▸ "; }
+  .how[open] > .how-sum { margin-bottom: 12px; color: var(--text); }
+  .how[open] > .how-sum::before { content: "▾ "; }
+  /* ── ④ 내보내기 (어도비 내보내기 창처럼: 출력 목록 → 영상 설정 → 요약) ── */
+  .xlist { display: grid; gap: 6px; }
+  .xitem { display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: center; background: var(--panel2); border: 1px solid var(--line2);
+           border-radius: 10px; padding: 9px 12px; cursor: pointer; }
+  .xitem.sel { border-color: var(--accent); }
+  .xitem input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+  .xitem .xt { font-size: 13px; font-weight: 700; }
+  .xitem .xd { font-size: 11.5px; color: var(--dim); margin-top: 1px; }
+  .xitem .xf { font-family: Consolas, monospace; font-size: 11px; color: #cfcfcf; background: #161616; border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
+  .xset { margin-top: 12px; border: 1px solid var(--line2); border-radius: 12px; padding: 12px; background: #171717; }
+  .xset-t { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .xrow { display: grid; grid-template-columns: 84px 1fr; gap: 10px; align-items: start; padding: 7px 0; border-top: 1px solid var(--line); }
+  .xrow:first-of-type { border-top: 0; }
+  .xl { font-size: 12px; color: var(--dim); padding-top: 4px; }
+  .chips { display: flex; gap: 5px; flex-wrap: wrap; }
+  .chip { font-size: 11.5px; padding: 3px 9px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line2); color: var(--text); }
+  .chip.lock::before { content: "🔒 "; font-size: 9.5px; opacity: .7; }
+  .xhint { font-size: 11.5px; color: var(--dim); margin-top: 5px; }
+  .xhint.bad, .xsum.bad { color: #ff7b72; }
+  #sizeEst { font-size: 14px; }
+  .xsum { margin-top: 12px; font-size: 12.5px; color: var(--text); background: #161616; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; word-break: break-all; }
 </style>
 </head>
 <body>
 <header class="top"><div class="inner">
   <div class="brand"><img src="/icon.png" alt=""><img class="name" src="/name.png" alt="Griding"><span>실사 얼굴 → 시댄스용 플레이트</span></div>
-  <div class="steps">
-    <span class="step now" data-step="1">① 플레이트 넣기</span>
-    <span class="step" data-step="2">② 사람 확인</span>
-    <span class="step" data-step="3">③ 카드 골라 조합</span>
-    <span class="step" data-step="4">④ 내보내기 고르기</span>
-    <span class="step" data-step="5">⑤ 실행하고 받기</span>
-  </div>
   <div class="seg lang" id="langSeg" title="화면 언어">
     <button type="button" data-lang="ko">한국어</button>
     <button type="button" data-lang="en">English</button>
@@ -295,29 +314,6 @@
   <span id="status">연결 확인 중</span>
 </div></header>
 
-<section class="how" aria-label="작동 방식">
-  <div class="how-row">
-    <div class="how-t">지금 이렇게<br>돌아갑니다<br><span class="faint" style="font-weight:400">고르는 대로 바뀜</span></div>
-    <div class="flow" id="flow" style="flex:1"></div>
-  </div>
-  <details class="how-row models">
-    <summary class="how-t" style="cursor:pointer">단계 설명</summary>
-    <ol>
-      <li><b>사람 찾기</b><span>영상 전체에서 머리를 찾아 사람마다 번호를 붙입니다. 옆모습과 뒤통수도 찾습니다.</span></li>
-      <li><b>표정 찾기</b><span>표정 카드를 고르면 머리를 크게 키워 얼굴 점 478개를 찍습니다.</span></li>
-      <li><b>카드 겹치기</b><span>고른 순서대로 원본이나 검은 바탕 위에 겹칩니다. 나중에 고른 카드가 위로 갑니다.</span></li>
-      <li><b>저장</b><span>원본과 같은 해상도, fps, 색공간, 소리로 mp4를 만듭니다. 카드별 투명 레이어(MOV)도 뺄 수 있습니다. 모든 처리는 이 PC에서 합니다.</span></li>
-    </ol>
-  </details>
-  <details class="how-row models">
-    <summary class="how-t" style="cursor:pointer">쓰는 모델 자세히</summary>
-    <div class="list" id="models"></div>
-  </details>
-  <details class="how-row models" id="syscheckBox">
-    <summary class="how-t" style="cursor:pointer">이 PC 점검 <span class="faint" id="syscheckSum"></span></summary>
-    <div class="list" id="syscheck"></div>
-  </details>
-</section>
 
 <main>
   <!-- 왼쪽: 작업대 -->
@@ -480,25 +476,45 @@
 
 
     <section class="panel" id="exportPanel">
-      <h2><span class="n">4</span>내보내기 고르기</h2>
-      <p class="sub">만들 파일을 고르세요. 여러 개 골라도 됩니다.</p>
-      <div class="xcards" id="xcards"></div>
+      <h2><span class="n">4</span>내보내기</h2>
 
-      <div class="nums" style="margin-top:10px">
-        <label style="grid-column: 1 / -1">조합 mp4 비트레이트 <span class="faint">고정 비트레이트(CBR)</span>
-          <select id="bitrate">
-            <option value="fixed">고정 · 2K 까지 30Mbps / 4K 50Mbps (기본)</option>
-            <option value="source">원본 영상 비트레이트 그대로 고정</option>
-          </select></label>
+      <div class="xlist" id="xcards"></div>
+
+      <div class="xset" id="videoSet">
+        <div class="xset-t">조합 영상 설정 <span class="faint">H.264 · .mp4</span></div>
+        <div class="xrow">
+          <span class="xl">원본에 맞춤</span>
+          <div class="chips" id="matchChips"></div>
+        </div>
+        <div class="xrow">
+          <span class="xl">비트레이트</span>
+          <div>
+            <div class="seg" id="rateSeg">
+              <button type="button" data-mode="fixed">해상도 기준</button>
+              <button type="button" data-mode="source">원본과 같게</button>
+            </div>
+            <div class="xhint" id="rateHint"></div>
+          </div>
+        </div>
+        <div class="xrow">
+          <span class="xl">예상 크기</span>
+          <div><b id="sizeEst">-</b> <span class="xhint" id="sizeNote"></span></div>
+        </div>
+        <select id="bitrate" hidden>
+          <option value="fixed">fixed</option>
+          <option value="source">source</option>
+        </select>
       </div>
 
       <div id="layerBox" hidden>
-        <div class="h4">투명 레이어로 나오는 파일 <span class="faint">편집기에서 원본 위에 이 순서로 쌓으면 조합과 같은 그림</span></div>
+        <div class="h4">투명 레이어 파일 <span class="faint">편집기에서 원본 위에 이 순서로 쌓으면 조합과 같은 그림</span></div>
         <ol class="lfiles" id="layerFiles"></ol>
       </div>
 
+      <div class="xsum" id="exportSum"></div>
+
       <details class="sec" id="specBox">
-        <summary>입력 → 출력 규격 <span class="faint" id="specNote"></span></summary>
+        <summary>규격 자세히 <span class="faint" id="specNote"></span></summary>
         <p class="note" id="specState"></p>
         <div class="spec" id="specTable"></div>
       </details>
@@ -513,6 +529,31 @@
     <p class="faint" style="margin:10px 2px">결과는 결과 폴더의 01_이름 에 저장됩니다. 다시 실행하면 01_이름_v2 처럼 새로 쌓입니다. 설정은 _settings.json, 전체 요약은 verification.json 에 남습니다.</p>
   </div>
 </main>
+
+<details class="how" id="howBox">
+  <summary class="how-sum">작동 흐름 · 쓰는 모델 · 이 PC 점검 <span class="faint" id="howSum"></span></summary>
+  <div class="how-row">
+    <div class="how-t">지금 이렇게<br>돌아갑니다<br><span class="faint" style="font-weight:400">고르는 대로 바뀜</span></div>
+    <div class="flow" id="flow" style="flex:1"></div>
+  </div>
+  <details class="how-row models">
+    <summary class="how-t" style="cursor:pointer">단계 설명</summary>
+    <ol>
+      <li><b>사람 찾기</b><span>영상 전체에서 머리를 찾아 사람마다 번호를 붙입니다. 옆모습과 뒤통수도 찾습니다.</span></li>
+      <li><b>표정 찾기</b><span>표정 카드를 고르면 머리를 크게 키워 얼굴 점 478개를 찍습니다.</span></li>
+      <li><b>카드 겹치기</b><span>고른 순서대로 원본이나 검은 바탕 위에 겹칩니다. 나중에 고른 카드가 위로 갑니다.</span></li>
+      <li><b>저장</b><span>원본과 같은 해상도, fps, 색공간, 소리로 mp4를 만듭니다. 카드별 투명 레이어(MOV)도 뺄 수 있습니다. 모든 처리는 이 PC에서 합니다.</span></li>
+    </ol>
+  </details>
+  <details class="how-row models">
+    <summary class="how-t" style="cursor:pointer">쓰는 모델 자세히</summary>
+    <div class="list" id="models"></div>
+  </details>
+  <details class="how-row models" id="syscheckBox">
+    <summary class="how-t" style="cursor:pointer">이 PC 점검 <span class="faint" id="syscheckSum"></span></summary>
+    <div class="list" id="syscheck"></div>
+  </details>
+</details>
 
 <script>
 "use strict";
@@ -905,22 +946,24 @@ class FilePicker {
 /** 내보내기 — 큰 카드 3장(조합 · 투명 레이어 · 확인용)이 아래 낱개 목록(FilePicker)을 대신 켜고 끈다 */
 class ExportPanel {
   static KINDS = [
-    { id: "combo", keys: ["combo"], title: "조합 영상", file: "_combo.mp4", desc: "고른 카드를 다 겹친 한 개. 시댄스에 넣는 파일", spec: "H.264 고정 비트레이트 · 원본 해상도 · fps · 색공간 · 소리" },
-    { id: "layers", keys: ["layers"], title: "카드별 투명 레이어", file: "_layer1 … N.mov", desc: "카드마다 따로, 배경 투명. AE · 프리미어에서 원본 위에 쌓기", spec: "PNG 무손실 · RGBA · 원본 크기 · 소리 없음" },
-    { id: "check", keys: ["compare", "preview", "contact"], title: "확인용", file: "_compare · _preview · _contact", desc: "원본 | 결과 | 추적 3칸 비교 영상 · 정지 그림 · 9칸 시트", spec: "H.264 · 1920 폭 · JPG" },
+    { id: "combo", keys: ["combo"], title: "조합 영상", fmt: "H.264 · .mp4", desc: "고른 카드를 다 겹친 한 개. 시댄스에 넣는 파일" },
+    { id: "layers", keys: ["layers"], title: "카드별 투명 레이어", fmt: "PNG · .mov · 알파", desc: "카드마다 따로, 배경 투명. AE · 프리미어 합성용" },
+    { id: "check", keys: ["compare", "preview", "contact"], title: "확인용", fmt: "mp4 · jpg", desc: "원본 | 결과 | 추적 비교 영상, 정지 그림, 9칸 시트" },
   ];
   constructor(files, onChange) {
     this.files = files; this.onChange = onChange;
     $("xcards").innerHTML = "";
     for (const k of ExportPanel.KINDS) {
-      const b = document.createElement("button");
-      b.type = "button"; b.className = "xcard"; b.dataset.id = k.id;
-      b.innerHTML = `<span class="tick">✓</span><div class="xt"></div><div class="xf"></div><div class="xd"></div><div class="xs"></div>`;
-      b.querySelector(".xt").textContent = k.title; b.querySelector(".xf").textContent = k.file;
-      b.querySelector(".xd").textContent = k.desc; b.querySelector(".xs").textContent = k.spec;
-      b.onclick = () => this.toggle(k);
-      $("xcards").appendChild(b);
+      const row = document.createElement("label");
+      row.className = "xitem"; row.dataset.id = k.id;
+      row.innerHTML = `<input type="checkbox"><div class="xm"><div class="xt"></div><div class="xd"></div></div><span class="xf"></span>`;
+      row.querySelector(".xt").textContent = k.title; row.querySelector(".xd").textContent = k.desc; row.querySelector(".xf").textContent = k.fmt;
+      row.querySelector("input").onchange = () => this.toggle(k);
+      $("xcards").appendChild(row);
     }
+    $("rateSeg").querySelectorAll("button").forEach(b => b.onclick = () => {
+      const sel = $("bitrate"); sel.value = b.dataset.mode; sel.dispatchEvent(new Event("change", { bubbles: true }));
+    });
   }
   isOn(k) { const keys = this.files.keys(); return k.keys.every(x => keys.includes(x)); }
   toggle(k) {
@@ -930,12 +973,49 @@ class ExportPanel {
   }
   on(id) { return this.isOn(ExportPanel.KINDS.find(k => k.id === id)); }
   render(recipe, plate) {
-    $("xcards").querySelectorAll(".xcard").forEach(b => { const on = this.isOn(ExportPanel.KINDS.find(k => k.id === b.dataset.id)); b.classList.toggle("sel", on); b.setAttribute("aria-pressed", on); });
+    $("xcards").querySelectorAll(".xitem").forEach(r => { const on = this.isOn(ExportPanel.KINDS.find(k => k.id === r.dataset.id)); r.classList.toggle("sel", on); r.querySelector("input").checked = on; });
+    this.renderVideo(plate);
     this.renderLayers(recipe, plate);
     this.renderSpec(plate);
+    this.renderSummary(recipe, plate);
   }
   stem(plate) { return plate ? plate.file.name.replace(/\.[^.]+$/, "") : "이름"; }
   static mbps(k) { return `${+(k / 1000).toFixed(1)}Mbps`; }
+  /** 지금 고른 방식의 목표 비트레이트 (kbps) — 플레이트가 없으면 1080p 기준 */
+  targetKbps(plate) {
+    const b = plate && plate.spec && plate.spec.table && plate.spec.table.bitrate, mode = $("bitrate").value;
+    return b ? b.options[mode] : 30000;
+  }
+  /** 조합 영상 설정 — 원본에 맞춘 값(잠김) · 비트레이트 · 예상 크기 */
+  renderVideo(plate) {
+    $("videoSet").hidden = !this.on("combo");
+    const s = plate && plate.spec, mode = $("bitrate").value;
+    $("rateSeg").querySelectorAll("button").forEach(b => b.classList.toggle("sel", b.dataset.mode === mode));
+    const chips = s && s.width ? [`${s.width}×${s.height}`, s.fps ? `${+(+s.fps).toFixed(3)}fps` : "", s.color ? `${s.color.matrix} ${s.color.range}` : "",
+                                  s.audio_codec ? `소리 ${s.audio_copyable ? s.audio_codec + " 복사" : "AAC 변환"}` : (s.fps ? "소리 없음" : "")].filter(Boolean)
+                                : ["해상도", "fps", "색공간", "소리"];
+    const box = $("matchChips"); box.innerHTML = "";
+    for (const c of chips) { const e = document.createElement("span"); e.className = "chip lock"; e.textContent = c; box.appendChild(e); }
+    const k = this.targetKbps(plate), b = s && s.table && s.table.bitrate;
+    $("rateHint").textContent = mode === "fixed" ? `${ExportPanel.mbps(k)} 고정 (CBR) · 2K 까지 30 · 4K 50Mbps`
+      : b && b.input ? `${ExportPanel.mbps(k)} 고정 (CBR) · 원본 ${ExportPanel.mbps(b.input)}` : "원본 값을 모르면 해상도 기준 값";
+    const sec = s && s.duration;
+    if (!sec) { $("sizeEst").textContent = plate && !plate.isVideo ? "이미지 (PNG)" : "-"; $("sizeNote").textContent = plate ? "" : "플레이트를 넣으면 계산"; return; }
+    const mb = (k + 192) * sec / 8 / 1000;
+    $("sizeEst").textContent = `약 ${mb < 10 ? mb.toFixed(1) : Math.round(mb)}MB`;
+    $("sizeNote").textContent = `${(+sec).toFixed(1)}초 기준` + (mb > 200 ? " · 시댄스 200MB 를 넘음" : " · 시댄스 200MB 안");
+    $("sizeNote").classList.toggle("bad", mb > 200);
+  }
+  /** 한 줄 요약 — 무엇이 몇 개 나오는지 */
+  renderSummary(recipe, plate) {
+    const parts = [];
+    const vid = !plate || plate.isVideo;
+    if (this.on("combo")) parts.push(`${this.stem(plate)}_combo.${vid ? "mp4" : "png"}`);
+    if (this.on("layers")) parts.push(`투명 레이어 ${recipe.recipe.length}개`);
+    if (this.on("check")) parts.push("확인용 3개");
+    $("exportSum").textContent = parts.length ? "나올 파일: " + parts.join(" · ") : "나올 파일이 없습니다. 위에서 하나 이상 고르세요";
+    $("exportSum").classList.toggle("bad", !parts.length);
+  }
   /** 규격표 비트레이트 줄 — 서버는 두 방식 값을 다 주고, 여기서 고른 방식으로 조합 칸을 채운다 */
   bitrateRow(r, b) {
     if (!b) return r;
@@ -1304,6 +1384,7 @@ class SystemPanel {
     const warn = items.filter(r => r.status !== "ok").length;
     $("syscheckSum").textContent = items.length ? (warn ? `· 알아둘 것 ${warn}개` : `· ${items.length}개 모두 정상 (눌러서 보기)`) : "";
     $("syscheckBox").open = warn > 0;   // 문제가 있을 때만 펼쳐 둔다
+    if (warn) { $("howBox").open = true; $("howSum").textContent = `· 이 PC 점검: 알아둘 것 ${warn}개`; }
     for (const r of items) {
       const d = document.createElement("div");
       d.className = "model chk";

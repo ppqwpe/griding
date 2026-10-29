@@ -194,7 +194,7 @@ class MediaInfo:
         d = asdict(self)
         d.pop("path")
         d["color"] = asdict(self.color)
-        d.update(vfr=self.vfr, rate=f"{self.rate.numerator}/{self.rate.denominator}", notes=self.notes(),
+        d.update(vfr=self.vfr, audio_copyable=self.audio_copyable, rate=f"{self.rate.numerator}/{self.rate.denominator}", notes=self.notes(),
                  summary=self.summary(), table=SpecTable.for_video(self))
         return d
 

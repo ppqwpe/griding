@@ -133,7 +133,7 @@
   "레이어 따로 · 표정": "Separate layer · Face",
   "레이어 따로 · 가리기": "Separate layer · Cover",
   "조합 영상": "Combo video",
-  "고른 카드를 다 겹친 한 개. 시댄스에 넣는 파일": "One file with all picked cards stacked. The file to feed to Seedance",
+  "고른 카드를 다 겹친 한 개. 시댄스에 넣는 파일": "All picked cards stacked into one file. This is what goes into Seedance",
   "H.264 고정 비트레이트 · 원본 해상도 · fps · 색공간 · 소리": "H.264 constant bitrate · original resolution · fps · color space · audio",
   "카드별 투명 레이어": "Transparent layer per card",
   "카드마다 따로, 배경 투명. AE · 프리미어에서 원본 위에 쌓기": "One per card, transparent background. Stack over the original in AE or Premiere",
@@ -416,7 +416,31 @@
   "선 · 점 색": "Line · point color",
   "화면 언어": "Language",
   "모두": "All",
-  "원본 규격과 같음": "matches the source spec"
+  "원본 규격과 같음": "matches the source spec",
+  "내보내기": "Export",
+  "조합 영상 설정": "Combo video settings",
+  "원본에 맞춤": "Match source",
+  "해상도 기준": "By resolution",
+  "원본과 같게": "Same as source",
+  "예상 크기": "Est. size",
+  "투명 레이어 파일": "Transparent layer files",
+  "규격 자세히": "Spec details",
+  "나올 파일이 없습니다. 위에서 하나 이상 고르세요": "Nothing to export. Pick at least one above",
+  "PNG · .mov · 알파": "PNG · .mov · alpha",
+  "카드마다 따로, 배경 투명. AE · 프리미어 합성용": "One per card, transparent background. For compositing in AE or Premiere",
+  "원본 | 결과 | 추적 비교 영상, 정지 그림, 9칸 시트": "Original | result | tracking comparison video, still, 9-frame sheet",
+  "작동 흐름 · 쓰는 모델 · 이 PC 점검": "How it works · models · this PC check",
+  "원본 값을 모르면 해상도 기준 값": "Uses the by-resolution value if the source bitrate is unknown",
+  "시댄스 200MB 를 넘음": "over Seedance's 200MB limit",
+  "시댄스 200MB 안": "within Seedance's 200MB limit",
+  "이미지 (PNG)": "Image (PNG)",
+  "플레이트를 넣으면 계산": "calculated once you add a plate",
+  "소리 AAC 변환": "audio → AAC",
+  "확인용 3개": "3 check files",
+  "나올 파일:": "Output files:",
+  "2K 까지 30": "30 up to 2K",
+  "4K 50Mbps": "50Mbps for 4K",
+  "고정 (CBR)": "constant (CBR)"
  },
  "templates": [
   {
@@ -914,6 +938,30 @@
   {
    "ko": "{} 노랑",
    "en": "{0}: yellow"
+  },
+  {
+   "ko": "원본 {}",
+   "en": "source {0}"
+  },
+  {
+   "ko": "약 {}MB",
+   "en": "about {0}MB"
+  },
+  {
+   "ko": "{}초 기준",
+   "en": "for {0}s"
+  },
+  {
+   "ko": "소리 {} 복사",
+   "en": "audio {0} copied"
+  },
+  {
+   "ko": "이 PC 점검: 알아둘 것 {}개",
+   "en": "this PC check: {0} to note"
+  },
+  {
+   "ko": "나올 파일: {}",
+   "en": "Output files: {0}"
   }
  ]
 }
