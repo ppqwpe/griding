@@ -24,7 +24,7 @@ from .blend import bounds, over_color
 from .composer import Composer
 from .facemesh import FaceLines, FacePoints, FaceShape
 from .geometry import Rect
-from .guide import MaskedFaceGuide, REF_WIDTH
+from .guide import MaskedFaceGuide, REF_WIDTH, draw_guide
 from .renderer import GridRenderer
 from .settings import GridSettings
 from .tracker import Track
@@ -132,7 +132,7 @@ class FaceLinesLayer(Layer):
 
     def apply(self, canvas, scene):
         t = max(1, int(round(2 * scene.scale * scene.thick)))
-        return FaceLines.draw(canvas, scene.faces, scene.renderer.settings.guide_bgr, t)
+        return draw_guide(canvas, scene.faces, scene.renderer.settings, line=t)
 
 
 class FacePointsLayer(Layer):
@@ -141,7 +141,7 @@ class FacePointsLayer(Layer):
 
     def apply(self, canvas, scene):
         r = max(1, int(round(1.5 * scene.scale * scene.thick)))
-        return FacePoints.draw(canvas, scene.faces, scene.renderer.settings.guide_bgr, r)
+        return draw_guide(canvas, scene.faces, scene.renderer.settings, dot=r)
 
 
 class HeadBoxLayer(Layer):

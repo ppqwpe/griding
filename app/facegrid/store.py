@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 import threading
@@ -62,24 +63,48 @@ class UploadStore:
         self._meta(fid).write_text(json.dumps({"name": name}, ensure_ascii=False), encoding="utf-8")
         return fid
 
+    def link(self, source: Path) -> str:
+        """파일 고르기 창에서 고른 원본 — 복사하지 않고 위치만 기억한다 (원본 옆에 저장할 수 있게)"""
+        source = Path(source)
+        ext = source.suffix.lower()
+        if ext not in config.VIDEO_EXT + config.IMAGE_EXT:
+            raise UploadError(f"지원하지 않는 파일입니다: {source.name}")
+        if not source.is_file():
+            raise UploadError(f"파일이 없습니다: {source}")
+        fid = uuid.uuid4().hex[:12] + ext
+        self._meta(fid).write_text(json.dumps({"name": source.name, "path": str(source.resolve())}, ensure_ascii=False), encoding="utf-8")
+        return fid
+
+    def _info(self, fid: str) -> dict:
+        try:
+            d = json.loads(self._meta(fid).read_text(encoding="utf-8"))
+            return d if isinstance(d, dict) else {}
+        except (OSError, ValueError):
+            return {}
+
     def path(self, fid: str) -> Path:
         if not _ID.match(fid or ""):
             raise UploadError("파일을 다시 넣어 주세요")
-        p = self._root / fid
+        p = self.source_path(fid) or self._root / fid
         if not p.is_file():
             raise UploadError("파일을 다시 넣어 주세요 (앱을 다시 켰다면 올린 파일이 지워졌습니다)")
         return p
 
+    def source_path(self, fid: str) -> Optional[Path]:
+        """고르기 창으로 넣은 원본의 실제 위치 (끌어다 놓은 파일은 None — 브라우저가 위치를 안 알려 줌)"""
+        if not _ID.match(fid or ""):
+            return None
+        p = self._info(fid).get("path")
+        return Path(p) if p else None
+
     def name(self, fid: str) -> str:
-        try:
-            return json.loads(self._meta(fid).read_text(encoding="utf-8"))["name"]
-        except (OSError, ValueError, KeyError):
-            return fid
+        return self._info(fid).get("name") or fid
 
     def _meta(self, fid: str) -> Path:
         return self._root / (fid + ".json")
 
     def remove(self, fid: str) -> None:
+        """올린 사본과 기록만 지운다 — 고르기 창으로 넣은 원본은 절대 건드리지 않는다"""
         if _ID.match(fid or ""):
             for p in (self._root / fid, self._meta(fid)):
                 p.unlink(missing_ok=True)
@@ -96,11 +121,71 @@ class UploadStore:
         return n
 
 
+class BesideSource:
+    """원본 폴더에 이름 뒤에 붙여 저장 — D:\\shots\\plate.mp4 → D:\\shots\\plate_combo.mp4 · plate_settings.json …
+
+    만드는 동안은 원본 폴더 안 숨은 임시 폴더(.griding_xxxxxxxx)에 쓰고 다 되면 옮긴다.
+    실패하면 임시 폴더만 지우므로 원본 폴더의 다른 파일은 건드리지 않는다.
+      version   : plate → plate_v2 → plate_v3 … (plate_settings.json 이 있으면 쓰인 이름)
+      overwrite : plate 그대로, 같은 이름 파일만 바꿔 씀
+    """
+
+    def __init__(self, source: Path, mode: str = "version"):
+        self.dir = Path(source).parent
+        self.base = ResultStore.safe_stem(Path(source).name)
+        self.mode = mode
+        self.staging: Optional[Path] = None
+
+    def writable(self) -> bool:
+        return self.dir.is_dir() and config.writable(self.dir)
+
+    def _name(self, n: int) -> str:
+        return self.base if n == 1 else f"{self.base}_v{n}"
+
+    def stem(self) -> str:
+        if self.mode == "overwrite":
+            return self.base
+        n = 1
+        while (self.dir / f"{self._name(n)}_settings.json").exists():
+            n += 1
+        return self._name(n)
+
+    def open(self) -> tuple[Path, str]:
+        self.staging = self.dir / f".griding_{uuid.uuid4().hex[:8]}"
+        self.staging.mkdir()
+        return self.staging, self.stem()
+
+    def commit(self) -> None:
+        for f in self.staging.iterdir():
+            os.replace(f, self.dir / f.name)
+        self.staging.rmdir()
+        self.staging = None
+
+    def discard(self) -> None:
+        if self.staging is not None:
+            shutil.rmtree(self.staging, ignore_errors=True)
+            self.staging = None
+
+
 class ResultStore:
     def __init__(self, root: Path = config.RESULT_DIR):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.Lock()
+        self._outside: dict[str, tuple[Path, set[str]]] = {}   # '@1' → (원본 옆 폴더, 그 작업이 만든 파일 이름)
+
+    def register(self, folder: Path, files: list[str]) -> str:
+        """결과 폴더 밖(원본 옆)에 쓴 결과에 '@번호' 이름을 붙여 기억 — 받기 · 폴더 열기용.
+        그 작업이 만든 파일만 내준다 (원본 폴더의 다른 파일은 화면에서 못 읽음)."""
+        folder = Path(folder).resolve()
+        with self._lock:
+            for k, (d, names) in self._outside.items():
+                if d == folder:
+                    names.update(files)
+                    return k
+            key = f"@{len(self._outside) + 1}"
+            self._outside[key] = (folder, set(files))
+        return key
 
     @staticmethod
     def safe_stem(filename: str) -> str:
@@ -143,6 +228,10 @@ class ResultStore:
         parts = [p for p in relative.replace("\\", "/").split("/") if p not in ("", ".", "..")]
         if not parts:
             return None
+        if parts[0] in self._outside:
+            folder, names = self._outside[parts[0]]
+            f = folder / parts[1] if len(parts) == 2 and parts[1] in names else None
+            return f if f is not None and f.is_file() else None
         p = (self.root / Path(*parts)).resolve()
         try:
             p.relative_to(self.root.resolve())
@@ -151,6 +240,8 @@ class ResultStore:
         return p if p.is_file() else None
 
     def folder(self, name: str) -> Path:
+        if name in self._outside:
+            return self._outside[name][0]
         base = Path(name).name
         if not name or base in ("", ".", ".."):
             return self.root

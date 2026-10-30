@@ -41,6 +41,7 @@ class GridSettings:
     mask_source: str = "face"      # face = 얼굴 윤곽을 넓혀 가림 | head = 머리 전체(귀 · 머리카락까지)
     mask_grow: float = 0.12        # 얼굴 윤곽을 바깥으로 넓히는 정도 (얼굴 폭 비율)
     guide_color: str = "#DC281E"   # 점 · 선 색 (격자와 같은 빨강)
+    guide_alpha: float = 1.0       # 점 · 선 불투명도
     # 조합 (_combo): 바탕 위에 recipe 순서대로 레이어를 겹친다 (layers.py 의 Layer.key)
     base: str = "original"         # original = 원본 위에 | black = 검은 바탕 위에
     recipe: tuple = ()             # 비어 있으면 아무것도 안 겹침 — 격자도 고를 때만 들어간다
@@ -55,6 +56,7 @@ class GridSettings:
         "thickness": (0.1, 20.0), "min_px": (1, 32), "expand_x": (-0.5, 2.0), "expand_top": (-0.5, 2.0),
         "expand_bottom": (-0.5, 2.0), "overhang": (0.0, 1.0), "threshold": (0.01, 0.95),
         "smooth": (0.0, 0.95), "hold": (0, 240), "mask_grow": (0.0, 1.0), "cover_alpha": (0.0, 1.0), "head_cover_alpha": (0.0, 1.0),
+        "guide_alpha": (0.0, 1.0),
     }
     CLIPS = ("box", "mask")
     MASK_SHAPES = ("oval", "box")

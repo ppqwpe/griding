@@ -151,7 +151,8 @@ class FaceGridPipeline:
     # ── 전체 ──
     def run(self, source: MediaSource, folder: Path, stem: str, settings: GridSettings,
             output_keys=None, progress: Progress = lambda f, t: None,
-            scan: Optional[TrackScan] = None) -> JobSummary:
+            scan: Optional[TrackScan] = None, folder_name: Optional[str] = None) -> JobSummary:
+        """folder_name: 기록에 남길 폴더 이름 (원본 옆 저장은 임시 폴더에 쓰고 옮기므로 실제 폴더 이름을 따로 받음)"""
         folder.mkdir(parents=True, exist_ok=True)
         t0 = time.time()
         outputs = self._catalog.build(output_keys)
@@ -165,7 +166,7 @@ class FaceGridPipeline:
         renderer = GridRenderer(settings)
         recipe = Recipe.from_settings(settings)
         target = OutputTarget(folder, stem, source, scan.frame_count, settings.bitrate)
-        summary = JobSummary(source=source.path.name, folder=folder.name, settings=settings.to_dict(),
+        summary = JobSummary(source=source.path.name, folder=folder_name or folder.name, settings=settings.to_dict(),
                              fps=source.fps, resolution=list(source.size), device=self._detector.device,
                              people_count=len(scan.people), max_together=scan.max_together,
                              people=[{k: v for k, v in p.describe(source.fps).items() if k != "thumb"} for p in scan.people])

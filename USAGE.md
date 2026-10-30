@@ -13,11 +13,26 @@ Keep the console window open while you work. If the browser does not open, paste
 (something like `http://127.0.0.1:7860/`) into Chrome or Edge.
 Switch the language with **[한국어 | English]** at the top right.
 
+## Screen layout
+
+On a wide screen (1500 px and up at 100% zoom) everything fits on one screen. The header stays put and each of the three columns scrolls on its own:
+
+| Left | Middle | Right |
+|---|---|---|
+| ① Plates · source/result view · ⑤ Run | ② People · ④ Export | ③ Cards · how it works |
+
+On narrower screens the page scrolls as one, with ② ③ ④ stacked next to ① ⑤.
+
 ## Steps
 
 ### ① Add plates
 
-Drag in videos or images. Several plates are processed one after another.
+**Click the box** to open the Windows file dialog, or **drag files** onto it. Up to 20 plates at a time.
+
+- Files you **choose in the dialog** keep their real location, so results can be saved next to them (see ⑤). They are not copied.
+- Files you **drag in** are uploaded to the app. The browser does not tell the app where they came from, so their results go to the `results` folder.
+
+Each plate gets a row in the list: thumbnail, name, spec, status (Waiting · Processing % · Done · Error), and buttons for **Download**, **Folder**, **Run again** and **✕** (removes it from the list; the file stays). Click a row to work on that plate.
 Below the source you see resolution, fps, length, color space and audio. Anything worth knowing is shown in yellow.
 
 ### ② Check people
@@ -30,8 +45,9 @@ Keep the people you want covered and click the rest to drop them. After a cut, t
 - Start from a preset button (Grid only, Masked face guide …) or click cards to stack them.
 - Cards picked later sit on top. Reorder them with ↑↓ under **[Stack order]**.
 - Choose the background: over the source, or black.
-- **[Card settings]** shows settings only for the cards you picked. Masks and the grid each have their own color palette and opacity.
+- **[Card settings]** shows settings only for the cards you picked. Masks, the grid, and face lines/points each have their own color palette and opacity.
 - Before a plate is added, the preview uses the sample character.
+- **[Use this combo for: All plates | This plate only]** — by default every plate uses the same combo. Pick **This plate only** to give the selected plate its own combo; it is marked **Own combo** in the plate list, and switching back to **All plates** returns it to the shared one. Each plate runs with its own combo when you press **[Run all]**.
 
 ### ④ Export
 
@@ -57,8 +73,18 @@ Open **[Spec details]** to see, item by item, how the source maps to the result.
 
 Check one frame with **[Preview this frame]**, then press **[Run all]**.
 When it finishes, each file shows a "matches source spec" check and a **[Download]** button.
-Running the same plate again stacks a new folder by default: `01_name_v2`, `_v3` …
-Switch to **[Overwrite the same folder]** if you prefer, or use **[Run again]** in the job list to redo just that plate.
+
+**Save to**
+
+| Choice | Where the files go |
+|---|---|
+| Source folder (suffix on the name) | Next to the original: `D:\shots\plate.mp4` → `D:\shots\plate_combo.mp4`, `plate_layer1_grid.mov`, `plate_settings.json` … Files are written to a hidden temporary folder first and moved in only when the run succeeds, so a failed run leaves nothing behind. If the folder is not writable, or the plate was dragged in, the results go to the `results` folder instead and the screen says so |
+| results folder | A numbered folder per plate: `results\01_plate\plate_combo.mp4` |
+
+**On a re-run** — **[New version (_v2 · _v3)]** keeps earlier results (`plate_v2_combo.mp4`, or `results\01_plate_v2\`); **[Overwrite]** replaces files with the same names.
+The line under the buttons shows the actual file name the selected plate will get.
+
+**Versions** — every run of a plate is listed under ⑤ as `v1`, `v2` … with the time, the combo used and where it was saved. Click a version to see its files again. The plate list shows the latest version number. Use **[Run again]** in the list to redo just one plate.
 
 ## Cards
 
@@ -67,8 +93,8 @@ Switch to **[Overwrite the same folder]** if you prefer, or use **[Run again]** 
 | Mask · face outline | Covers the face outline, slightly widened. Profiles and the back of the head, where no face is found, are covered with the head box |
 | Mask · whole head | Covers the whole head including ears and hair. Works without face landmarks |
 | Grid | Puts a grid over the head. 8 patterns (grid, diagonal grid, horizontal lines, vertical lines, dots, checker, X cross, filled box) |
-| Face lines | Eyes, brows, mouth, nose and face outline (red by default) |
-| Face points | 478 face points (red by default) |
+| Face lines | Eyes, brows, mouth, nose and face outline (red by default, opacity adjustable) |
+| Face points | 478 face points (red by default, opacity adjustable) |
 | Tracking boxes | Detected head boxes with numbers. Green = detected, orange (HOLD) = briefly lost and held |
 
 - Mask opacity below 100% lets the original face show through. If a face is visible, Seedance may reject the clip.
@@ -141,7 +167,7 @@ The PC is checked on every launch ("PC check" at the bottom of the screen, `work
 | App folder is not writable | Results move to `Documents\Griding results` automatically |
 | Run straight from inside the zip | Tells you to extract first |
 
-If it still fails, run the self-test: `app\python\python.exe app\tests\run_tests.py` (155 tests)
+If it still fails, run the self-test: `app\python\python.exe app\tests\run_tests.py` (163 tests)
 
 ## Moving to another PC
 

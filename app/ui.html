@@ -46,6 +46,7 @@
   .model { font-size: 12px; color: var(--dim); line-height: 1.45; }
   .chk b.ok { color: #3fb950; } .chk b.warn { color: #d29922; } .chk b.fail { color: #ff7b72; }
   .chk .fix { color: var(--text); }
+  .bang::before { content: "! "; }
   .notes { font-size: 12px; color: #d29922; margin-top: 4px; line-height: 1.5; }
   .model b { color: var(--text); font-size: 12.5px; }
   .model .tag { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line2); color: #cfcfcf; margin: 2px 0; }
@@ -237,14 +238,76 @@
   .rfile a:hover { border-color: var(--accent); }
 
   /* ── 화면 폭 고정: 큰 모니터에서도 늘어나지 않고 가운데 ── */
-  :root { --page: 1440px; }
+  :root { --page: 1880px; }
   header.top > *, .how, main { max-width: var(--page); }
   header.top { justify-content: center; }
   header.top .inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; width: 100%; max-width: var(--page); }
   .how { margin-left: auto !important; margin-right: auto !important; }
-  main { margin: 0 auto; grid-template-columns: minmax(0, 1fr) 500px; }
-  @media (max-width: 1040px) { main { grid-template-columns: 1fr; } }
-  .view { max-height: 46vh; }
+  /* 100% 배율 한 화면 (넓은 화면): 머리는 고정, 세 열이 각자 스크롤 — 한 열을 내려도 나머지는 그대로
+       ①⑤ 작업대 | ② 사람 · ④ 내보내기 | ③ 카드 · 작동 흐름 */
+  .how { margin: 14px 0 0 !important; }
+  .people { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); max-height: 34vh; overflow-y: auto; padding-right: 2px; }
+  @media (min-width: 1500px) {
+    body { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    header.top { position: static; flex: none; }
+    main { flex: 1; min-height: 0; width: 100%; margin: 0 auto; padding-bottom: 14px;
+           grid-template-columns: minmax(0, 1.25fr) minmax(330px, .72fr) minmax(400px, 1fr); align-items: stretch; }
+    .work, .col-people, .col-cards { position: static; min-height: 0; overflow-y: auto; scrollbar-gutter: stable; padding-right: 4px; align-content: start; }
+    .work { display: grid; gap: 16px; }
+    .col-people, .col-cards { display: grid; gap: 14px; align-content: start; }
+    .col-people > .panel, .col-cards > .panel { margin-top: 0; }
+    .work::-webkit-scrollbar, .col-people::-webkit-scrollbar, .col-cards::-webkit-scrollbar { width: 8px; }
+    .work::-webkit-scrollbar-thumb, .col-people::-webkit-scrollbar-thumb, .col-cards::-webkit-scrollbar-thumb { background: #2c2c2c; border-radius: 4px; }
+  }
+  /* 좁은 화면: 페이지 하나로 스크롤 (① ⑤ 옆에 ② ③ ④ 차례로) */
+  @media (max-width: 1499px) {
+    main { grid-template-columns: minmax(0, 1fr) 500px; grid-template-areas: "work people" "work cards" "work export" "work how"; }
+    .col-people, .col-cards { display: contents; }
+    .work { grid-area: work; position: static; } #peoplePanel { grid-area: people; } #cardPanel { grid-area: cards; } #exportPanel { grid-area: export; } #howBox { grid-area: how; }
+    #peoplePanel, #cardPanel, #exportPanel, #howBox { margin-top: 0 !important; }
+    .people { max-height: 420px; }
+  }
+  @media (max-width: 1040px) { main { grid-template-columns: 1fr; grid-template-areas: "work" "people" "cards" "export" "how"; } }
+  .view { max-height: 34vh; }
+  /* ① 플레이트 목록 */
+  .phead { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .phead h2 { margin: 0; flex: 1; }
+  #drop { padding: 12px 16px; }
+  #drop b { font-size: 14px; }
+  .bin { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; max-height: 196px; overflow-y: auto; }
+  .bin li { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; background: #161616;
+            border: 1px solid var(--line); border-radius: 10px; padding: 4px 8px 4px 4px; cursor: pointer; }
+  .bin li:hover { border-color: var(--line2); }
+  .bin li.sel { border-color: var(--accent); background: #241f1e; }
+  .bin .th { width: 64px; height: 36px; border-radius: 6px; background: #000; overflow: hidden; display: grid; place-items: center; }
+  .bin .th video, .bin .th img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+  .bin .nm { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bin .sp { font-size: 11px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bin .pill { font-size: 11px; padding: 1px 9px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line2); color: var(--dim); white-space: nowrap; }
+  .bin .pill.run { color: #fff; border-color: var(--accent); }
+  .bin .pill.ok { color: var(--ok); border-color: #24442b; } .bin .pill.err { color: #ff7b72; border-color: #5a2522; } .bin .pill.warn { color: var(--warn); }
+  .bin .ops { display: flex; gap: 4px; }
+  .bin .ops button, .bin .ops a { background: #262626; border: 1px solid var(--line2); color: var(--text); border-radius: 999px; font-size: 11.5px; padding: 2px 9px;
+                                  cursor: pointer; text-decoration: none; white-space: nowrap; }
+  .bin .ops button:hover, .bin .ops a:hover { border-color: #666; }
+  .bin .ops .x { width: 24px; padding: 2px 0; text-align: center; }
+  .bin .src { color: var(--faint); font-size: 10.5px; margin-left: 4px; }
+  .scope { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: -4px 0 12px; }
+  .scope .seg button { padding: 5px 11px; font-size: 12.5px; }
+  .bin .tag { display: inline-block; font-size: 10.5px; padding: 0 7px; border-radius: 999px; border: 1px solid var(--line2); color: #cfcfcf; margin-left: 6px; }
+  .bin .tag.own { border-color: var(--accent); color: #ffb3ae; }
+  .versions { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; margin-top: 10px; }
+  .vchip { font-size: 11.5px; padding: 3px 10px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line2); color: var(--text); cursor: pointer; }
+  .vchip.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .vchip small { color: var(--dim); margin-left: 4px; }
+  /* 펼치기: 눌렀을 때 미끄러지듯 열리고 닫힘 (Collapse) */
+  details.sec > .body, details.how > .body { overflow: hidden; }
+  .files details.fgrp { border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; background: #171717; }
+  .files details.fgrp > summary { cursor: pointer; list-style: none; font-size: 12.5px; font-weight: 600; display: flex; gap: 8px; align-items: center; }
+  .files details.fgrp > summary::-webkit-details-marker { display: none; }
+  .files details.fgrp > summary::before { content: "▸"; color: var(--dim); transition: transform .2s; }
+  .files details.fgrp[open] > summary::before { transform: rotate(90deg); }
+  .files details.fgrp > .body { display: grid; gap: 6px; padding-top: 8px; }
   .seg.lang button { padding: 4px 10px; font-size: 12px; }
   #langSeg { margin-left: auto; }
   #langSeg + #status { margin-left: 0; }
@@ -306,7 +369,7 @@
 </head>
 <body>
 <header class="top"><div class="inner">
-  <div class="brand"><img src="/icon.png" alt=""><img class="name" src="/name.png" alt="Griding"><span>실사 얼굴 → 시댄스용 플레이트</span></div>
+  <div class="brand"><img src="/icon.png" alt=""><img class="name" src="/name.png" alt="Griding"></div>
   <div class="seg lang" id="langSeg" title="화면 언어">
     <button type="button" data-lang="ko">한국어</button>
     <button type="button" data-lang="en">English</button>
@@ -319,11 +382,13 @@
   <!-- 왼쪽: 작업대 -->
   <div class="work">
     <section class="panel">
-      <h2><span class="n">1</span>플레이트 넣기</h2>
-      <p class="sub">영상이나 이미지를 넣으세요. 여러 개를 넣으면 차례로 처리합니다.</p>
+      <div class="phead"><h2><span class="n">1</span>플레이트 넣기 <span class="faint" id="plateCount"></span></h2>
+        <button class="btn small" id="openOut" type="button">results 폴더 열기</button>
+        <button class="btn small" id="clear" type="button">목록 비우기</button></div>
       <div id="drop" tabindex="0" role="button" aria-label="플레이트 파일 선택">
-        <b>여기에 끌어다 놓기</b>클릭해서 골라도 됩니다 (mp4, mov, png, jpg)
+        <b>클릭해서 고르기 · 끌어다 놓기</b>mp4, mov, png, jpg · 한 번에 여러 개
         <input type="file" id="file" accept="video/*,image/*" multiple hidden></div>
+      <ul class="bin" id="plates"></ul>
       <div class="stage">
         <div>
           <div class="viewhead"><span class="t">원본</span></div>
@@ -343,28 +408,28 @@
         <button class="btn" id="previewBtn" type="button" disabled>이 프레임 미리보기</button>
         <button class="btn primary" id="runBtn" type="button" disabled>전체 실행</button>
       </div>
+      <div class="rerun">저장 위치
+        <div class="seg" id="placeSeg">
+          <button type="button" data-place="source">원본 폴더 (이름 뒤에 붙임)</button>
+          <button type="button" data-place="results">results 폴더</button>
+        </div>
+      </div>
       <div class="rerun">다시 실행하면
         <div class="seg" id="saveSeg">
           <button type="button" data-mode="version">새 버전으로 쌓기 (_v2 · _v3)</button>
-          <button type="button" data-mode="overwrite">같은 폴더에 덮어쓰기</button>
+          <button type="button" data-mode="overwrite">덮어쓰기</button>
         </div>
       </div>
+      <p class="note" id="placeNote"></p>
       <div class="bar"><i id="bar"></i></div>
       <div id="msg"></div>
+      <div class="versions" id="versions" hidden><span class="xl">버전</span><div class="chips" id="versionChips"></div></div>
       <div class="rfiles" id="outFiles"></div>
-    </section>
-
-    <section class="panel">
-      <div style="display:flex;align-items:center;gap:8px"><h2 style="margin:0;flex:1">작업 목록</h2>
-        <button class="btn small" id="openOut" type="button">결과 폴더 열기</button>
-        <button class="btn small" id="clear" type="button">목록 비우기</button></div>
-      <table id="list"><tbody></tbody></table>
-      <div class="empty" id="emptyList">아직 넣은 플레이트가 없습니다.</div>
     </section>
   </div>
 
-  <!-- 오른쪽: 조합 -->
-  <div>
+  <!-- 가운데: 사람 -->
+  <div class="col-people">
     <section class="panel" id="peoplePanel">
       <h2><span class="n">2</span>사람 확인 <span class="faint" id="peopleCount"></span></h2>
       <p class="sub">플레이트를 넣으면 나오는 사람을 찾아 번호를 붙입니다. 가릴 사람만 고르세요.</p>
@@ -379,9 +444,72 @@
       <p class="note" id="peopleNote">찾지 않으면 영상에 나오는 모든 사람을 가립니다.</p>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="exportPanel">
+      <h2><span class="n">4</span>내보내기</h2>
+
+      <div class="xlist" id="xcards"></div>
+
+      <div class="xset" id="videoSet">
+        <div class="xset-t">조합 영상 설정 <span class="faint">H.264 · .mp4</span></div>
+        <div class="xrow">
+          <span class="xl">원본에 맞춤</span>
+          <div class="chips" id="matchChips"></div>
+        </div>
+        <div class="xrow">
+          <span class="xl">비트레이트</span>
+          <div>
+            <div class="seg" id="rateSeg">
+              <button type="button" data-mode="fixed">해상도 기준</button>
+              <button type="button" data-mode="source">원본과 같게</button>
+            </div>
+            <div class="xhint" id="rateHint"></div>
+          </div>
+        </div>
+        <div class="xrow">
+          <span class="xl">예상 크기</span>
+          <div><b id="sizeEst">-</b> <span class="xhint" id="sizeNote"></span></div>
+        </div>
+        <select id="bitrate" hidden>
+          <option value="fixed">fixed</option>
+          <option value="source">source</option>
+        </select>
+      </div>
+
+      <div id="layerBox" hidden>
+        <div class="h4">투명 레이어 파일 <span class="faint">편집기에서 원본 위에 이 순서로 쌓으면 조합과 같은 그림</span></div>
+        <ol class="lfiles" id="layerFiles"></ol>
+      </div>
+
+      <div class="xsum" id="exportSum"></div>
+
+      <details class="sec" id="specBox">
+        <summary>규격 자세히 <span class="faint" id="specNote"></span></summary>
+        <p class="note" id="specState"></p>
+        <div class="spec" id="specTable"></div>
+      </details>
+
+      <details class="sec">
+        <summary>그 밖의 결과물 <span class="faint" id="filesCount"></span></summary>
+        <p class="sub" style="margin-top:8px">확인용 파일과 예전 양식 파일을 하나씩 고릅니다.</p>
+        <div class="files" id="files"></div>
+      </details>
+      <p class="faint" style="margin:12px 0 0">설정은 이름_settings.json 에 함께 남습니다. results 폴더에 저장하면 전체 요약이 verification.json 에 쌓입니다.</p>
+    </section>
+  </div>
+
+  <!-- 오른쪽: 카드 (④ 내보내기는 넓은 화면에서 가운데 열 ② 아래로) -->
+  <div class="col-cards">
+    <section class="panel" id="cardPanel">
       <h2><span class="n">3</span>카드 골라 조합하기</h2>
       <p class="sub">예시 조합을 누르거나 카드를 골라 쌓으세요. 색과 불투명도는 아래에서 바꿉니다.</p>
+      <div class="scope">
+        <span class="xl">이 조합을</span>
+        <div class="seg" id="scopeSeg">
+          <button type="button" data-scope="all">모든 플레이트에</button>
+          <button type="button" data-scope="one">이 플레이트에만</button>
+        </div>
+        <span class="faint" id="scopeNote"></span>
+      </div>
 
       <div class="quick" id="quick">
         <button type="button" data-recipe="grid" data-base="original">격자만 (시댄스)</button>
@@ -448,7 +576,7 @@
 
         <div class="cset" data-for="lines,points">
           <div class="cset-t">표정 선 · 점</div>
-          <div class="colorfield" data-color="guide_color" data-label="선 · 점 색"></div>
+          <div class="colorfield" data-color="guide_color" data-alpha="guide_alpha" data-label="선 · 점 색 · 불투명도"></div>
         </div>
 
         <p class="note" id="opacityNote">불투명도를 100%보다 낮추면 원본 얼굴이 비칩니다. 얼굴이 보이면 시댄스가 거절할 수 있습니다.</p>
@@ -475,85 +603,33 @@
     </section>
 
 
-    <section class="panel" id="exportPanel">
-      <h2><span class="n">4</span>내보내기</h2>
-
-      <div class="xlist" id="xcards"></div>
-
-      <div class="xset" id="videoSet">
-        <div class="xset-t">조합 영상 설정 <span class="faint">H.264 · .mp4</span></div>
-        <div class="xrow">
-          <span class="xl">원본에 맞춤</span>
-          <div class="chips" id="matchChips"></div>
-        </div>
-        <div class="xrow">
-          <span class="xl">비트레이트</span>
-          <div>
-            <div class="seg" id="rateSeg">
-              <button type="button" data-mode="fixed">해상도 기준</button>
-              <button type="button" data-mode="source">원본과 같게</button>
-            </div>
-            <div class="xhint" id="rateHint"></div>
-          </div>
-        </div>
-        <div class="xrow">
-          <span class="xl">예상 크기</span>
-          <div><b id="sizeEst">-</b> <span class="xhint" id="sizeNote"></span></div>
-        </div>
-        <select id="bitrate" hidden>
-          <option value="fixed">fixed</option>
-          <option value="source">source</option>
-        </select>
+    <details class="how" id="howBox">
+      <summary class="how-sum">작동 흐름 · 쓰는 모델 · 이 PC 점검 <span class="faint" id="howSum"></span></summary>
+      <div class="how-row">
+        <div class="how-t">지금 이렇게<br>돌아갑니다<br><span class="faint" style="font-weight:400">고르는 대로 바뀜</span></div>
+        <div class="flow" id="flow" style="flex:1"></div>
       </div>
-
-      <div id="layerBox" hidden>
-        <div class="h4">투명 레이어 파일 <span class="faint">편집기에서 원본 위에 이 순서로 쌓으면 조합과 같은 그림</span></div>
-        <ol class="lfiles" id="layerFiles"></ol>
-      </div>
-
-      <div class="xsum" id="exportSum"></div>
-
-      <details class="sec" id="specBox">
-        <summary>규격 자세히 <span class="faint" id="specNote"></span></summary>
-        <p class="note" id="specState"></p>
-        <div class="spec" id="specTable"></div>
+      <details class="how-row models">
+        <summary class="how-t" style="cursor:pointer">단계 설명</summary>
+        <ol>
+          <li><b>사람 찾기</b><span>영상 전체에서 머리를 찾아 사람마다 번호를 붙입니다. 옆모습과 뒤통수도 찾습니다.</span></li>
+          <li><b>표정 찾기</b><span>표정 카드를 고르면 머리를 크게 키워 얼굴 점 478개를 찍습니다.</span></li>
+          <li><b>카드 겹치기</b><span>고른 순서대로 원본이나 검은 바탕 위에 겹칩니다. 나중에 고른 카드가 위로 갑니다.</span></li>
+          <li><b>저장</b><span>원본과 같은 해상도, fps, 색공간, 소리로 mp4를 만듭니다. 카드별 투명 레이어(MOV)도 뺄 수 있습니다. 모든 처리는 이 PC에서 합니다.</span></li>
+        </ol>
       </details>
-
-      <details class="sec">
-        <summary>그 밖의 결과물 <span class="faint" id="filesCount"></span></summary>
-        <p class="sub" style="margin-top:8px">확인용 파일과 예전 양식 파일을 하나씩 고릅니다.</p>
-        <div class="files" id="files"></div>
+      <details class="how-row models">
+        <summary class="how-t" style="cursor:pointer">쓰는 모델 자세히</summary>
+        <div class="list" id="models"></div>
       </details>
-    </section>
-
-    <p class="faint" style="margin:10px 2px">결과는 결과 폴더의 01_이름 에 저장됩니다. 다시 실행하면 01_이름_v2 처럼 새로 쌓입니다. 설정은 _settings.json, 전체 요약은 verification.json 에 남습니다.</p>
+      <details class="how-row models" id="syscheckBox">
+        <summary class="how-t" style="cursor:pointer">이 PC 점검 <span class="faint" id="syscheckSum"></span></summary>
+        <div class="list" id="syscheck"></div>
+      </details>
+    </details>
   </div>
 </main>
 
-<details class="how" id="howBox">
-  <summary class="how-sum">작동 흐름 · 쓰는 모델 · 이 PC 점검 <span class="faint" id="howSum"></span></summary>
-  <div class="how-row">
-    <div class="how-t">지금 이렇게<br>돌아갑니다<br><span class="faint" style="font-weight:400">고르는 대로 바뀜</span></div>
-    <div class="flow" id="flow" style="flex:1"></div>
-  </div>
-  <details class="how-row models">
-    <summary class="how-t" style="cursor:pointer">단계 설명</summary>
-    <ol>
-      <li><b>사람 찾기</b><span>영상 전체에서 머리를 찾아 사람마다 번호를 붙입니다. 옆모습과 뒤통수도 찾습니다.</span></li>
-      <li><b>표정 찾기</b><span>표정 카드를 고르면 머리를 크게 키워 얼굴 점 478개를 찍습니다.</span></li>
-      <li><b>카드 겹치기</b><span>고른 순서대로 원본이나 검은 바탕 위에 겹칩니다. 나중에 고른 카드가 위로 갑니다.</span></li>
-      <li><b>저장</b><span>원본과 같은 해상도, fps, 색공간, 소리로 mp4를 만듭니다. 카드별 투명 레이어(MOV)도 뺄 수 있습니다. 모든 처리는 이 PC에서 합니다.</span></li>
-    </ol>
-  </details>
-  <details class="how-row models">
-    <summary class="how-t" style="cursor:pointer">쓰는 모델 자세히</summary>
-    <div class="list" id="models"></div>
-  </details>
-  <details class="how-row models" id="syscheckBox">
-    <summary class="how-t" style="cursor:pointer">이 PC 점검 <span class="faint" id="syscheckSum"></span></summary>
-    <div class="list" id="syscheck"></div>
-  </details>
-</details>
 
 <script>
 "use strict";
@@ -695,6 +771,8 @@ class Api {
   run(body) { return this.json("/api/run", body); }
   job(id) { return this.json("/api/job/" + id); }
   open(folder) { return this.json("/api/open", { folder }); }
+  pick() { return this.json("/api/pick", {}); }
+  sourceUrl(id) { return "/source/" + encodeURIComponent(id); }
   async upload(file) {
     const r = await fetch("/api/upload", { method: "POST", headers: { "X-Filename": encodeURIComponent(file.name) }, body: file });
     const j = await r.json().catch(() => ({}));
@@ -719,7 +797,7 @@ class Memory {
 /** 숫자 · 색 설정 폼. data-pct 칸은 화면에선 %, 서버에는 0~1 */
 class SettingsForm {
   static KEYS = ["cols","rows","color","alpha","fill_alpha","thickness","clip","threshold","expand_top","expand_x","expand_bottom","smooth","hold",
-                 "cover_color","cover_alpha","head_cover_color","head_cover_alpha","mask_shape","mask_source","mask_grow","guide_color","model","bitrate"];
+                 "cover_color","cover_alpha","head_cover_color","head_cover_alpha","mask_shape","mask_source","mask_grow","guide_color","guide_alpha","model","bitrate"];
   static DETECT = ["model","threshold","hold","smooth"];   // 이 값이 바뀌면 사람 찾기를 다시 해야 함
   static GRID = ["cols","rows","color","alpha","fill_alpha","thickness","clip"];
   constructor(defaults, onChange) {
@@ -780,10 +858,11 @@ class ColorField {
     el.innerHTML = `<div class="cf-head"><span></span><b></b></div><div class="cf-row"></div>`;
     el.querySelector(".cf-head span").textContent = label || "색";
     const row = el.querySelector(".cf-row");
+    el.setAttribute("role", "group"); el.setAttribute("aria-label", label || "색");
     this.swatches = ColorField.PALETTE.map(([name, hex]) => {
       const b = document.createElement("button");
       b.type = "button"; b.className = "cf-sw"; b.style.background = hex; b.title = name; b.dataset.hex = hex;
-      b.setAttribute("aria-label", `${label || "색"} ${name}`);
+      b.setAttribute("aria-label", name);
       b.onclick = () => this.set(hex);
       row.appendChild(b);
       return b;
@@ -791,7 +870,7 @@ class ColorField {
     this.custom = document.createElement("label");
     this.custom.className = "cf-custom"; this.custom.title = "직접 고르기"; this.custom.textContent = "+";
     this.input = document.createElement("input");
-    this.input.type = "color"; this.input.id = color; this.input.setAttribute("aria-label", `${label || "색"} 직접 고르기`);
+    this.input.type = "color"; this.input.id = color; this.input.setAttribute("aria-label", "직접 고르기");
     this.custom.appendChild(this.input); row.appendChild(this.custom);
     this.input.addEventListener("input", () => this.sync());
     this.hex = el.querySelector(".cf-head b");
@@ -801,7 +880,7 @@ class ColorField {
       a.innerHTML = `<span>불투명도</span><input type="range" id="${alpha}" data-pct min="0" max="100" step="5"><b></b>`;
       el.appendChild(a);
       this.alpha = a.querySelector("input"); this.pct = a.querySelector("b");
-      this.alpha.setAttribute("aria-label", `${label || "색"} 불투명도`);
+      this.alpha.setAttribute("aria-label", "불투명도");
       this.alpha.addEventListener("input", () => this.sync());
     }
   }
@@ -847,6 +926,13 @@ class RecipeBuilder {
     this.changed();
   }
   set(keys, base) { this.recipe = keys.filter(k => this.layers[k]); if (base) this.base = base; this.changed(); }
+  /** 다른 조합(모든 플레이트 공통 · 플레이트 하나 전용)으로 바꿔 보여 주기 */
+  load(c) { this.recipe = [...c.recipe]; this.base = c.base; this.changed(); }
+  snapshot() { return { recipe: [...this.recipe], base: this.base }; }
+  titleOf(c) {
+    const base = c.base === "black" ? "검은 바탕" : "원본";
+    return c.recipe.length ? `${base} + ${c.recipe.map(k => this.layers[k].label).join(" → ")}` : `${base} (카드 없음)`;
+  }
   setBase(b) { this.base = b; this.changed(); }
   changed() { this.render(); this.onChange(); }
   needsFaces() { return this.recipe.some(k => this.layers[k].needs_faces); }
@@ -921,23 +1007,64 @@ class CardGrid {
   select(id) { this.selected = id; this.el.querySelectorAll(".card").forEach(c => c.classList.toggle("sel", c.dataset.id === id)); }
 }
 
+/** 접는 칸(details)을 눌렀을 때 높이를 늘이며 미끄러지듯 열고 닫는다 */
+class Collapse {
+  static SEL = "details.sec, details.how, details.fgrp";
+  static wire(root = document) {
+    if (root.matches && root.matches(Collapse.SEL)) Collapse.#one(root);
+    root.querySelectorAll(Collapse.SEL).forEach(d => Collapse.#one(d));
+  }
+  static #one(d) {
+    if (d.dataset.collapse) return;
+    d.dataset.collapse = "1";
+    const sum = d.querySelector(":scope > summary");
+    let body = d.querySelector(":scope > .body");
+    if (!body) {   // 제목 아래 내용을 한 덩어리로 감싸야 높이를 움직일 수 있다
+      body = document.createElement("div"); body.className = "body";
+      [...d.childNodes].filter(n => n !== sum).forEach(n => body.appendChild(n));
+      d.appendChild(body);
+    }
+    sum.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (d._anim) d._anim.cancel();
+      const opening = !d.open;
+      if (opening) d.open = true;
+      const h = body.scrollHeight;
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) { d.open = opening; return; }
+      const a = body.animate({ height: opening ? ["0px", `${h}px`] : [`${h}px`, "0px"], opacity: opening ? [0, 1] : [1, 0] },
+                             { duration: Math.min(420, 180 + h / 5), easing: "cubic-bezier(.2,.75,.25,1)" });
+      d._anim = a;
+      a.onfinish = () => { d._anim = null; if (!opening) d.open = false; };
+    });
+  }
+}
+
 /** 함께 저장할 파일 (조합 결과 + 확인용 + 레이어 따로) */
 class FilePicker {
   static GROUPS = { combo: "조합", grid: "확인용 · 격자", face: "레이어 따로 · 표정", mask: "레이어 따로 · 가리기" };
   constructor(outputs, saved, known, onChange) {
     this.outputs = Object.fromEntries(outputs.map(o => [o.key, o]));
     this.all = outputs.map(o => o.key);
-    let html = "", last = null;
-    for (const o of outputs) {
-      if (o.group !== last) { html += `<div class="grp">${FilePicker.GROUPS[o.group] || o.group}</div>`; last = o.group; }
-      html += `<label><input type="checkbox" value="${o.key}"><span>${o.label} <code>_${o.key}</code><small>${o.description}</small></span></label>`;
-    }
-    $("files").innerHTML = html;
+    // 묶음마다 접었다 펴는 칸 — 고른 게 있는 묶음만 펼쳐 둔다
+    const groups = [...new Set(outputs.map(o => o.group))];
+    $("files").innerHTML = groups.map(g => `<details class="fgrp" data-g="${g}"><summary><span>${FilePicker.GROUPS[g] || g}</span><span class="faint cnt"></span></summary><div class="body">` +
+      outputs.filter(o => o.group === g).map(o => `<label><input type="checkbox" value="${o.key}"><span>${o.label} <code>_${o.key}</code><small>${o.description}</small></span></label>`).join("") +
+      `</div></details>`).join("");
     const seen = new Set(known || []);          // 저장 뒤 새로 생긴 파일은 기본값대로
     const on = new Set(saved || []);
     for (const o of outputs) if (!seen.has(o.key) && o.default) on.add(o.key);
     $("files").querySelectorAll("input").forEach(c => c.checked = on.has(c.value));
-    $("files").addEventListener("change", onChange);
+    $("files").querySelectorAll(".fgrp").forEach(d => d.open = !!d.querySelector("input:checked"));
+    this.counts();
+    $("files").addEventListener("change", () => { this.counts(); onChange(); });
+    Collapse.wire($("files"));
+  }
+  /** 묶음 제목 옆 'n개 선택' */
+  counts() {
+    $("files").querySelectorAll(".fgrp").forEach(d => {
+      const n = d.querySelectorAll("input:checked").length, all = d.querySelectorAll("input").length;
+      d.querySelector(".cnt").textContent = n ? `${n}개 선택 / ${all}` : `${all}개`;
+    });
   }
   keys() { return [...$("files").querySelectorAll("input:checked")].map(c => c.value); }
   label(key) { return (this.outputs[key] || {}).label || key; }
@@ -979,7 +1106,7 @@ class ExportPanel {
     this.renderSpec(plate);
     this.renderSummary(recipe, plate);
   }
-  stem(plate) { return plate ? plate.file.name.replace(/\.[^.]+$/, "") : "이름"; }
+  stem(plate) { return plate ? plate.name.replace(/\.[^.]+$/, "") : "이름"; }
   static mbps(k) { return `${+(k / 1000).toFixed(1)}Mbps`; }
   /** 지금 고른 방식의 목표 비트레이트 (kbps) — 플레이트가 없으면 1080p 기준 */
   targetKbps(plate) {
@@ -1108,7 +1235,7 @@ class FlowView {
     const arrow = () => { const a = document.createElement("div"); a.className = "farrow"; a.textContent = "→"; return a; };
     const spec = s.plate && s.plate.spec;
     const nodes = [
-      this.node("입", "넣은 파일", s.plate ? s.plate.file.name : "아직 없음",
+      this.node("입", "넣은 파일", s.plate ? s.plate.name : "아직 없음",
                 spec ? spec.summary : (s.plate ? "규격 읽는 중…" : "영상 · 이미지를 넣으면 규격이 여기"), "io"),
       this.node(1, "머리 찾기", s.model === "accurate" ? "YOLO11m head (정확)" : "YOLO11s head (빠름)",
                 `ONNX Runtime · ${s.device === "GPU" ? "그래픽카드" : "CPU"} · 옆모습 · 뒤통수도`),
@@ -1159,24 +1286,35 @@ class ResultFiles {
         box.appendChild(row);
       }
     }
-    const o = document.createElement("a"); o.href = "#"; o.textContent = `results\\${r.folder} 폴더 열기`;
-    o.style.cssText = "font-size:12px;color:var(--text);margin-top:4px"; o.onclick = (e) => { e.preventDefault(); this.api.open(r.folder); };
+    if (r.note) { const n = document.createElement("div"); n.className = "notes bang"; n.textContent = r.note; box.appendChild(n); }
+    const o = document.createElement("a"); o.href = "#"; o.textContent = `${r.where} 폴더 열기`;
+    o.style.cssText = "font-size:12px;color:var(--text);margin-top:4px;word-break:break-all"; o.onclick = (e) => { e.preventDefault(); this.api.open(r.folder); };
     box.appendChild(o);
   }
 }
 
 /** 넣은 플레이트 하나 */
 class Plate {
-  constructor(file) {
-    this.file = file; this.id = null; this.state = "wait"; this.msg = "대기"; this.result = null; this.url = URL.createObjectURL(file);
+  /** 끌어다 놓은 파일(File) 또는 고르기 창으로 고른 원본(서버가 위치를 아는 것) 하나 */
+  constructor(file, picked = null, api = null) {
+    this.file = file; this.picked = picked; this.state = "wait"; this.msg = "대기"; this.result = null;
+    this.name = picked ? picked.name : file.name;
+    this.size = picked ? picked.bytes : file.size;
+    this.path = picked ? picked.path : "";       // 원본 위치 — 있으면 원본 폴더에 저장할 수 있다
+    this.id = picked ? picked.id : null;
+    this.spec = picked ? picked.spec : null;
+    this.url = picked ? api.sourceUrl(picked.id) : URL.createObjectURL(file);
+    this.own = null;       // 이 플레이트에만 쓰는 카드 조합 { recipe, base } — null 이면 모든 플레이트 공통 조합
+    this.runs = [];        // 실행한 버전들 (결과 요약) — 덮어쓰기면 같은 버전 자리를 바꿈
     this.scan = null;      // { key, result } — 사람 찾기 결과 (검출 설정이 같을 때만 유효)
     this.chosen = null;    // 가릴 사람 번호 Set. null = 모두
     this._uploading = null;
   }
-  get isVideo() { return this.file.type.startsWith("video") || /\.(mp4|mov|mkv|webm|avi|m4v)$/i.test(this.file.name); }
-  /** 올리기는 한 번만 (올리는 중에 또 부르면 같은 약속을 돌려줌) */
+  get isVideo() { return (this.file && this.file.type.startsWith("video")) || /\.(mp4|mov|mkv|webm|avi|m4v)$/i.test(this.name); }
+  /** 올리기는 한 번만 (올리는 중에 또 부르면 같은 약속을 돌려줌). 고른 원본은 올릴 게 없다 */
   ensureUploaded(api) {
     if (this.id) return Promise.resolve(this.id);
+    if (!this.file) return Promise.reject(new Error("원본을 찾지 못했습니다. 다시 골라 주세요"));
     if (!this._uploading) this._uploading = api.upload(this.file).then(j => { this.spec = j.spec || null; if (Plate.onSpec) Plate.onSpec(this); return (this.id = j.id); }).finally(() => { this._uploading = null; });
     return this._uploading;
   }
@@ -1185,11 +1323,23 @@ class Plate {
     await this.ensureUploaded(api);
     try { return await fn(this.id); }
     catch (e) {
-      if (!/다시 넣어/.test(e.message)) throw e;
+      if (!/다시 넣어/.test(e.message) || !this.file) throw e;
       this.id = null; this.scan = null;
       await this.ensureUploaded(api);
       return fn(this.id);
     }
+  }
+  /** 결과 이름에서 버전 번호 — plate_v2_combo.mp4 · 01_plate_v2 → 2, 없으면 1 */
+  static versionOf(r) {
+    const stem = (r.settings_name || (r.files || []).find(f => /_settings\.json$/.test(f)) || "").replace(/_settings\.json$/, "");
+    const m = stem.match(/_v(\d+)$/) || String(r.where || "").match(/_v(\d+)$/);
+    return m ? +m[1] : 1;
+  }
+  addRun(r, recipeTitle) {
+    const run = { ...r, version: Plate.versionOf(r), at: new Date(), title: recipeTitle };
+    const same = this.runs.findIndex(x => x.version === run.version && x.where === run.where);   // 덮어쓰기
+    if (same >= 0) this.runs[same] = run; else this.runs.push(run);
+    this.result = run;
   }
   scanFor(key) { return this.scan && this.scan.key === key ? this.scan.result : null; }
   people(key) {
@@ -1252,18 +1402,29 @@ class PeoplePanel {
   }
 }
 
-/** 작업 목록 */
+/** ① 플레이트 목록 — 넣은 파일마다 한 줄 (썸네일 · 규격 · 상태 · 받기 · 다시 실행 · 빼기) */
 class PlateList {
+  static MAX = 20;
+  static MEDIA = /\.(mp4|mov|mkv|webm|avi|m4v|png|jpe?g|webp|bmp)$/i;
   constructor(api, onSelect, onReject, labelOf, onRerun) {
     this.api = api; this.items = []; this.selected = -1; this.onSelect = onSelect; this.onReject = onReject; this.labelOf = labelOf; this.onRerun = onRerun;
   }
+  /** 끌어다 놓은 파일 */
   add(files) {
-    const ok = files.filter(f => /^(video|image)\//.test(f.type) || /\.(mp4|mov|mkv|webm|avi|m4v|png|jpe?g|webp|bmp)$/i.test(f.name));
+    const ok = files.filter(f => /^(video|image)\//.test(f.type) || PlateList.MEDIA.test(f.name));
+    if (ok.length < files.length) this.onReject(`${files.length - ok.length}개는 영상 · 이미지가 아니라서 뺐습니다`);
+    return this.#push(ok.map(f => new Plate(f)));
+  }
+  /** 고르기 창으로 고른 원본 (서버에 이미 등록됨) */
+  addPicked(list) { return this.#push(list.map(j => new Plate(null, j, this.api))); }
+  #push(plates) {
+    const room = PlateList.MAX - this.items.length;
+    if (plates.length > room) this.onReject(`플레이트는 한 번에 ${PlateList.MAX}개까지 넣을 수 있습니다. ${plates.length - Math.max(room, 0)}개는 뺐습니다`);
+    const take = plates.slice(0, Math.max(room, 0));
     const before = this.items.length;
-    ok.forEach(f => this.items.push(new Plate(f)));
-    if (ok.length < files.length) this.onReject(files.length - ok.length);
+    this.items.push(...take);
     if (this.selected < 0 && this.items.length) this.select(before); else this.render();
-    return ok.length;
+    return take.length;
   }
   get current() { return this.items[this.selected]; }
   select(i) {
@@ -1271,36 +1432,77 @@ class PlateList {
     this.selected = i; this.render();
     if (!same) this.onSelect(this.items[i]);
   }
+  remove(i) {
+    const p = this.items[i];
+    if (!p || p.state === "run") return;
+    this.items.splice(i, 1);
+    if (i === this.selected) { this.selected = -1; if (this.items.length) this.select(Math.min(i, this.items.length - 1)); else { this.render(); this.onSelect(undefined); } }
+    else { if (i < this.selected) this.selected--; this.render(); }
+  }
   clear() { this.items = []; this.selected = -1; this.render(); }
   pending() { return this.items.filter(p => p.state !== "done" && p.state !== "run"); }
+  /** 썸네일은 플레이트마다 한 번만 만든다 (진행률이 바뀔 때마다 영상을 다시 읽지 않게) */
+  #thumb(p) {
+    if (!p.thumbEl) {
+      const box = document.createElement("div"); box.className = "th";
+      if (p.isVideo) { const v = document.createElement("video"); v.muted = true; v.preload = "metadata"; v.src = p.url + "#t=0.5"; box.appendChild(v); }
+      else { const im = document.createElement("img"); im.alt = ""; im.src = p.url; box.appendChild(im); }
+      p.thumbEl = box;
+    }
+    return p.thumbEl;
+  }
+  static pill(p) {
+    if (p.state === "done") return [p.result.empty ? "warn" : "ok", "완료"];
+    if (p.state === "error") return ["err", "오류"];
+    if (p.state === "run") return ["run", p.msg];
+    return ["", "대기"];
+  }
   render() {
-    const tb = $("list").querySelector("tbody");
-    $("emptyList").style.display = this.items.length ? "none" : "block";
-    tb.innerHTML = "";
+    const ul = $("plates");
+    $("plateCount").textContent = this.items.length ? `${this.items.length} / ${PlateList.MAX}` : `최대 ${PlateList.MAX}개`;
+    ul.innerHTML = "";
     this.items.forEach((p, i) => {
-      const tr = document.createElement("tr");
-      if (i === this.selected) tr.className = "sel";
-      const cls = p.state === "done" ? (p.result.empty ? "warn" : "ok") : p.state === "error" ? "err" : "";
-      tr.innerHTML = `<td class="name"></td><td class="st ${cls}"></td><td class="act"></td>`;
-      tr.querySelector(".name").textContent = p.file.name;
-      tr.querySelector(".name").onclick = () => this.select(i);
-      tr.querySelector(".st").textContent = p.msg;
+      const li = document.createElement("li");
+      if (i === this.selected) li.className = "sel";
+      li.title = p.path || p.name;
+      li.innerHTML = `<div class="info"><div class="nm"></div><div class="sp"></div></div><span class="pill"></span><span class="ops"></span>`;
+      li.prepend(this.#thumb(p));
+      li.querySelector(".nm").textContent = p.name;
+      const s = p.spec;
+      li.querySelector(".sp").textContent = (p.state === "done" ? p.msg : s && s.summary ? s.summary : `${(p.size / 1048576).toFixed(1)}MB`);
+      const src = document.createElement("span"); src.className = "src";
+      src.textContent = p.path ? "· 원본 위치 앎" : "· 끌어 놓음";
+      li.querySelector(".nm").appendChild(src);
+      if (p.own) { const t = document.createElement("span"); t.className = "tag own"; t.textContent = "전용 조합"; li.querySelector(".nm").appendChild(t); }
+      if (p.runs.length) { const t = document.createElement("span"); t.className = "tag"; t.textContent = `v${Math.max(...p.runs.map(r => r.version))}`; t.title = `버전 ${p.runs.length}개`; li.querySelector(".nm").appendChild(t); }
+      const [cls, text] = PlateList.pill(p);
+      const pill = li.querySelector(".pill"); pill.className = "pill " + cls; pill.textContent = text;
+      const ops = li.querySelector(".ops");
       if (p.state === "done") {
         const a = document.createElement("a");
         a.href = this.api.fileUrl(p.result.folder, p.result.main); a.download = p.result.main;
-        a.textContent = `${this.labelOf(p.result.main)} 받기`;
-        const o = document.createElement("a");
-        o.href = "#"; o.textContent = "폴더 열기"; o.onclick = (e) => { e.preventDefault(); this.api.open(p.result.folder); };
-        tr.querySelector(".act").append(a, o);
+        a.textContent = "받기"; a.title = `${this.labelOf(p.result.main)} 받기`;
+        const o = document.createElement("button"); o.type = "button"; o.textContent = "폴더";
+        o.title = p.result.where; o.onclick = () => this.api.open(p.result.folder);
+        ops.append(a, o);
       }
       if (p.state === "done" || p.state === "error") {
         const again = document.createElement("button");
         again.type = "button"; again.textContent = "다시 실행"; again.title = "이 플레이트만 지금 설정으로 다시 만듭니다";
         again.onclick = () => this.onRerun(p);
-        tr.querySelector(".act").append(again);
+        ops.append(again);
       }
-      tb.appendChild(tr);
+      if (p.state !== "run") {
+        const x = document.createElement("button");
+        x.type = "button"; x.className = "x"; x.textContent = "✕"; x.title = "목록에서 빼기 (파일은 그대로)";
+        x.onclick = () => this.remove(i);
+        ops.append(x);
+      }
+      ops.onclick = (e) => e.stopPropagation();
+      li.onclick = () => this.select(i);
+      ul.appendChild(li);
     });
+    if (!this.items.length) ul.innerHTML = '<li class="empty" style="display:block;cursor:default">아직 넣은 플레이트가 없습니다.</li>';
   }
 }
 
@@ -1321,9 +1523,9 @@ class Viewer {
   /** 넣은 파일 규격 (올린 뒤 서버가 읽은 값) + 알아둘 점 */
   showSpec(p) {
     const s = p && p.spec;
-    $("srcCap").textContent = `${p.file.name} · ${(p.file.size / 1048576).toFixed(1)}MB` + (s && s.summary ? ` · ${s.summary}` : (p.id ? "" : " · 규격 읽는 중…"));
+    $("srcCap").textContent = (p.path || p.name) + ` · ${(p.size / 1048576).toFixed(1)}MB` + (s && s.summary ? ` · ${s.summary}` : (p.id ? "" : " · 규격 읽는 중…"));
     $("srcNotes").innerHTML = "";
-    for (const n of (s && s.notes) || []) { const d = document.createElement("div"); d.textContent = "! " + n; $("srcNotes").appendChild(d); }
+    for (const n of (s && s.notes) || []) { const d = document.createElement("div"); d.className = "bang"; d.textContent = n; $("srcNotes").appendChild(d); }
   }
   currentTime() { const v = this.video(); return v ? v.currentTime : 0; }
   video() { return $("srcView").querySelector("video"); }
@@ -1336,7 +1538,7 @@ class Viewer {
       const url = this.api.fileUrl(r.folder, f);
       $("outView").innerHTML = /\.mp4$/i.test(f) ? `<video src="${url}" controls autoplay muted loop playsinline></video>` : `<img alt="" src="${url}">`;
       const c = (r.checks || {})[f];
-      $("outCap").textContent = `results\\${r.folder}\\${f}` + (c ? ` · ${c.frames}프레임 · ${c.size[0]}×${c.size[1]} · ${c.fps}fps · ${c.codec}` +
+      $("outCap").textContent = `${r.where}\\${f}` + (c ? ` · ${c.frames}프레임 · ${c.size[0]}×${c.size[1]} · ${c.fps}fps · ${c.codec}` +
         (c.ok ? " · 원본 규격과 같음" : ` · 규격 다름: ${c.problems.join(", ")}`) : "");
       tabs.querySelectorAll(".tab").forEach(t => t.classList.toggle("sel", t.dataset.f === f));
     };
@@ -1418,6 +1620,8 @@ class App {
     this.form.apply({ ...info.defaults, ...(saved.values || {}) });
     this.lastValues = this.form.values();
     this.recipe = new RecipeBuilder(info.layers, saved, () => this.onRecipeChange());
+    this.shared = this.recipe.snapshot();
+    $("scopeSeg").querySelectorAll("button").forEach(b => b.onclick = () => this.setScope(b.dataset.scope));
     this.files = new FilePicker(info.outputs, saved.outputs, saved.known_outputs, () => { this.save(); this.updateSummary(); });
     this.exporter = new ExportPanel(this.files, () => { this.save(); this.updateSummary(); this.stepper.set(4); });
     this.flow = new FlowView(); this.resultFiles = new ResultFiles(this.api);
@@ -1425,12 +1629,20 @@ class App {
     this.patternGrid = new CardGrid($("patternCards"), "key", (it) => this.pickPattern(it));
     this.coverGrid = null;
     this.patternGrid.selected = this.form.pattern;
-    this.list = new PlateList(this.api, (p) => this.onSelect(p), (n) => this.message(`${n}개는 영상 · 이미지가 아니라서 뺐습니다`, true),
+    this.list = new PlateList(this.api, (p) => this.onSelect(p), (t) => this.message(t, true),
                               (file) => this.files.label(Viewer.keyOf(file)), (p) => this.runAll(p));
     this.saveMode = saved.save_mode === "overwrite" ? "overwrite" : "version";
-    const paintSave = () => $("saveSeg").querySelectorAll("button").forEach(b => b.classList.toggle("sel", b.dataset.mode === this.saveMode));
+    this.place = saved.place === "results" ? "results" : "source";
+    const paintSave = () => {
+      $("saveSeg").querySelectorAll("button").forEach(b => b.classList.toggle("sel", b.dataset.mode === this.saveMode));
+      $("placeSeg").querySelectorAll("button").forEach(b => b.classList.toggle("sel", b.dataset.place === this.place));
+      this.placeNote();
+    };
     $("saveSeg").querySelectorAll("button").forEach(b => b.onclick = () => { this.saveMode = b.dataset.mode; paintSave(); this.save(); });
-    paintSave();
+    $("placeSeg").querySelectorAll("button").forEach(b => b.onclick = () => { this.place = b.dataset.place; paintSave(); this.save(); });
+    this.paintSave = paintSave;
+    paintSave(); this.list.render(); this.paintScope();
+    Collapse.wire();
     this.modelPanel.render(info.models);
     new SystemPanel().render(info.system);
     Plate.onSpec = (p) => { if (p === this.list.current) { this.viewer.showSpec(p); this.updateSummary(); } };
@@ -1456,8 +1668,54 @@ class App {
     const p = this.list && this.list.current;
     return p ? this.settingsFor(p) : { ...this.form.values(), recipe: this.recipe.recipe, base: this.recipe.base, people: [] };
   }
-  settingsFor(p) { return { ...this.form.values(), recipe: this.recipe.recipe, base: this.recipe.base, people: p.people(this.scanKey()) }; }
-  save() { this.memory.save({ values: this.form.values(), recipe: this.recipe.recipe, base: this.recipe.base, outputs: this.files.keys(), known_outputs: this.files.all, save_mode: this.saveMode }); }
+  /** 이 플레이트에 쓸 카드 조합 — 전용 조합이 있으면 그것, 없으면 모든 플레이트 공통 */
+  comboFor(p) { return (p && p.own) || this.shared; }
+  settingsFor(p) { const c = this.comboFor(p); return { ...this.form.values(), recipe: c.recipe, base: c.base, people: p.people(this.scanKey()) }; }
+  save() { this.memory.save({ values: this.form.values(), recipe: this.shared.recipe, base: this.shared.base, outputs: this.files.keys(), known_outputs: this.files.all, save_mode: this.saveMode, place: this.place }); }
+  /** ③ '이 조합을 모든 플레이트에 / 이 플레이트에만' */
+  setScope(scope) {
+    const p = this.list.current;
+    if (!p) return;
+    if (scope === "one" && !p.own) p.own = this.recipe.snapshot();
+    if (scope === "all" && p.own) { p.own = null; this.recipe.load(this.shared); }
+    this.paintScope(); this.list.render();
+  }
+  paintScope() {
+    const p = this.list && this.list.current, own = !!(p && p.own);
+    $("scopeSeg").querySelectorAll("button").forEach(b => { b.classList.toggle("sel", b.dataset.scope === (own ? "one" : "all")); b.disabled = !p; });
+    const others = this.list ? this.list.items.filter(x => x.own).length : 0;
+    $("scopeNote").textContent = !p ? "플레이트를 넣으면 고를 수 있습니다" : own ? `${p.name} 에만 적용 · 목록에 '전용' 표시`
+      : `공통 조합 · ${this.list.items.length - others}개 플레이트에 적용` + (others ? ` (전용 ${others}개 제외)` : "");
+  }
+  /** ⑤ 버전 — 이 플레이트를 실행한 기록. 누르면 그 버전 결과를 본다 */
+  renderVersions(p) {
+    const runs = (p && p.runs) || [];
+    $("versions").hidden = !runs.length;
+    const box = $("versionChips"); box.innerHTML = "";
+    for (const run of [...runs].sort((a, b) => a.version - b.version)) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "vchip" + (run === p.result ? " sel" : "");
+      b.textContent = `v${run.version}`;
+      const s = document.createElement("small");
+      s.textContent = `${run.at.toTimeString().slice(0, 5)} · ${run.title} · ${run.place === "source" ? "원본 옆" : "results"}`;
+      b.appendChild(s); b.title = run.where;
+      b.onclick = () => { p.result = run; this.viewer.showResult(run); this.resultFiles.render(run); this.renderVersions(p); this.list.render(); this.updateSummary(); };
+      box.appendChild(b);
+    }
+  }
+  /** 저장 위치 설명 — 지금 고른 플레이트 기준으로 실제 이름을 보여 준다 */
+  placeNote() {
+    const p = this.list && this.list.current, v = this.saveMode === "version";
+    const stem = p ? p.name.replace(/\.[^.]+$/, "") : "이름";
+    let t;
+    if (this.place === "results") t = `results\\01_${stem}\\${stem}_combo.mp4 처럼 번호 폴더에 저장합니다` + (v ? " (다시 실행하면 01_" + stem + "_v2)" : "");
+    else if (p && !p.path) t = "끌어 놓은 파일은 위치를 몰라 results 폴더에 저장합니다. 원본 옆에 저장하려면 위 칸을 눌러 파일을 고르세요";
+    else {
+      const dir = p ? p.path.replace(/[\\/][^\\/]*$/, "") : "원본 폴더";
+      t = `${dir}\\${stem}_combo.mp4 처럼 원본 옆에 이름 뒤에 붙여 저장합니다` + (v ? ` (다시 실행하면 ${stem}_v2_combo.mp4)` : " (같은 이름이면 덮어씀)");
+    }
+    $("placeNote").textContent = t;
+  }
   message(t, err) { $("msg").textContent = t; $("msg").className = err ? "err" : ""; }
   bar(p) { $("bar").style.width = Math.round(p * 100) + "%"; }
   problem() {
@@ -1475,7 +1733,7 @@ class App {
     const ids = p ? p.people(this.scanKey()) : [];
     const who = !r ? "나오는 사람 모두" : ids.length ? `#${ids.join(", #")}` : `${r.count}명 모두`;
     $("summary").innerHTML = bad ? `<span style="color:#ff7b72">${bad}</span>`
-      : `만들 것: <b>${this.recipe.title()}</b> <span class="faint">· ${who} · ` +
+      : `만들 것: <b>${this.recipe.title()}</b> <span class="faint" style="margin-left:6px">${who} · ` +
         [keys.includes("combo") && "조합 영상", keys.includes("layers") && `투명 레이어 ${this.recipe.recipe.length}개`, keys.some(k => ["compare", "preview", "contact"].includes(k)) && "확인용"]
           .filter(Boolean).join(" + ") + `</span>`;
     $("runBtn").disabled = this.busy || !!bad || !(this.list && this.list.items.length);
@@ -1510,7 +1768,12 @@ class App {
     if (detectChanged) { this.peoplePanel.show(this.list.current, this.scanKey()); this.updateSummary(); this.autoScan(900); }
     if (changed) this.scheduleGallery();
   }
-  onRecipeChange() { this.save(); this.updateSummary(); this.scheduleGallery(); }
+  onRecipeChange() {
+    const p = this.list && this.list.current;
+    if (p && p.own) p.own = this.recipe.snapshot(); else this.shared = this.recipe.snapshot();
+    this.save(); this.updateSummary(); this.scheduleGallery();
+    if (this.list) { this.list.render(); this.paintScope(); }
+  }
 
   // 예시 그림
   scheduleGallery() { clearTimeout(this.galleryTimer); this.galleryTimer = setTimeout(() => this.refreshGallery(), 250); }
@@ -1535,14 +1798,27 @@ class App {
   // 파일
   bindDrop() {
     const d = $("drop");
-    d.onclick = () => $("file").click();
-    d.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("file").click(); } };
+    d.onclick = () => this.pickFiles();
+    d.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.pickFiles(); } };
     $("file").onchange = (e) => { this.addFiles([...e.target.files]); e.target.value = ""; };
     d.ondragover = (e) => { e.preventDefault(); d.classList.add("over"); };
     d.ondragleave = () => d.classList.remove("over");
     d.ondrop = (e) => { e.preventDefault(); d.classList.remove("over"); this.addFiles([...e.dataTransfer.files]); };
   }
-  addFiles(files) { if (this.list.add(files)) { $("previewBtn").disabled = this.busy; this.updateSummary(); this.stepper.set(2); this.autoScan(300); } }
+  addFiles(files) { if (this.list.add(files)) this.afterAdd(); }
+  afterAdd() { $("previewBtn").disabled = this.busy; this.updateSummary(); this.stepper.set(2); this.autoScan(300); }
+  /** Windows 고르기 창 (서버가 띄움) — 원본 위치를 알아서 원본 옆에 저장할 수 있다. 창을 못 띄우면 브라우저 고르기로 */
+  async pickFiles() {
+    if (this.picking) return;
+    this.picking = true; $("drop").classList.add("over");
+    this.message("파일 고르기 창이 열렸습니다 (작업 표시줄에 있을 수 있어요)");
+    try {
+      const j = await this.api.pick();
+      if (j.errors && j.errors.length) this.message(j.errors.join(" · "), true); else this.message("");
+      if (j.plates && j.plates.length && this.list.addPicked(j.plates)) this.afterAdd();
+    } catch (e) { this.message(e.message, true); }
+    finally { this.picking = false; $("drop").classList.remove("over"); }
+  }
   /** 아직 이 설정으로 훑지 않았으면 자동으로 사람 찾기 */
   autoScan(delay = 0) {
     clearTimeout(this.scanTimer);
@@ -1552,7 +1828,9 @@ class App {
     }, delay);
   }
   onSelect(p) {
-    this.peoplePanel.show(p, this.scanKey()); this.updateSummary();
+    this.recipe.load(this.comboFor(p));   // 그 플레이트 전용 조합이 있으면 그것으로
+    this.renderVersions(p);
+    this.peoplePanel.show(p, this.scanKey()); this.updateSummary(); this.placeNote();
     if (p) this.autoScan(300);
     this.viewer.showSource(p);
     if (p && p.result) this.viewer.showResult(p.result); else this.viewer.clearResult();
@@ -1562,6 +1840,7 @@ class App {
   clear() {
     if (this.busy) return;
     this.list.clear(); this.viewer.showSource(null); this.viewer.clearResult(); this.resultFiles.clear(); this.peoplePanel.show(null, this.scanKey());
+    this.recipe.load(this.shared); this.renderVersions(null); this.placeNote();
     $("previewBtn").disabled = true; this.updateSummary(); this.stepper.set(1); this.refreshGallery();
   }
 
@@ -1606,22 +1885,24 @@ class App {
       k++;
       try {
         p.state = "run"; p.msg = "올리는 중"; this.list.render();
-        const previous = p.result ? p.result.folder : "";
-        const job = await p.withUpload(this.api, (id) => this.api.run({ id, settings: this.settingsFor(p), outputs: this.files.keys(), previous, save_mode: this.saveMode }));
-        const r = await this.follow(job.id, p, k, todo.length);
-        p.state = "done"; p.result = r;
+        const previous = (p.runs.filter(x => x.place === "results").pop() || {}).folder || "";   // results 폴더에서 _v2 · 덮어쓰기 기준
+        const job = await p.withUpload(this.api, (id) => this.api.run({ id, settings: this.settingsFor(p), outputs: this.files.keys(), previous, save_mode: this.saveMode, place: this.place }));
+        p.addRun(await this.follow(job.id, p, k, todo.length), this.recipe.titleOf(this.comboFor(p)));
+        p.state = "done";
+        const r = p.result;
         const checks = Object.values(r.checks || {}), okN = checks.filter(c => c.ok).length;
-        p.msg = `완료 · ${r.folder} · ${Math.round(r.seconds)}초 · 사람 ${(r.people_used || []).length}명` + (checks.length ? ` · 규격 ${okN}/${checks.length}` : "");
+        p.msg = `완료 · ${r.place === "source" ? "원본 옆" : r.where.split(/[\\/]/).pop()} · ${Math.round(r.seconds)}초 · 사람 ${(r.people_used || []).length}명` + (checks.length ? ` · 규격 ${okN}/${checks.length}` : "");
         if (okN < checks.length) this.message("규격이 원본과 다른 파일이 있습니다: " + Object.entries(r.checks).filter(([, c]) => !c.ok).map(([f, c]) => `${f} (${c.problems.join(", ")})`).join(" · "), true);
         const i = this.list.items.indexOf(p);
-        if (i === this.list.selected) { this.list.render(); this.viewer.showResult(r); this.resultFiles.render(r); this.updateSummary(); } else this.list.select(i);
+        if (i === this.list.selected) { this.list.render(); this.viewer.showResult(r); this.resultFiles.render(r); this.renderVersions(p); this.updateSummary(); } else this.list.select(i);
       } catch (e) { fail++; p.state = "error"; p.msg = "오류"; this.message(e.message, true); this.list.render(); }
     }
     this.bar(1);
     const done = this.list.items.filter(p => p.state === "done").length;
     const layers = this.list.items.reduce((n, p) => n + ((p.result && p.result.files) || []).filter(f => /_layer\d+_.*\.(mov|png)$/i.test(f)).length, 0);
     if (!fail) this.message(`${done}개 완료. 결과 칸 위 탭에서 파일을 바꿔 볼 수 있습니다` +
-      (layers ? `. 투명 레이어 ${layers}개는 결과 폴더에 있습니다 (편집기에서 원본 위에 번호 순서대로)` : "") + `. 저장 위치: ${this.outDir}`);
+      (layers ? `. 투명 레이어 ${layers}개는 결과 폴더에 있습니다 (편집기에서 원본 위에 번호 순서대로)` : "") +
+      `. 저장 위치: ${[...new Set(todo.filter(p => p.result).map(p => p.result.where))].join(" · ") || this.outDir}`);
     this.busy = false; $("previewBtn").disabled = false; this.updateSummary(); this.peoplePanel.render();
   }
   async follow(id, p, k, n, showInList = true) {

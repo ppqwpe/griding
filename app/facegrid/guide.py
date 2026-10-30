@@ -72,6 +72,19 @@ class MaskedFaceGuide:
         scale = frame.shape[1] / REF_WIDTH
         line = max(1, int(round(2 * scale)))
         dot = max(1, int(round(1.5 * scale)))
-        col = self._s.guide_bgr
-        FaceLines.draw(out, faces, col, line)
-        return FacePoints.draw(out, faces, col, dot)
+        return draw_guide(out, faces, self._s, line=line, dot=dot)
+
+
+def draw_guide(canvas: np.ndarray, faces: Sequence[FaceShape], settings: GridSettings,
+               line: int = 0, dot: int = 0) -> np.ndarray:
+    """표정 선(line px) · 점(dot px)을 guide_color 로. 불투명도가 100% 보다 낮으면 따로 그린 판을 그만큼 얹는다"""
+    def paint(target, color):
+        if line:
+            FaceLines.draw(target, faces, color, line)
+        if dot:
+            FacePoints.draw(target, faces, color, dot)
+        return target
+    if settings.guide_alpha >= 1:
+        return paint(canvas, settings.guide_bgr)
+    plate = paint(np.zeros(canvas.shape[:2], np.uint8), 255)
+    return over_color(canvas, plate, settings.guide_bgr, settings.guide_alpha)

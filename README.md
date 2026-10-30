@@ -30,7 +30,7 @@ git clone https://github.com/ppqwpe/griding.git Griding
 Griding\Griding.bat
 ```
 
-Run the tests after any change. All 155 should pass.
+Run the tests after any change. All 163 should pass.
 
 ```
 app\python\python.exe app\tests\run_tests.py

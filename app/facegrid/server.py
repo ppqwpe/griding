@@ -29,7 +29,8 @@ from .pipeline import FaceGridPipeline, default_face_tracker
 from .scan import TrackScan
 from .settings import GridSettings
 from .shortcut import DesktopShortcut
-from .store import SAVE_MODES, ResultStore, UploadError, UploadStore
+from .picker import NativeFilePicker, PickerError
+from .store import SAVE_MODES, BesideSource, ResultStore, UploadError, UploadStore
 from .syscheck import SystemCheck
 
 CONTENT_TYPES = {".mp4": "video/mp4", ".mov": "video/quicktime", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
@@ -59,6 +60,7 @@ class FaceGridApp:
         self.jobs = JobQueue()
         self.face_tracker_factory = default_face_tracker        # 작업 · 미리보기용 표정 인식기 만드는 법
         self.face_probe_factory = lambda: HeadCropFaceTracker(video=False)
+        self.picker = NativeFilePicker()                        # 파일 고르기 창 (테스트에선 가짜로 바꿈)
         self._ui_path = ui_path
         self._ui_lock = threading.Lock()   # 화면 요청끼리는 차례로 (화면용 검출기 · 표정 예시기 공유)
         self._face_probe = None
@@ -122,6 +124,10 @@ class FaceGridApp:
             if fid:
                 self.uploads.remove(fid)   # 열 수 없는 파일은 남기지 않음
             raise ApiError(str(e))
+        return self._describe(fid, src)
+
+    @staticmethod
+    def _describe(fid: str, src: MediaSource) -> dict:
         return {"id": fid, "video": src.is_video, "size": list(src.size), "fps": src.fps, "frames": src.frame_count,
                 "spec": src.describe()}
 
@@ -202,24 +208,60 @@ class FaceGridApp:
 
         mode = body.get("save_mode") if body.get("save_mode") in SAVE_MODES else "version"
         previous = str(body.get("previous") or "")
+        original = self.uploads.source_path(fid)
+        beside = BesideSource(original, mode) if body.get("place") == "source" and original else None
+        why = "" if body.get("place") != "source" or beside else "끌어 놓은 파일은 위치를 몰라 results 폴더에 저장했습니다"
 
-        def work(job: Job) -> dict:
+        def compute(folder: Path, stem: str, job: Job, folder_name: str | None = None):
+            scan = self._cached_scan(fid, settings)
+            pipe = self._pipeline(settings, "job")
+            if scan is None:
+                scan = pipe.scan(src, settings, lambda f, t: job.report(f * 0.35, t))
+                self._remember_scan(fid, scan)
+            return pipe.run(src, folder, stem, settings, keys, job.report, scan, folder_name)
+
+        def in_results(job: Job, note: str) -> dict:
             folder, stem = self.results.folder_for(name, previous, mode)
             try:
-                scan = self._cached_scan(fid, settings)
-                pipe = self._pipeline(settings, "job")
-                if scan is None:
-                    scan = pipe.scan(src, settings, lambda f, t: job.report(f * 0.35, t))
-                    self._remember_scan(fid, scan)
-                summary = pipe.run(src, folder, stem, settings, keys, job.report, scan)
+                summary = compute(folder, stem, job)
             except BaseException:
                 self.results.discard(folder)   # 반쯤 만든 결과 폴더는 지운다
                 raise
             finally:
                 self.results.write_verification()
-            return summary.brief()
+            return summary.brief() | {"place": "results", "where": str(folder), "note": note}
 
-        return self.jobs.submit(Job(name, work)).to_dict()
+        def next_to_source(job: Job) -> dict:
+            if not beside.writable():
+                return in_results(job, f"원본 폴더에 쓸 수 없어 results 폴더에 저장했습니다 ({beside.dir})")
+            staging, stem = beside.open()
+            try:
+                summary = compute(staging, stem, job, beside.dir.name)
+                beside.commit()
+            except BaseException:
+                beside.discard()   # 원본 폴더엔 임시 폴더만 있었으니 그것만 지운다
+                raise
+            key = self.results.register(beside.dir, summary.files)
+            return summary.brief() | {"folder": key, "place": "source", "where": str(beside.dir), "note": ""}
+
+        return self.jobs.submit(Job(name, next_to_source if beside else lambda job: in_results(job, why))).to_dict()
+
+    def pick(self) -> dict:
+        """파일 고르기 창으로 고른 원본들 — 복사 없이 위치만 등록 (원본 옆에 저장할 수 있음)"""
+        try:
+            paths = self.picker.choose()
+        except PickerError as e:
+            raise ApiError(str(e))
+        plates, errors = [], []
+        for p in paths:
+            try:
+                fid = self.uploads.link(p)
+                src = MediaSource.open(self.uploads.path(fid))
+            except (UploadError, UnsupportedMediaError, MediaReadError) as e:
+                errors.append(f"{p.name}: {e}")
+                continue
+            plates.append(self._describe(fid, src) | {"name": p.name, "bytes": p.stat().st_size, "path": str(p)})
+        return {"plates": plates, "errors": errors}
 
     def job(self, job_id: str) -> dict:
         j = self.jobs.get(job_id)
@@ -315,6 +357,11 @@ class RequestHandler(BaseHTTPRequestHandler):
             return self._send_file(icon if path.endswith(".ico") else icon.with_name("griding_text.png") if path == "/name.png" else icon.with_suffix(".png"))
         if path.startswith("/api/job/"):
             return self._send(200, self.app.job(path.rsplit("/", 1)[-1]))
+        if path.startswith("/source/"):   # 고르기 창으로 넣은 원본을 화면에서 틀기
+            try:
+                return self._send_file(self.app.uploads.path(unquote(path[len("/source/"):])))
+            except UploadError as e:
+                raise ApiError(str(e), 404)
         if path.startswith("/files/"):
             f = self.app.results.resolve(unquote(path[len("/files/"):]))
             if not f:
@@ -332,6 +379,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                   "/api/gallery": lambda: self._send(200, self.app.gallery_cards(body)),
                   "/api/run": lambda: self._send(200, self.app.run(body)),
                   "/api/scan": lambda: self._send(200, self.app.scan(body)),
+                  "/api/pick": lambda: self._send(200, self.app.pick()),
                   "/api/open": lambda: self._send(200, self.app.open_folder(body))}
         if path not in routes:
             raise ApiError("없는 주소입니다", 404)

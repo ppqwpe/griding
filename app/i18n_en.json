@@ -441,7 +441,33 @@
   "2K 까지 30": "30 up to 2K",
   "4K 50Mbps": "50Mbps for 4K",
   "고정 (CBR)": "constant (CBR)",
-  "AGPL-3.0 (Ultralytics 학습 · 저작자 표기 없음)": "AGPL-3.0 (trained with Ultralytics; not stated by the authors)"
+  "AGPL-3.0 (Ultralytics 학습 · 저작자 표기 없음)": "AGPL-3.0 (trained with Ultralytics; not stated by the authors)",
+  "results 폴더 열기": "Open results folder",
+  "클릭해서 고르기 · 끌어다 놓기": "Click to choose · or drag in",
+  "mp4, mov, png, jpg · 한 번에 여러 개": "mp4, mov, png, jpg · several at once",
+  "· 끌어 놓음": "· dragged in",
+  "· 원본 위치 앎": "· location known",
+  "폴더": "Folder",
+  "전용 조합": "Own combo",
+  "저장 위치": "Save to",
+  "원본 폴더 (이름 뒤에 붙임)": "Source folder (suffix on the name)",
+  "results 폴더": "results folder",
+  "덮어쓰기": "Overwrite",
+  "버전": "Versions",
+  "이 조합을": "Use this combo for",
+  "모든 플레이트에": "All plates",
+  "이 플레이트에만": "This plate only",
+  "플레이트를 넣으면 고를 수 있습니다": "Add a plate to choose",
+  "목록에서 빼기 (파일은 그대로)": "Remove from list (the file stays)",
+  "끌어 놓은 파일은 위치를 몰라 results 폴더에 저장했습니다": "Dragged-in files have no known location, so they were saved to the results folder",
+  "끌어 놓은 파일은 위치를 몰라 results 폴더에 저장합니다. 원본 옆에 저장하려면 위 칸을 눌러 파일을 고르세요": "Dragged-in files have no known location, so they go to the results folder. To save next to the source, click the box above and choose the files",
+  "설정은 이름_settings.json 에 함께 남습니다. results 폴더에 저장하면 전체 요약이 verification.json 에 쌓입니다.": "Settings are kept in name_settings.json. When saving to the results folder, a summary of all runs also goes into verification.json.",
+  "파일 고르기 창이 열렸습니다 (작업 표시줄에 있을 수 있어요)": "The file dialog is open (it may be behind, on the taskbar)",
+  "원본을 찾지 못했습니다. 다시 골라 주세요": "Source file not found. Choose it again",
+  "선 · 점 색 · 불투명도": "Line · point color · opacity",
+  "원본 옆": "next to source",
+  "최대 20개": "up to 20",
+  "카드 없음": "no cards"
  },
  "templates": [
   {
@@ -454,11 +480,11 @@
   },
   {
    "ko": "{} 직접 고르기",
-   "en": "{0}: pick custom"
+   "en": "{0}: custom"
   },
   {
    "ko": "{} 불투명도",
-   "en": "{0} opacity"
+   "en": "{0}: opacity"
   },
   {
    "ko": "{} (카드를 고르세요)",
@@ -630,7 +656,7 @@
   },
   {
    "ko": "{}개는 영상 · 이미지가 아니라서 뺐습니다",
-   "en": "{0} files were skipped because they are not videos or images"
+   "en": "{0} were left out because they are not videos or images"
   },
   {
    "ko": "처리 중 {}%",
@@ -963,6 +989,70 @@
   {
    "ko": "나올 파일: {}",
    "en": "Output files: {0}"
+  },
+  {
+   "ko": "{} 폴더 열기",
+   "en": "Open folder {0}"
+  },
+  {
+   "ko": "{}개 선택 / {}",
+   "en": "{0} selected / {1}"
+  },
+  {
+   "ko": "{} 에만 적용 · 목록에 '전용' 표시",
+   "en": "Applies only to {0} · marked 'Own combo' in the list"
+  },
+  {
+   "ko": "공통 조합 · {}개 플레이트에 적용",
+   "en": "Shared combo · used by {0} plates"
+  },
+  {
+   "ko": "공통 조합 · {}개 플레이트에 적용 (전용 {}개 제외)",
+   "en": "Shared combo · used by {0} plates ({1} with their own combo)"
+  },
+  {
+   "ko": "버전 {}개",
+   "en": "{0} versions"
+  },
+  {
+   "ko": "{}\\{}_combo.mp4 처럼 원본 옆에 이름 뒤에 붙여 저장합니다 (다시 실행하면 {}_v2_combo.mp4)",
+   "en": "Saves next to the source with a suffix, like {0}\\{1}_combo.mp4 (a re-run makes {2}_v2_combo.mp4)"
+  },
+  {
+   "ko": "{}\\{}_combo.mp4 처럼 원본 옆에 이름 뒤에 붙여 저장합니다 (같은 이름이면 덮어씀)",
+   "en": "Saves next to the source with a suffix, like {0}\\{1}_combo.mp4 (same names are overwritten)"
+  },
+  {
+   "ko": "results\\01_{}\\{}_combo.mp4 처럼 번호 폴더에 저장합니다 (다시 실행하면 01_{}_v2)",
+   "en": "Saves into a numbered folder, like results\\01_{0}\\{1}_combo.mp4 (a re-run makes 01_{2}_v2)"
+  },
+  {
+   "ko": "results\\01_{}\\{}_combo.mp4 처럼 번호 폴더에 저장합니다",
+   "en": "Saves into a numbered folder, like results\\01_{0}\\{1}_combo.mp4"
+  },
+  {
+   "ko": "원본 폴더에 쓸 수 없어 results 폴더에 저장했습니다 ({})",
+   "en": "Could not write to the source folder, so it was saved to the results folder ({0})"
+  },
+  {
+   "ko": "플레이트는 한 번에 {}개까지 넣을 수 있습니다. {}개는 뺐습니다",
+   "en": "Up to {0} plates at a time. {1} were left out"
+  },
+  {
+   "ko": "{} · {} (표시 없음 → 짐작)",
+   "en": "{0} · {1} (no tag → guessed)"
+  },
+  {
+   "ko": "완료 · 원본 옆 · {}초",
+   "en": "Done · next to source · {0}s"
+  },
+  {
+   "ko": "{} (카드 없음)",
+   "en": "{0} (no cards)"
+  },
+  {
+   "ko": "{}개",
+   "en": "{0}"
   }
  ]
 }
