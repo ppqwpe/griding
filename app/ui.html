@@ -1159,7 +1159,7 @@ class ResultFiles {
         box.appendChild(row);
       }
     }
-    const o = document.createElement("a"); o.href = "#"; o.textContent = `결과\\${r.folder} 폴더 열기`;
+    const o = document.createElement("a"); o.href = "#"; o.textContent = `results\\${r.folder} 폴더 열기`;
     o.style.cssText = "font-size:12px;color:var(--text);margin-top:4px"; o.onclick = (e) => { e.preventDefault(); this.api.open(r.folder); };
     box.appendChild(o);
   }
@@ -1336,7 +1336,7 @@ class Viewer {
       const url = this.api.fileUrl(r.folder, f);
       $("outView").innerHTML = /\.mp4$/i.test(f) ? `<video src="${url}" controls autoplay muted loop playsinline></video>` : `<img alt="" src="${url}">`;
       const c = (r.checks || {})[f];
-      $("outCap").textContent = `결과\\${r.folder}\\${f}` + (c ? ` · ${c.frames}프레임 · ${c.size[0]}×${c.size[1]} · ${c.fps}fps · ${c.codec}` +
+      $("outCap").textContent = `results\\${r.folder}\\${f}` + (c ? ` · ${c.frames}프레임 · ${c.size[0]}×${c.size[1]} · ${c.fps}fps · ${c.codec}` +
         (c.ok ? " · 원본 규격과 같음" : ` · 규격 다름: ${c.problems.join(", ")}`) : "");
       tabs.querySelectorAll(".tab").forEach(t => t.classList.toggle("sel", t.dataset.f === f));
     };

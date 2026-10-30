@@ -1,6 +1,6 @@
 """배포 zip 만들기 — 받은 사람이 풀어서 Griding.bat 만 누르면 되게
 
-  app\\python\\python.exe app\\tools\\build_zip.py            → 이 폴더 옆에 Griding_배포.zip
+  app\\python\\python.exe app\\tools\\build_zip.py            → 이 폴더 옆에 Griding_1.0_windows.zip
   app\\python\\python.exe app\\tools\\build_zip.py D:\\x.zip  → 원하는 곳에
 
 zip 안의 맨 위 폴더 이름은 Griding. 쓰다가 생긴 것(app/work, 결과, __pycache__)과 깃 폴더는 넣지 않는다.
@@ -13,7 +13,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-SKIP = {ROOT / "결과", ROOT / "app" / "work", ROOT / ".git"}
+SKIP = {ROOT / "results", ROOT / "app" / "work", ROOT / ".git"}
 SKIP_NAMES = {"__pycache__", ".gitignore", ".gitattributes"}
 NEEDED = (ROOT / "app" / "python" / "python.exe", ROOT / "app" / "lib")
 
@@ -43,6 +43,6 @@ def build(dest: Path) -> tuple[int, float]:
 
 
 if __name__ == "__main__":
-    target = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT.parent / "Griding_배포.zip"
+    target = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT.parent / "Griding_1.0_windows.zip"
     n, mb = build(target)
     print(f"{target} · 파일 {n}개 · {mb:.0f}MB")

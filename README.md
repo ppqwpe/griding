@@ -3,12 +3,12 @@
 A Windows app that covers the faces in live-action plates with a grid or a solid mask, so the footage can go into Seedance.
 It starts from a single `Griding.bat` with no ComfyUI, and everything runs on your own PC.
 
-![Griding](로고/griding_logo_dark.png)
+![Griding](logo/griding_logo_dark.png)
 
 ## Using it
 
 Download the zip from [Releases](../../releases), extract it, and double-click `Griding.bat`. If it freezes because of the graphics card, start `Griding_CPU.bat` instead.
-On first launch it puts a Griding shortcut with the app icon on your desktop. The step-by-step guide is in [사용법.txt](사용법.txt) (Korean).
+On first launch it puts a Griding shortcut with the app icon on your desktop. The step-by-step guide is in [USAGE.md](USAGE.md), and measured test results are in [VERIFICATION.md](VERIFICATION.md).
 
 What it does:
 
@@ -36,7 +36,7 @@ Run the tests after any change. All 155 should pass.
 app\python\python.exe app\tests\run_tests.py
 ```
 
-Build a new release zip like this. It lands next to the repo folder as `Griding_배포.zip`.
+Build a new release zip like this. It lands next to the repo folder as `Griding_1.0_windows.zip`.
 
 ```
 app\python\python.exe app\tools\build_zip.py
@@ -51,7 +51,7 @@ app\python\python.exe app\tools\build_zip.py
 | `app/tests/` | Automated tests |
 | `app/model/` | Two head-detection models, the face landmark model, the sample character images |
 | `app/tools/` | Scripts for the logo, the sample character's face points, and the release zip |
-| `로고/` | Logo PNGs: icon at several sizes, and horizontal versions with the pixel wordmark |
+| `logo/` | Logo PNGs: icon at several sizes, and horizontal versions with the pixel wordmark |
 
 To change the logo, edit `app/tools/make_logo.py` and run it. For the sample character's face points, edit `app/tools/make_character_face.py`.
 

@@ -155,13 +155,13 @@ class StoreTest(unittest.TestCase):
         self.assertEqual(ResultStore.safe_stem("...mp4"), "plate")
 
     def test_numbered_folders(self):
-        rs = ResultStore(self.tmp / "결과")
+        rs = ResultStore(self.tmp / "results")
         a, _ = rs.new_folder("a.mp4")
         b, _ = rs.new_folder("b.mp4")
         self.assertEqual((a.name, b.name), ("01_a", "02_b"))
 
     def test_rerun_versions_and_overwrite(self):
-        rs = ResultStore(self.tmp / "결과")
+        rs = ResultStore(self.tmp / "results")
         a, _ = rs.folder_for("a.mp4")                       # 처음 = 새 번호
         (a / "a_combo.mp4").write_bytes(b"1")
         v2, _ = rs.folder_for("a.mp4", a.name, "version")
@@ -176,7 +176,7 @@ class StoreTest(unittest.TestCase):
         self.assertEqual(rs.folder_for("b.mp4", "없는폴더", "version")[0].name, "03_b")
 
     def test_resolve_blocks_escape(self):
-        rs = ResultStore(self.tmp / "결과")
+        rs = ResultStore(self.tmp / "results")
         f, _ = rs.new_folder("x.mp4")
         (f / "x_facegrid.mp4").write_bytes(b"1")
         self.assertIsNotNone(rs.resolve(f"{f.name}/x_facegrid.mp4"))
@@ -184,7 +184,7 @@ class StoreTest(unittest.TestCase):
         self.assertIsNone(rs.resolve(f"{f.name}/없음.mp4"))
 
     def test_verification(self):
-        rs = ResultStore(self.tmp / "결과")
+        rs = ResultStore(self.tmp / "results")
         f, stem = rs.new_folder("x.mp4")
         (f / f"{stem}_settings.json").write_text(json.dumps({"source": "x.mp4", "frames": 3, "empty_grid_frames": []}), encoding="utf-8")
         rows = json.loads(rs.write_verification().read_text(encoding="utf-8"))

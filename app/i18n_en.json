@@ -897,11 +897,11 @@
    "en": "Face model not found: {0}"
   },
   {
-   "ko": "결과\\{} 폴더 열기",
+   "ko": "results\\{} 폴더 열기",
    "en": "Open result\\{0} folder"
   },
   {
-   "ko": "결과\\{}\\{}",
+   "ko": "results\\{}\\{}",
    "en": "Result\\{0}\\{1}"
   },
   {

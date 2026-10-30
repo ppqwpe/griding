@@ -20,7 +20,7 @@ class ServerTest(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp = Path(tempfile.mkdtemp(prefix="fg_서버_"))
         cls.video = helpers.make_video(cls.tmp / "plate.mp4")
-        cls.app = FaceGridApp(helpers.FakeDetector(), ResultStore(cls.tmp / "결과"), UploadStore(cls.tmp / "work"), config.UI_PATH)
+        cls.app = FaceGridApp(helpers.FakeDetector(), ResultStore(cls.tmp / "results"), UploadStore(cls.tmp / "work"), config.UI_PATH)
         from test_face_layers import FakeFaceTracker
         cls.app.face_probe_factory = lambda: FakeFaceTracker(False)
         cls.app.face_tracker_factory = FakeFaceTracker

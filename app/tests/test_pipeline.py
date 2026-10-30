@@ -31,7 +31,7 @@ class PipelineTest(unittest.TestCase):
             MediaSource.open(self.tmp / "a.txt")
 
     def test_video_package(self):
-        out = self.tmp / "결과" / "01_plate"
+        out = self.tmp / "results" / "01_plate"
         progress = []
         s = self.pipe.run(MediaSource.open(self.video), out, "plate", GridSettings.from_dict({"hold": 6}),
                           ["facegrid", "compare", "overlay", "matte", "preview", "contact"], lambda d, t: progress.append(d))
@@ -67,20 +67,20 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual((data["people_count"], data["people_used"], data["max_together"]), (1, [1], 1))
 
     def test_single_output(self):
-        out = self.tmp / "결과" / "02_min"
+        out = self.tmp / "results" / "02_min"
         s = self.pipe.run(MediaSource.open(self.video), out, "min", GridSettings(), ["facegrid"])
         self.assertEqual(s.files, ["min_facegrid.mp4", "min_settings.json"])
 
     def test_grid_can_be_off(self):
-        out = self.tmp / "결과" / "04_nogrid"
+        out = self.tmp / "results" / "04_nogrid"
         s = self.pipe.run(MediaSource.open(self.video), out, "ng", GridSettings(), ["matte"])
         self.assertEqual(s.files, ["ng_matte.mp4", "ng_settings.json"])
         self.assertEqual(s.main_file, "ng_matte.mp4")
         with self.assertRaises(ValueError):
-            self.pipe.run(MediaSource.open(self.video), self.tmp / "결과" / "05_none", "x", GridSettings(), [])
+            self.pipe.run(MediaSource.open(self.video), self.tmp / "results" / "05_none", "x", GridSettings(), [])
 
     def test_image_package(self):
-        out = self.tmp / "결과" / "03_still"
+        out = self.tmp / "results" / "03_still"
         s = self.pipe.run(MediaSource.open(self.image), out, "still", GridSettings(),
                           ["facegrid", "compare", "overlay", "matte", "preview", "contact"])
         self.assertIn("still_facegrid.png", s.files)

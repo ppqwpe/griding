@@ -223,7 +223,7 @@ class StorageCheck(Check):
 
     def run(self):
         moved = []
-        if config.RESULT_DIR != config.ROOT_DIR / "결과":
+        if config.RESULT_DIR != config.ROOT_DIR / "results":
             moved.append("결과")
         if config.WORK_DIR != config.APP_DIR / "work":
             moved.append("임시")

@@ -210,7 +210,7 @@ class ReviewRegressionTest(unittest.TestCase):
 
     def test_open_folder_never_leaves_results(self):
         tmp = Path(tempfile.mkdtemp(prefix="fg_보관_"))
-        rs = ResultStore(tmp / "결과")
+        rs = ResultStore(tmp / "results")
         self.assertEqual(rs.folder(".."), rs.root)
         self.assertEqual(rs.folder("../.."), rs.root)
         f, _ = rs.new_folder("a.mp4")

@@ -4,7 +4,7 @@ app/lib/
 
 # 쓰다가 생기는 것
 app/work/
-결과/
+results/
 __pycache__/
 *.pyc
 

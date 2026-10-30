@@ -1,9 +1,9 @@
 """Griding 로고 만들기 — 앱 아이콘(ico · png)과 따로 쓸 로고 PNG 묶음
 
   app/icon/griding.ico · griding.png          앱 · 바로가기 · 브라우저 탭
-  로고/griding_icon_{1024,512,256,128,64,32}.png   아이콘만 (투명 바탕)
-  로고/griding_logo_dark.png · _light.png         아이콘 + 픽셀 글자 (어두운 · 밝은 바탕용, 투명)
-  로고/griding_text_dark.png · _light.png         픽셀 글자만 — i 의 점 두 개는 격자와 같은 빨강
+  logo/griding_icon_{1024,512,256,128,64,32}.png   아이콘만 (투명 바탕)
+  logo/griding_logo_dark.png · _light.png         아이콘 + 픽셀 글자 (어두운 · 밝은 바탕용, 투명)
+  logo/griding_text_dark.png · _light.png         픽셀 글자만 — i 의 점 두 개는 격자와 같은 빨강
   app/icon/griding_text.png                       화면 왼쪽 위 이름
 
 재료: app/model/sample_character_head.png (캐릭터 머리, 목 아래 없음 · 초록 바탕)
@@ -126,7 +126,7 @@ class Logo:
         icon.resize((256, 256), Image.LANCZOS).save(app_icon / "griding.png")
         icon.save(app_icon / "griding.ico", sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
         out += [app_icon / "griding.png", app_icon / "griding.ico"]
-        folder = ROOT / "로고"
+        folder = ROOT / "logo"
         folder.mkdir(exist_ok=True)
         for size in (1024, 512, 256, 128, 64, 32):
             p = folder / f"griding_icon_{size}.png"

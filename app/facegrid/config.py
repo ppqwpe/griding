@@ -1,7 +1,7 @@
 """경로와 상수. 앱 폴더를 어디로 옮겨도 이 파일 기준으로 찾는다.
 
 앱 폴더에 쓸 수 없는 곳(Program Files · 읽기 전용 USB · 네트워크 드라이브 등)에 두면
-결과는 문서\\Griding 결과, 임시 파일은 %LOCALAPPDATA%\\Griding 로 자동으로 옮긴다.
+결과는 문서\\Griding results, 임시 파일은 %LOCALAPPDATA%\\Griding 로 자동으로 옮긴다.
 """
 import os
 from pathlib import Path
@@ -32,7 +32,7 @@ def pick_dir(*candidates: Path) -> Path:
 
 _LOCAL = Path(os.environ.get("LOCALAPPDATA") or Path.home() / "AppData" / "Local") / "Griding"
 WORK_DIR = pick_dir(APP_DIR / "work", _LOCAL / "work")
-RESULT_DIR = pick_dir(ROOT_DIR / "결과", Path.home() / "Documents" / "Griding 결과", _LOCAL / "결과")
+RESULT_DIR = pick_dir(ROOT_DIR / "results", Path.home() / "Documents" / "Griding results", _LOCAL / "results")
 
 # 그래픽카드 드라이버가 말썽이면 FACEGRID_CPU=1 로 켜면 처음부터 CPU 로만 돌린다
 FORCE_CPU = os.environ.get("FACEGRID_CPU", "").strip() not in ("", "0")
