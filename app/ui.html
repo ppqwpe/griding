@@ -297,6 +297,7 @@
   .bin .tag { display: inline-block; font-size: 10.5px; padding: 0 7px; border-radius: 999px; border: 1px solid var(--line2); color: #cfcfcf; margin-left: 6px; }
   .bin .tag.own { border-color: var(--accent); color: #ffb3ae; }
   .versions { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; margin-top: 10px; }
+  .versions[hidden] { display: none; }
   .vchip { font-size: 11.5px; padding: 3px 10px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line2); color: var(--text); cursor: pointer; }
   .vchip.sel { border-color: var(--accent); background: var(--accent-soft); }
   .vchip small { color: var(--dim); margin-left: 4px; }
@@ -365,6 +366,71 @@
   .xhint.bad, .xsum.bad { color: #ff7b72; }
   #sizeEst { font-size: 14px; }
   .xsum { margin-top: 12px; font-size: 12.5px; color: var(--text); background: #161616; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; word-break: break-all; }
+
+  /* ── 차분한 판: 빨강은 [전체 실행] 하나만, 고른 것은 흰 테두리 · 밝은 회색 ──
+       위 규칙들이 고른 상태를 var(--accent) 로 칠하던 것을 여기서 무채색으로 덮는다. */
+  :root { --sel: #e6e6e6; --sel-bg: #2b2b2b; --sel-soft: #262626; --hint: #c9a96a; }
+  h2 .n, .stack li .k, .lfiles li .k, .fnode .ft i, .lcard .num, .person .tag { background: #3a3a3a; color: #f2f2f2; }
+  .lcard .num { box-shadow: 0 0 0 2px #111; }
+  .seg button.sel, .tab.sel { background: var(--sel); color: #111; border-color: var(--sel); }
+  .lcard.sel, .card.sel, .xitem.sel, .xcard.sel { border-color: var(--sel); background: var(--panel2); }
+  .person { border-color: var(--sel); }
+  .person.off { border-color: var(--line2); }
+  .bin li.sel { border-color: var(--line2); background: var(--sel-bg); box-shadow: inset 3px 0 0 var(--sel); }
+  .bin .pill.run { color: var(--text); border-color: var(--sel); }
+  .bin .tag.own { border-color: var(--sel); color: var(--text); }
+  .vchip.sel { border-color: var(--sel); background: var(--sel-bg); }
+  .cset-t::before { background: #777; }
+  .cf-sw.sel, .cf-custom.sel { box-shadow: 0 0 0 2px #888; }
+  .files input, .xitem input, .cf-alpha input { accent-color: #d9d9d9; }
+  .nums input:focus, .nums select:focus { border-color: #888; }
+  #drop.over { border-color: var(--sel); background: var(--sel-soft); }
+  .bar i { background: #d9d9d9; }
+  .rfile a:hover { border-color: #888; }
+  .xcard .xf { color: #cfcfcf; }
+  .hint { color: var(--hint); }                                   /* '카드를 고르세요' 같은 안내 — 오류(빨강)와 구분 */
+  .stack-empty { color: var(--hint); }
+
+  /* ── 한 판을 칸으로만 나누기: 상자 대신 얇은 선 ── */
+  .panel { background: transparent; border: 0; border-radius: 0; padding: 14px 18px; }
+  .panel + .panel { margin-top: 0; border-top: 1px solid var(--line); }
+  .cset { background: transparent; border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 10px 0 0; }
+  .xset { background: transparent; border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 10px 0 0; }
+  .xlist { gap: 0; }
+  .xitem { background: transparent; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 7px 2px; }
+  .xitem:first-child { border-top: 1px solid var(--line); }
+  .xitem.sel { background: transparent; }
+  .xsum { background: transparent; border: 0; padding: 8px 0 0; color: var(--dim); }
+  .bin li { background: transparent; border-color: transparent; border-bottom: 1px solid var(--line); border-radius: 6px; }
+  .how { background: transparent; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
+  @media (min-width: 1500px) {
+    main { gap: 0; padding: 0 22px 14px; }
+    main > .work, main > .col-people, main > .col-cards { background: var(--panel); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    main > .work { border-left: 1px solid var(--line); border-radius: var(--radius) 0 0 var(--radius); }
+    main > .col-people { border-left: 1px solid var(--line); }
+    main > .col-cards { border-left: 1px solid var(--line); border-right: 1px solid var(--line); border-radius: 0 var(--radius) var(--radius) 0; }
+    .work, .col-people, .col-cards { gap: 0 !important; padding-right: 0; }
+    header.top { border-bottom: 0; }
+  }
+  @media (max-width: 1499px) {
+    main { gap: 0; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 0; margin: 14px; }
+    .col-people > .panel, .col-cards > .panel, .work { border-left: 1px solid var(--line); }
+    .work { border-left: 0; }
+  }
+  @media (max-width: 1040px) { .col-people > .panel, .col-cards > .panel { border-left: 0; border-top: 1px solid var(--line); } }
+
+  /* ── 한 화면에 들어오게 촘촘히 ── */
+  .sub { margin-bottom: 8px; }
+  .btn { padding: 10px; }
+  .btns { margin-top: 10px; }
+  .lcard .d { display: none; }                                    /* 카드 설명은 마우스를 올리면 (title) */
+  .lcard .t { padding: 5px 8px 7px; }
+  .combo-img { aspect-ratio: 16/10; }
+  .person .d { font-size: 10.5px; }
+  .xitem .xd { font-size: 11px; }
+  .xrow { grid-template-columns: 72px 1fr; padding: 5px 0; }
+  .rerun { margin-top: 8px; }
+  #placeNote { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 </style>
 </head>
 <body>
@@ -965,7 +1031,7 @@ class RecipeBuilder {
       b.innerHTML = `<span class="num">${n + 1}</span>${l.needs_faces ? '<span class="face">표정 인식</span>' : ""}
         <img alt="" ${this.images[k] ? `src="${this.images[k]}"` : ""}><div class="t"></div><div class="d"></div>`;
       b.querySelector(".t").textContent = l.label;
-      b.querySelector(".d").textContent = l.description;
+      b.querySelector(".d").textContent = l.description; b.title = l.description;
       b.onclick = () => this.toggle(k);
       box.appendChild(b);
     }
@@ -1073,9 +1139,9 @@ class FilePicker {
 /** 내보내기 — 큰 카드 3장(조합 · 투명 레이어 · 확인용)이 아래 낱개 목록(FilePicker)을 대신 켜고 끈다 */
 class ExportPanel {
   static KINDS = [
-    { id: "combo", keys: ["combo"], title: "조합 영상", fmt: "H.264 · .mp4", desc: "고른 카드를 다 겹친 한 개. 시댄스에 넣는 파일" },
-    { id: "layers", keys: ["layers"], title: "카드별 투명 레이어", fmt: "PNG · .mov · 알파", desc: "카드마다 따로, 배경 투명. AE · 프리미어 합성용" },
-    { id: "check", keys: ["compare", "preview", "contact"], title: "확인용", fmt: "mp4 · jpg", desc: "원본 | 결과 | 추적 비교 영상, 정지 그림, 9칸 시트" },
+    { id: "combo", keys: ["combo"], title: "조합 영상", fmt: "H.264 · .mp4", desc: "시댄스에 넣는 파일" },
+    { id: "layers", keys: ["layers"], title: "카드별 투명 레이어", fmt: "PNG · .mov · 알파", desc: "카드마다 투명 MOV · 편집기 합성용" },
+    { id: "check", keys: ["compare", "preview", "contact"], title: "확인용", fmt: "mp4 · jpg", desc: "비교 영상 · 정지 그림 · 9칸 시트" },
   ];
   constructor(files, onChange) {
     this.files = files; this.onChange = onChange;
@@ -1124,8 +1190,8 @@ class ExportPanel {
     const box = $("matchChips"); box.innerHTML = "";
     for (const c of chips) { const e = document.createElement("span"); e.className = "chip lock"; e.textContent = c; box.appendChild(e); }
     const k = this.targetKbps(plate), b = s && s.table && s.table.bitrate;
-    $("rateHint").textContent = mode === "fixed" ? `${ExportPanel.mbps(k)} 고정 (CBR) · 2K 까지 30 · 4K 50Mbps`
-      : b && b.input ? `${ExportPanel.mbps(k)} 고정 (CBR) · 원본 ${ExportPanel.mbps(b.input)}` : "원본 값을 모르면 해상도 기준 값";
+    $("rateHint").textContent = mode === "fixed" ? `${ExportPanel.mbps(k)} CBR`
+      : b && b.input ? `${ExportPanel.mbps(k)} CBR · 원본 ${ExportPanel.mbps(b.input)}` : "원본 값을 모르면 해상도 기준 값";
     const sec = s && s.duration;
     if (!sec) { $("sizeEst").textContent = plate && !plate.isVideo ? "이미지 (PNG)" : "-"; $("sizeNote").textContent = plate ? "" : "플레이트를 넣으면 계산"; return; }
     const mb = (k + 192) * sec / 8 / 1000;
@@ -1137,7 +1203,7 @@ class ExportPanel {
   renderSummary(recipe, plate) {
     const parts = [];
     const vid = !plate || plate.isVideo;
-    if (this.on("combo")) parts.push(`${this.stem(plate)}_combo.${vid ? "mp4" : "png"}`);
+    if (this.on("combo")) parts.push(`조합 ${vid ? "mp4" : "png"} 1개`);
     if (this.on("layers")) parts.push(`투명 레이어 ${recipe.recipe.length}개`);
     if (this.on("check")) parts.push("확인용 3개");
     $("exportSum").textContent = parts.length ? "나올 파일: " + parts.join(" · ") : "나올 파일이 없습니다. 위에서 하나 이상 고르세요";
@@ -1714,7 +1780,7 @@ class App {
       const dir = p ? p.path.replace(/[\\/][^\\/]*$/, "") : "원본 폴더";
       t = `${dir}\\${stem}_combo.mp4 처럼 원본 옆에 이름 뒤에 붙여 저장합니다` + (v ? ` (다시 실행하면 ${stem}_v2_combo.mp4)` : " (같은 이름이면 덮어씀)");
     }
-    $("placeNote").textContent = t;
+    $("placeNote").textContent = t; $("placeNote").title = t;
   }
   message(t, err) { $("msg").textContent = t; $("msg").className = err ? "err" : ""; }
   bar(p) { $("bar").style.width = Math.round(p * 100) + "%"; }
@@ -1732,7 +1798,7 @@ class App {
     const p = this.list && this.list.current, r = p && p.scanFor(this.scanKey());
     const ids = p ? p.people(this.scanKey()) : [];
     const who = !r ? "나오는 사람 모두" : ids.length ? `#${ids.join(", #")}` : `${r.count}명 모두`;
-    $("summary").innerHTML = bad ? `<span style="color:#ff7b72">${bad}</span>`
+    $("summary").innerHTML = bad ? `<span class="hint">${bad}</span>`
       : `만들 것: <b>${this.recipe.title()}</b> <span class="faint" style="margin-left:6px">${who} · ` +
         [keys.includes("combo") && "조합 영상", keys.includes("layers") && `투명 레이어 ${this.recipe.recipe.length}개`, keys.some(k => ["compare", "preview", "contact"].includes(k)) && "확인용"]
           .filter(Boolean).join(" + ") + `</span>`;

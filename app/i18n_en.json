@@ -467,7 +467,10 @@
   "선 · 점 색 · 불투명도": "Line · point color · opacity",
   "원본 옆": "next to source",
   "최대 20개": "up to 20",
-  "카드 없음": "no cards"
+  "카드 없음": "no cards",
+  "시댄스에 넣는 파일": "The file for Seedance",
+  "카드마다 투명 MOV · 편집기 합성용": "One transparent MOV per card · for compositing",
+  "비교 영상 · 정지 그림 · 9칸 시트": "Comparison video · still · 9-frame sheet"
  },
  "templates": [
   {
@@ -1053,6 +1056,18 @@
   {
    "ko": "{}개",
    "en": "{0}"
+  },
+  {
+   "ko": "{} CBR",
+   "en": "{0} CBR"
+  },
+  {
+   "ko": "{} CBR · 원본 {}",
+   "en": "{0} CBR · source {1}"
+  },
+  {
+   "ko": "조합 {} 1개",
+   "en": "1 combined {0}"
   }
  ]
 }
