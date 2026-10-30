@@ -474,7 +474,7 @@
   "사람": "People",
   "모니터": "Monitor",
   "원본 | 결과": "Source | Result",
-  "플레이트": "Plates",
+  "플레이트": "Plate",
   "실행 · 결과": "Run · Results",
   "설정": "Settings",
   "① 플레이트": "① Plates",
@@ -482,7 +482,18 @@
   "③ 카드 골라 조합하기": "③ Pick and combine cards",
   "④ 내보내기": "④ Export",
   "끌어서 폭 바꾸기 · 두 번 누르면 처음대로": "Drag to resize · double-click to reset",
-  "끌어서 높이 바꾸기 · 두 번 누르면 처음대로": "Drag to resize · double-click to reset"
+  "끌어서 높이 바꾸기 · 두 번 누르면 처음대로": "Drag to resize · double-click to reset",
+  "카드 · 설정": "Cards · Settings",
+  "카드 설정": "Card settings",
+  "박스 색 · 불투명도": "Box color · opacity",
+  "잠깐 놓쳐 유지한 머리(HOLD)는 주황으로 그대로 보입니다.": "Heads that were briefly lost (HOLD) stay orange.",
+  "결과 목록": "Results",
+  "시각": "Time",
+  "파일": "Files",
+  "규격": "Spec",
+  "보기": "View",
+  "아직 실행한 결과가 없습니다. [전체 실행]을 누르면 여기에 한 줄씩 쌓입니다.": "No results yet. Each [Run all] adds a row here.",
+  "찾은 머리 박스와 번호. 고른 색은 찾은 것, 주황(HOLD)은 잠깐 놓쳐 유지한 것": "Detected head boxes and numbers. Your color = detected, orange (HOLD) = briefly lost and held"
  },
  "templates": [
   {

@@ -146,10 +146,17 @@ class FacePointsLayer(Layer):
 
 class HeadBoxLayer(Layer):
     key, label = "boxes", "추적 박스"
-    description = "찾은 머리 박스와 번호. 초록은 찾은 것, 주황(HOLD)은 잠깐 놓쳐 유지한 것"
+    description = "찾은 머리 박스와 번호. 고른 색은 찾은 것, 주황(HOLD)은 잠깐 놓쳐 유지한 것"
 
     def apply(self, canvas, scene):
-        return Composer.overlay(canvas, scene.tracks)
+        s = scene.renderer.settings
+        drawn = Composer.overlay(canvas, scene.tracks, s.box_bgr)
+        if s.box_alpha >= 1:
+            return drawn
+        changed = (drawn != canvas).any(axis=2)   # 박스 · 번호를 그린 곳만 불투명도만큼 섞는다
+        out = canvas.copy()
+        out[changed] = (canvas[changed] * (1 - s.box_alpha) + drawn[changed] * s.box_alpha).astype(np.uint8)
+        return out
 
 
 LAYERS: dict[str, Layer] = {l.key: l for l in (

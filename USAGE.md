@@ -19,12 +19,14 @@ Griding is laid out like an editing workspace (think Premiere). From 1200 px wid
 
 | Left | Center | Cards | Export |
 |---|---|---|---|
-| ② People, and below it ① Plates (drop box and plate list) | **Monitor** (source \| result), the run bar (⑤ Preview this frame · Run all), and below it ⑤ Run · Results | Tabs **③ Cards** \| **Settings** (card colors and opacity, head detection, how it works) | **④ Export** |
+| ② People, and below it ① the plate list | The drop box, the **Monitor** (source \| result), the run bar (⑤ Preview this frame · Run all), and below it ⑤ Run · Results with the **results list** | ③ Cards, and below them the card settings (colors and opacity, head detection, how it works) | **④ Export** |
 
-- Drag the thin lines between panels to resize them: the widths of the left, cards and export columns, the monitor height, and the height of the plates panel. Double-click a line to reset it.
-- Panel sizes and the open tab are remembered in this browser.
+- Drag the thin lines between panels to resize them: the widths of the left, cards and export columns, the monitor height, and the height of the plate list. Double-click a line to reset it.
+- Panel sizes are remembered in this browser.
 - On smaller screens the side columns shrink first so the monitor keeps its room.
-- Below 1200 px the panels stack and every section is shown in order, without tabs.
+- Below 1200 px the panels stack in order.
+
+**Results list** — every run adds a row: plate, version, time, combo, where it was saved, number of files, and the spec check (e.g. `2/2`). **View** opens that plate and version in the monitor; **Download** and **Folder** work as in the plate list.
 
 ## Steps
 
@@ -98,7 +100,7 @@ The line under the buttons shows the actual file name the selected plate will ge
 | Grid | Puts a grid over the head. 8 patterns (grid, diagonal grid, horizontal lines, vertical lines, dots, checker, X cross, filled box) |
 | Face lines | Eyes, brows, mouth, nose and face outline (red by default, opacity adjustable) |
 | Face points | 478 face points (red by default, opacity adjustable) |
-| Tracking boxes | Detected head boxes with numbers. Green = detected, orange (HOLD) = briefly lost and held |
+| Tracking boxes | Detected head boxes with numbers, in a color and opacity you choose (green by default). Orange (HOLD) = briefly lost and held |
 
 - Mask opacity below 100% lets the original face show through. If a face is visible, Seedance may reject the clip.
 - Face lines and points only appear from front to three-quarter views, where eyes and mouth are visible. Empty frames for full profiles or the back of the head are expected.
@@ -170,7 +172,7 @@ The PC is checked on every launch ("PC check" at the bottom of the screen, `work
 | App folder is not writable | Results move to `Documents\Griding results` automatically |
 | Run straight from inside the zip | Tells you to extract first |
 
-If it still fails, run the self-test: `app\python\python.exe app\tests\run_tests.py` (163 tests)
+If it still fails, run the self-test: `app\python\python.exe app\tests\run_tests.py` (164 tests)
 
 ## Moving to another PC
 

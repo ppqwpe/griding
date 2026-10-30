@@ -442,7 +442,7 @@ def make_server(app: FaceGridApp, port: int) -> ThreadingHTTPServer:
     return srv
 
 
-def main(open_browser: bool = True, make_shortcut: bool = True) -> int:
+def main(open_browser: bool = True, make_shortcut: bool = True, first_port: int = config.FIRST_PORT) -> int:
     print(f"\n  Griding {__version__} · 시댄스용 얼굴 격자\n  " + "-" * 34)
     for folder in (config.RESULT_DIR, config.WORK_DIR):
         if not config.writable(folder):
@@ -466,7 +466,7 @@ def main(open_browser: bool = True, make_shortcut: bool = True) -> int:
     uploads.cleanup()
     app = FaceGridApp(pool, ResultStore(), uploads)
     app.system = report.to_dict()
-    port = free_port()
+    port = free_port(first=first_port)   # 쓰는 중이면 다음 번호
     srv = make_server(app, port)
     url = f"http://{config.HOST}:{port}/"
     print(f"  처리 장치: {'그래픽카드' if detector.device == 'GPU' else 'CPU'}")

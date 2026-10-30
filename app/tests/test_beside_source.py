@@ -36,6 +36,18 @@ class GuideAlphaTest(unittest.TestCase):
         self.assertEqual(GridSettings().guide_alpha, 1.0)
 
 
+class BoxColorTest(unittest.TestCase):
+    def test_box_color_and_opacity(self):
+        from facegrid.geometry import Rect
+        from facegrid.layers import LAYERS, Scene
+        frame = np.full((120, 160, 3), 100, np.uint8)
+        scene = Scene.still(frame, [Rect(40, 30, 100, 90)], GridSettings(box_color="#0000FF"))
+        out = LAYERS["boxes"].apply(frame.copy(), scene)
+        self.assertTrue(((out[..., 0] > 200) & (out[..., 2] < 60)).any(), "고른 파랑으로 박스를 그린다")
+        faint = LAYERS["boxes"].apply(frame.copy(), Scene.still(frame, [Rect(40, 30, 100, 90)], GridSettings(box_color="#0000FF", box_alpha=0.0)))
+        self.assertTrue((faint == frame).all(), "불투명도 0% 면 안 보임")
+
+
 class BesideSourceTest(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp(prefix="fg_원본옆_"))

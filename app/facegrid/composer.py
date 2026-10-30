@@ -24,12 +24,12 @@ COMBO_LABELS = ("PLATE / ORIGINAL", "RESULT / COMBO", "TRACK / HEAD BOXES")
 
 class Composer:
     @staticmethod
-    def overlay(frame: np.ndarray, tracks: Sequence[Track]) -> np.ndarray:
+    def overlay(frame: np.ndarray, tracks: Sequence[Track], seen=SEEN) -> np.ndarray:
         out = frame.copy()
         t = max(2, frame.shape[1] // 640)
         for tr in tracks:
             x0, y0, x1, y1 = tr.box.as_int()
-            col = HOLD if tr.lost else SEEN
+            col = HOLD if tr.lost else seen
             cv2.rectangle(out, (x0, y0), (x1, y1), col, t, cv2.LINE_AA)
             label = f"#{tr.id}" + (" HOLD" if tr.lost else "")
             cv2.putText(out, label, (x0, max(18, y0 - 8)), cv2.FONT_HERSHEY_SIMPLEX, 0.5 * t, col, t, cv2.LINE_AA)

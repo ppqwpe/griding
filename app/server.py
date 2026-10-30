@@ -7,4 +7,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from facegrid.server import main  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main(open_browser="--no-browser" not in sys.argv, make_shortcut="--no-shortcut" not in sys.argv))
+    args = sys.argv[1:]
+    port = int(args[args.index("--port") + 1]) if "--port" in args[:-1] else 7860   # --port N: 이 번호부터 빈 번호를 찾음
+    sys.exit(main(open_browser="--no-browser" not in args, make_shortcut="--no-shortcut" not in args, first_port=port))

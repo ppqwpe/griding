@@ -278,6 +278,29 @@
   .seg button, .dhead .btn { white-space: nowrap; }
   #cardPanel .combo-row { grid-template-columns: minmax(0, 1fr); }      /* 카드 칸이 좁아도 예시 그림 · 바탕 · 쌓인 순서가 안 꺾이게 위아래로 */
   #cardPanel .combo-img { aspect-ratio: 16/9; }
+  .combo-img, .lcard img { object-fit: contain; }                  /* 예시 캐릭터는 자르지 않고 여백을 두고 가운데 */
+  .combo-img { padding: 14px; }
+  .lcard img { padding: 6px 6px 0; }
+  /* 모니터 위 넣는 칸 — 한 줄로 얇게 */
+  .dropbar { padding: 8px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  .dropbar #drop { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 7px 12px; font-size: 12.5px; }
+  .dropbar #drop b { display: inline; margin: 0; font-size: 13px; }
+  #rightBody > .pane + .pane { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 12px; }
+  #rightBody > .pane::before { display: none; }
+  #setPane > #cardSettings > .h4:first-child { margin-top: 0; }
+  /* 결과 목록 — 실행할 때마다 한 줄 (플레이트 · 버전 · 시각 · 조합 · 저장 위치 · 파일 · 규격) */
+  .rtable { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  #runTable { font-size: 12px; min-width: 640px; }
+  #runTable th { text-align: left; font-weight: 600; color: var(--dim); padding: 6px 8px; background: #1f1f1f; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  #runTable td { padding: 5px 8px; border-top: 1px solid var(--line); white-space: nowrap; }
+  #runTable td.nm { max-width: 220px; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+  #runTable td.ti { max-width: 200px; overflow: hidden; text-overflow: ellipsis; color: var(--dim); }
+  #runTable tr.sel td { background: var(--sel-bg); }
+  #runTable tr:hover td { background: #222; }
+  #runTable .ok { color: var(--ok); } #runTable .bad { color: #ff7b72; }
+  #runTable td.act { text-align: right; }
+  #runTable td.act button, #runTable td.act a { background: #262626; border: 1px solid var(--line2); color: var(--text); border-radius: 999px; font-size: 11px; padding: 1px 9px; margin-left: 4px; cursor: pointer; text-decoration: none; }
+  #runTable .empty td { color: var(--faint); text-align: center; padding: 14px; white-space: normal; }
   @media (min-width: 1200px) {
     body { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     header.top { position: static; flex: none; padding: 6px 14px; }
@@ -290,7 +313,7 @@
     .splitter.v { cursor: col-resize; }
     .splitter.h { cursor: row-resize; }
     #dockCenter, #colLeft { background: #0c0c0c; display: grid; min-height: 0; min-width: 0; }
-    #dockCenter { grid-template-rows: min(var(--hm), 62vh) 5px minmax(0, 1fr); }   /* 모니터는 정해 둔 높이, 아래 실행 · 결과가 나머지 */
+    #dockCenter { grid-template-rows: auto min(var(--hm), 58vh) 5px minmax(0, 1fr); }   /* 넣는 칸 · 모니터(정해 둔 높이) · 아래 실행 · 결과가 나머지 */
     #colLeft { grid-template-rows: minmax(0, 1fr) 5px min(var(--hp), 60vh); }
     .monitor { display: flex; flex-direction: column; min-height: 0; background: var(--panel); }
     .mbody { display: flex; padding: 10px 12px; overflow: hidden; }
@@ -315,7 +338,7 @@
     .dtabs { justify-content: flex-end; }
     .pane { display: block !important; overflow: visible; }
     .pane + .pane { border-top: 1px solid var(--line); }
-    .pane::before { content: attr(data-title); display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+    .pane::before { display: none; }   /* 창마다 이름 막대가 있어 따로 제목을 달지 않는다 */
     .runbar { flex-wrap: wrap; }
     .runbar .summary { white-space: normal; flex-basis: 100%; }
     .people { max-height: 420px; overflow-y: auto; }
@@ -496,9 +519,6 @@
       <button class="btn small" id="openOut" type="button" title="results 폴더 열기">results</button>
       <button class="btn small" id="clear" type="button">비우기</button></div>
     <div class="dbody pane" id="platePane" data-title="① 플레이트">
-        <div id="drop" tabindex="0" role="button" aria-label="플레이트 파일 선택">
-          <b>클릭해서 고르기 · 끌어다 놓기</b>mp4, mov, png, jpg · 한 번에 여러 개
-          <input type="file" id="file" accept="video/*,image/*" multiple hidden></div>
         <ul class="bin" id="plates"></ul>
     </div>
   </section>
@@ -506,6 +526,11 @@
   <div class="splitter v" data-split="wl" role="separator" aria-orientation="vertical" title="끌어서 폭 바꾸기 · 두 번 누르면 처음대로"></div>
 
   <section class="dock center" id="dockCenter">
+    <div class="dropbar">
+      <div id="drop" tabindex="0" role="button" aria-label="플레이트 파일 선택">
+        <b>클릭해서 고르기 · 끌어다 놓기</b>mp4, mov, png, jpg · 한 번에 여러 개
+        <input type="file" id="file" accept="video/*,image/*" multiple hidden></div>
+    </div>
     <div class="monitor">
       <div class="dhead"><span class="dtitle">모니터</span><span class="faint">원본 | 결과</span></div>
       <div class="dbody mbody">
@@ -551,6 +576,11 @@
         <p class="note" id="placeNote"></p>
         <div class="bar"><i id="bar"></i></div>
         <div id="msg"></div>
+        <div class="runlist">
+          <div class="h4" style="margin-top:6px">결과 목록 <span class="faint" id="runCount"></span></div>
+          <div class="rtable"><table id="runTable"><thead><tr><th>플레이트</th><th>버전</th><th>시각</th><th>조합</th><th>저장 위치</th><th>파일</th><th>규격</th><th></th></tr></thead>
+            <tbody></tbody></table></div>
+        </div>
         <div class="versions" id="versions" hidden><span class="xl">버전</span><div class="chips" id="versionChips"></div></div>
         <div class="rfiles" id="outFiles"></div>
       </div>
@@ -559,11 +589,9 @@
   <div class="splitter v" data-split="wr" role="separator" aria-orientation="vertical" title="끌어서 폭 바꾸기 · 두 번 누르면 처음대로"></div>
 
   <section class="dock" id="dockRight">
-    <div class="dhead dtabs" data-group="right">
-      <button type="button" class="dtab" data-pane="cardPanel"><span class="n">3</span>카드</button>
-      <button type="button" class="dtab" data-pane="setPane">설정</button>
-    </div>
-    <div class="dbody pane" id="cardPanel" data-title="③ 카드 골라 조합하기">
+    <div class="dhead"><span class="dtitle"><span class="n">3</span>카드 · 설정</span></div>
+    <div class="dbody" id="rightBody">
+    <div class="pane" id="cardPanel" data-title="③ 카드 골라 조합하기">
         <p class="sub">예시 조합을 누르거나 카드를 골라 쌓으세요. 색과 불투명도는 아래에서 바꿉니다.</p>
         <div class="scope">
           <span class="xl">이 조합을</span>
@@ -601,7 +629,7 @@
         <div class="h4">카드 <span class="faint">눌러서 쌓기 · 다시 누르면 빠짐</span></div>
         <div class="lcards" id="layerCards"></div>
     </div>
-    <div class="dbody pane" id="setPane" data-title="설정">
+    <div class="pane" id="setPane" data-title="카드 설정">
         <div id="cardSettings" hidden>
           <div class="h4">고른 카드 설정 <span class="faint">고른 카드만 보입니다</span></div>
 
@@ -641,6 +669,12 @@
           <div class="cset" data-for="lines,points">
             <div class="cset-t">표정 선 · 점</div>
             <div class="colorfield" data-color="guide_color" data-alpha="guide_alpha" data-label="선 · 점 색 · 불투명도"></div>
+          </div>
+
+          <div class="cset" data-for="boxes">
+            <div class="cset-t">추적 박스</div>
+            <div class="colorfield" data-color="box_color" data-alpha="box_alpha" data-label="박스 색 · 불투명도"></div>
+            <p class="note" style="min-height:0">잠깐 놓쳐 유지한 머리(HOLD)는 주황으로 그대로 보입니다.</p>
           </div>
 
           <p class="note" id="opacityNote">불투명도를 100%보다 낮추면 원본 얼굴이 비칩니다. 얼굴이 보이면 시댄스가 거절할 수 있습니다.</p>
@@ -688,6 +722,7 @@
             <div class="list" id="syscheck"></div>
           </details>
         </details>
+    </div>
     </div>
   </section>
   <div class="splitter v" data-split="we" role="separator" aria-orientation="vertical" title="끌어서 폭 바꾸기 · 두 번 누르면 처음대로"></div>
@@ -913,7 +948,7 @@ class Memory {
 /** 숫자 · 색 설정 폼. data-pct 칸은 화면에선 %, 서버에는 0~1 */
 class SettingsForm {
   static KEYS = ["cols","rows","color","alpha","fill_alpha","thickness","clip","threshold","expand_top","expand_x","expand_bottom","smooth","hold",
-                 "cover_color","cover_alpha","head_cover_color","head_cover_alpha","mask_shape","mask_source","mask_grow","guide_color","guide_alpha","model","bitrate"];
+                 "cover_color","cover_alpha","head_cover_color","head_cover_alpha","mask_shape","mask_source","mask_grow","guide_color","guide_alpha","box_color","box_alpha","model","bitrate"];
   static DETECT = ["model","threshold","hold","smooth"];   // 이 값이 바뀌면 사람 찾기를 다시 해야 함
   static GRID = ["cols","rows","color","alpha","fill_alpha","thickness","clip"];
   constructor(defaults, onChange) {
@@ -1817,7 +1852,7 @@ class App {
     $("saveSeg").querySelectorAll("button").forEach(b => b.onclick = () => { this.saveMode = b.dataset.mode; paintSave(); this.save(); });
     $("placeSeg").querySelectorAll("button").forEach(b => b.onclick = () => { this.place = b.dataset.place; paintSave(); this.save(); });
     this.paintSave = paintSave;
-    paintSave(); this.list.render(); this.paintScope();
+    paintSave(); this.list.render(); this.paintScope(); this.renderRunTable();
     Collapse.wire();
     this.modelPanel.render(info.models);
     new SystemPanel().render(info.system);
@@ -1863,8 +1898,38 @@ class App {
     $("scopeNote").textContent = !p ? "플레이트를 넣으면 고를 수 있습니다" : own ? `${p.name} 에만 적용 · 목록에 '전용' 표시`
       : `공통 조합 · ${this.list.items.length - others}개 플레이트에 적용` + (others ? ` (전용 ${others}개 제외)` : "");
   }
+  /** ⑤ 결과 목록 — 모든 플레이트의 실행 기록을 한 표로 (새것이 위). 누르면 그 플레이트 · 버전을 연다 */
+  renderRunTable() {
+    const tb = $("runTable").querySelector("tbody");
+    const rows = (this.list ? this.list.items : []).flatMap(p => p.runs.map(run => ({ p, run }))).sort((a, b) => b.run.at - a.run.at);
+    $("runCount").textContent = rows.length ? `${rows.length}개` : "";
+    tb.innerHTML = rows.length ? "" : '<tr class="empty"><td colspan="8">아직 실행한 결과가 없습니다. [전체 실행]을 누르면 여기에 한 줄씩 쌓입니다.</td></tr>';
+    const cur = this.list && this.list.current;
+    for (const { p, run } of rows) {
+      const tr = document.createElement("tr");
+      if (p === cur && p.result === run) tr.className = "sel";
+      tr.innerHTML = `<td class="nm"></td><td></td><td></td><td class="ti"></td><td></td><td></td><td></td><td class="act"></td>`;
+      const td = tr.children, checks = Object.values(run.checks || {}), ok = checks.filter(c => c.ok).length;
+      td[0].textContent = p.name; td[0].title = p.path || p.name;
+      td[1].textContent = `v${run.version}`;
+      td[2].textContent = run.at.toTimeString().slice(0, 5);
+      td[3].textContent = run.title; td[3].title = run.title;
+      td[4].textContent = run.place === "source" ? "원본 옆" : "results"; td[4].title = run.where;
+      td[5].textContent = `${(run.files || []).length}개`;
+      td[6].textContent = checks.length ? `${ok}/${checks.length}` : "-";
+      td[6].className = checks.length ? (ok === checks.length ? "ok" : "bad") : "";
+      const view = document.createElement("button"); view.type = "button"; view.textContent = "보기";
+      const open = () => { if (this.list.current !== p) this.list.select(this.list.items.indexOf(p)); p.result = run; this.viewer.showResult(run); this.resultFiles.render(run); this.renderVersions(p); this.list.render(); this.updateSummary(); };
+      view.onclick = open; td[0].onclick = open;
+      const a = document.createElement("a"); a.href = this.api.fileUrl(run.folder, run.main); a.download = run.main; a.textContent = "받기";
+      const f = document.createElement("button"); f.type = "button"; f.textContent = "폴더"; f.onclick = () => this.api.open(run.folder);
+      td[7].append(view, a, f);
+      tb.appendChild(tr);
+    }
+  }
   /** ⑤ 버전 — 이 플레이트를 실행한 기록. 누르면 그 버전 결과를 본다 */
   renderVersions(p) {
+    this.renderRunTable();
     const runs = (p && p.runs) || [];
     $("versions").hidden = !runs.length;
     const box = $("versionChips"); box.innerHTML = "";

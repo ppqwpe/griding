@@ -68,7 +68,7 @@ Seedance 2.5 · reference-to-video · 480p · 9-second Paris plate, 23 people
 - Checked: extracted into a folder with Korean characters and spaces on a clean environment; starts in both GPU and CPU mode; 155 tests pass
 - Not done yet: running on an actual second PC
 
-## 6. Automated tests (163)
+## 6. Automated tests (164)
 
 Spec · bitrate · mask opacity · shortcut · color round trip (709/601) · variable fps · rotation · 10-bit · odd sizes · transparent layers · people tracking · face landmarks · server · PC check · blending speed · sample character cards · result versioning · saving next to the source · file picker · face line/point opacity
 
