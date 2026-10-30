@@ -15,13 +15,16 @@ Switch the language with **[한국어 | English]** at the top right.
 
 ## Screen layout
 
-On a wide screen (1500 px and up at 100% zoom) everything fits on one screen. The header stays put and each of the three columns scrolls on its own:
+Griding is laid out like an editing workspace (think Premiere). From 1100 px wide it fills the whole window, with docked panels and no page scroll:
 
-| Left | Middle | Right |
+| Left | Center | Right |
 |---|---|---|
-| ① Plates · source/result view · ⑤ Run | ② People · ④ Export | ③ Cards · how it works |
+| ② People | **Monitor** (source \| result), the run bar (⑤ Preview this frame · Run all), and below it tabs **① Plates** \| **Run · Results** | Tabs **③ Cards** \| **Settings** (card colors and opacity, head detection, how it works) \| **④ Export** |
 
-On narrower screens the page scrolls as one, with ② ③ ④ stacked next to ① ⑤.
+- Drag the thin lines between panels to resize them (left and right columns, and the height of the plates/results panel). Double-click a line to reset it.
+- Panel sizes and the open tabs are remembered in this browser.
+- Pressing **Run all** switches the bottom panel to **Run · Results**.
+- Below 1100 px the panels stack and every section is shown in order, without tabs.
 
 ## Steps
 

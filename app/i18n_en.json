@@ -470,7 +470,19 @@
   "카드 없음": "no cards",
   "시댄스에 넣는 파일": "The file for Seedance",
   "카드마다 투명 MOV · 편집기 합성용": "One transparent MOV per card · for compositing",
-  "비교 영상 · 정지 그림 · 9칸 시트": "Comparison video · still · 9-frame sheet"
+  "비교 영상 · 정지 그림 · 9칸 시트": "Comparison video · still · 9-frame sheet",
+  "사람": "People",
+  "모니터": "Monitor",
+  "원본 | 결과": "Source | Result",
+  "플레이트": "Plates",
+  "실행 · 결과": "Run · Results",
+  "설정": "Settings",
+  "① 플레이트": "① Plates",
+  "⑤ 실행 · 결과": "⑤ Run · Results",
+  "③ 카드 골라 조합하기": "③ Pick and combine cards",
+  "④ 내보내기": "④ Export",
+  "끌어서 폭 바꾸기 · 두 번 누르면 처음대로": "Drag to resize · double-click to reset",
+  "끌어서 높이 바꾸기 · 두 번 누르면 처음대로": "Drag to resize · double-click to reset"
  },
  "templates": [
   {

@@ -243,33 +243,77 @@
   header.top { justify-content: center; }
   header.top .inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; width: 100%; max-width: var(--page); }
   .how { margin-left: auto !important; margin-right: auto !important; }
-  /* 프리미어처럼 (폭 1200px 이상, 100% 배율 한 화면): 머리는 고정, 세 열이 각자 스크롤
-       ② 사람 | ①⑤ 플레이트 · 영상 · 실행 (가운데) | ③ 카드 · ④ 내보내기 · 작동 흐름 */
+  /* ── 작업 화면 (프리미어처럼 창을 붙여 놓음) ──
+       폭 1100px 이상: 창 전체를 채우고 페이지는 스크롤하지 않는다. 창마다 이름 막대 · 탭, 내용은 창 안에서 스크롤.
+       창 사이 경계선(.splitter)을 끌어 크기를 바꾸고(Workspace), 크기와 고른 탭은 이 브라우저에 기억한다.
+       그보다 좁으면 창을 위아래로 쌓고 탭 대신 모든 내용을 차례로 보여 준다. */
+  :root { --wl: 300px; --wr: 460px; --hb: 240px; --dhead: 34px; }
   .how { margin: 14px 0 0 !important; }
-  .people { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); max-height: 34vh; overflow-y: auto; padding-right: 2px; }
-  @media (min-width: 1200px) {
+  .people { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); }
+  .dock { background: var(--panel); min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+  .dhead { flex: none; height: var(--dhead); display: flex; align-items: center; gap: 8px; padding: 0 10px; background: #1f1f1f;
+           border-bottom: 1px solid var(--line); font-size: 12.5px; white-space: nowrap; overflow: hidden; }
+  .dtitle { font-weight: 700; color: var(--text); display: inline-flex; align-items: center; gap: 6px; }
+  .dhead .n, .dtab .n, .runbar .n { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; }
+  .dspace { flex: 1; }
+  .dhead .btn.small { padding: 3px 9px; font-size: 11.5px; }
+  .dtab { height: 100%; display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; background: none; border: 0; border-bottom: 2px solid transparent;
+          color: var(--dim); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+  .dtab:hover { color: var(--text); }
+  .dtab.on { color: var(--text); border-bottom-color: var(--sel); }
+  .dtabs { padding-left: 2px; gap: 0; }
+  .dtabs .btn.small { margin-left: 6px; }
+  .dbody { flex: 1; min-height: 0; overflow: auto; padding: 12px 14px; scrollbar-gutter: stable; }
+  .dbody::-webkit-scrollbar { width: 8px; height: 8px; }
+  .dbody::-webkit-scrollbar-thumb { background: #2f2f2f; border-radius: 4px; }
+  .splitter { background: #0c0c0c; position: relative; z-index: 2; }
+  .splitter::after { content: ""; position: absolute; inset: 0; background: transparent; transition: background .12s; }
+  .splitter:hover::after, .splitter.drag::after { background: #4a4a4a; }
+  .runbar { flex: none; display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: #1f1f1f; border-top: 1px solid var(--line); }
+  .runbar .summary { flex: 1; min-width: 0; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .runbar .btns { margin: 0; flex: none; }
+  .runbar .btn { padding: 8px 18px; white-space: nowrap; }
+  .runbar .btn.primary { min-width: 140px; }
+  .pane > .sub:first-child { margin-top: 0; }
+  @media (min-width: 1100px) {
     body { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-    header.top { position: static; flex: none; }
-    main { flex: 1; min-height: 0; width: 100%; margin: 0 auto; padding-bottom: 14px; align-items: stretch;
-           grid-template-columns: minmax(230px, .5fr) minmax(0, 1.3fr) minmax(360px, .95fr); grid-template-areas: "people work cards"; }
-    .work { grid-area: work; } .col-people { grid-area: people; } .col-cards { grid-area: cards; }
-    .work, .col-people, .col-cards { position: static; min-height: 0; overflow-y: auto; scrollbar-gutter: stable; padding-right: 4px; align-content: start; }
-    .work { display: grid; gap: 16px; }
-    .col-people, .col-cards { display: grid; gap: 14px; align-content: start; }
-    .col-people > .panel, .col-cards > .panel { margin-top: 0; }
-    .col-people .people { max-height: none; overflow: visible; }   /* 왼쪽 열 전체가 사람 목록 — 열이 스크롤 */
-    .work::-webkit-scrollbar, .col-people::-webkit-scrollbar, .col-cards::-webkit-scrollbar { width: 8px; }
-    .work::-webkit-scrollbar-thumb, .col-people::-webkit-scrollbar-thumb, .col-cards::-webkit-scrollbar-thumb { background: #2c2c2c; border-radius: 4px; }
+    header.top { position: static; flex: none; padding: 6px 14px; }
+    header.top .inner { max-width: none; }
+    main.ws { flex: 1; min-height: 0; max-width: none; width: 100%; margin: 0; padding: 0; gap: 0; border-top: 1px solid var(--line);
+              display: grid; align-items: stretch; grid-template-rows: minmax(0, 1fr);
+              grid-template-columns: min(var(--wl), 24vw) 5px minmax(0, 1fr) 5px min(var(--wr), 36vw); }   /* 작은 화면에선 양옆이 먼저 줄어든다 */
+    main.ws > *, #dockCenter > *, .monitor, .mbody { min-width: 0; min-height: 0; }
+    .mbody .stage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .splitter.v { cursor: col-resize; }
+    .splitter.h { cursor: row-resize; }
+    #dockCenter { background: #0c0c0c; display: grid; grid-template-rows: minmax(0, 1fr) 5px min(var(--hb), 45vh); }
+    .monitor { display: flex; flex-direction: column; min-height: 0; background: var(--panel); }
+    .mbody { display: flex; padding: 10px 12px; overflow: hidden; }
+    .mbody .stage { flex: 1; min-height: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mbody .stage > div { display: flex; flex-direction: column; min-height: 0; }
+    .mbody .view { flex: 1; min-height: 0; max-height: none; aspect-ratio: auto; }
+    .mbody .cap, .mbody .notes { flex: none; max-height: 4.6em; overflow: auto; }
+    .dock .pane[hidden] { display: none; }
+    .pane::before { display: none; }
   }
-  /* 좁은 화면: 페이지 하나로 스크롤 — 왼쪽 ①⑤, 오른쪽에 ② ③ ④ 차례로 */
-  @media (max-width: 1199px) {
-    main { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); grid-template-areas: "work people" "work cards" "work export" "work how"; }
-    .col-people, .col-cards { display: contents; }
-    .work { grid-area: work; position: static; } #peoplePanel { grid-area: people; } #cardPanel { grid-area: cards; } #exportPanel { grid-area: export; } #howBox { grid-area: how; }
-    #peoplePanel, #cardPanel, #exportPanel, #howBox { margin-top: 0 !important; }
-    .people { max-height: 420px; }
+  /* 좁은 화면: 창을 위아래로 쌓는다 — 탭은 숨기고 모든 내용을 제목과 함께 차례로 */
+  @media (max-width: 1099px) {
+    main.ws { display: flex; flex-direction: column; align-items: stretch; gap: 12px; padding: 12px; max-width: none; }
+    main.ws > *, #dockCenter > * { min-width: 0; }
+    .splitter { display: none; }
+    .dock { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    #dockCenter { order: 1; display: flex; flex-direction: column; gap: 12px; background: transparent; border: 0; border-radius: 0; overflow: visible; }
+    #dockCenter > .monitor, #dockCenter > .dock { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--panel); }
+    #dockPeople { order: 2; } #dockRight { order: 3; }
+    .dtab, .dtabs .dspace { display: none; }
+    .dtabs { justify-content: flex-end; }
+    .pane { display: block !important; overflow: visible; }
+    .pane + .pane { border-top: 1px solid var(--line); }
+    .pane::before { content: attr(data-title); display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+    .runbar { flex-wrap: wrap; }
+    .runbar .summary { white-space: normal; flex-basis: 100%; }
+    .people { max-height: 420px; overflow-y: auto; }
   }
-  @media (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); grid-template-areas: "work" "people" "cards" "export" "how"; } }
   .view { max-height: 34vh; }
   /* ① 플레이트 목록 */
   .phead { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
@@ -422,257 +466,271 @@
 </div></header>
 
 
-<main>
-  <!-- 왼쪽: 작업대 -->
-  <div class="work">
-    <section class="panel">
-      <div class="phead"><h2><span class="n">1</span>플레이트 넣기 <span class="faint" id="plateCount"></span></h2>
-        <button class="btn small" id="openOut" type="button">results 폴더 열기</button>
-        <button class="btn small" id="clear" type="button">목록 비우기</button></div>
-      <div id="drop" tabindex="0" role="button" aria-label="플레이트 파일 선택">
-        <b>클릭해서 고르기 · 끌어다 놓기</b>mp4, mov, png, jpg · 한 번에 여러 개
-        <input type="file" id="file" accept="video/*,image/*" multiple hidden></div>
-      <ul class="bin" id="plates"></ul>
-      <div class="stage">
-        <div>
-          <div class="viewhead"><span class="t">원본</span></div>
-          <div class="view" id="srcView"><span class="ph">플레이트를 넣으면 여기 나옵니다</span></div>
-          <div class="cap" id="srcCap">영상을 멈춘 곳의 프레임으로 미리보기를 만듭니다.</div>
-          <div class="notes" id="srcNotes"></div>
+<main class="ws" id="ws">
+  <!-- 프리미어처럼: 왼쪽 ② 사람 | 가운데 모니터 · 실행 막대 · 플레이트/실행 결과 | 오른쪽 ③ 카드 · 설정 · ④ 내보내기
+       창 사이 경계선(.splitter)을 끌어 크기를 바꾼다. 좁은 화면에서는 위아래로 쌓인다. -->
+  <section class="dock" id="dockPeople">
+    <div class="dhead"><span class="dtitle"><span class="n">2</span>사람</span><span class="faint" id="peopleCount"></span>
+      <span class="dspace"></span><button class="btn small" id="scanBtn" type="button" disabled>다시 찾기</button></div>
+    <div class="dbody pane" id="peoplePanel" data-title="② 사람 확인">
+        <p class="sub">플레이트를 넣으면 나오는 사람을 찾아 번호를 붙입니다. 가릴 사람만 고르세요.</p>
+        <div class="people" id="people"></div>
+        <div class="quick" id="peopleOps" hidden style="margin-top:8px">
+          <button type="button" data-all="1">모두 가리기</button>
+          <button type="button" data-all="0">모두 빼기</button>
         </div>
-        <div>
-          <div class="viewhead"><span class="t">결과</span><div class="tabs" id="resultTabs"></div></div>
-          <div class="view" id="outView"><span class="ph">카드를 고르고 [이 프레임 미리보기]</span></div>
-          <div class="cap" id="outCap"></div>
-        </div>
-      </div>
-      <h2 style="margin-top:16px"><span class="n">5</span>실행하고 받기</h2>
-      <div class="summary" id="summary"></div>
-      <div class="btns">
-        <button class="btn" id="previewBtn" type="button" disabled>이 프레임 미리보기</button>
-        <button class="btn primary" id="runBtn" type="button" disabled>전체 실행</button>
-      </div>
-      <div class="rerun">저장 위치
-        <div class="seg" id="placeSeg">
-          <button type="button" data-place="source">원본 폴더 (이름 뒤에 붙임)</button>
-          <button type="button" data-place="results">results 폴더</button>
-        </div>
-      </div>
-      <div class="rerun">다시 실행하면
-        <div class="seg" id="saveSeg">
-          <button type="button" data-mode="version">새 버전으로 쌓기 (_v2 · _v3)</button>
-          <button type="button" data-mode="overwrite">덮어쓰기</button>
-        </div>
-      </div>
-      <p class="note" id="placeNote"></p>
-      <div class="bar"><i id="bar"></i></div>
-      <div id="msg"></div>
-      <div class="versions" id="versions" hidden><span class="xl">버전</span><div class="chips" id="versionChips"></div></div>
-      <div class="rfiles" id="outFiles"></div>
-    </section>
-  </div>
+        <p class="note" id="peopleNote">찾지 않으면 영상에 나오는 모든 사람을 가립니다.</p>
+    </div>
+  </section>
+  <div class="splitter v" data-split="wl" role="separator" aria-orientation="vertical" title="끌어서 폭 바꾸기 · 두 번 누르면 처음대로"></div>
 
-  <!-- 왼쪽: 사람 (프리미어처럼 가운데가 영상) -->
-  <div class="col-people">
-    <section class="panel" id="peoplePanel">
-      <h2><span class="n">2</span>사람 확인 <span class="faint" id="peopleCount"></span></h2>
-      <p class="sub">플레이트를 넣으면 나오는 사람을 찾아 번호를 붙입니다. 가릴 사람만 고르세요.</p>
-      <div class="btns" style="margin-top:0">
-        <button class="btn" id="scanBtn" type="button" disabled>다시 찾기</button>
-      </div>
-      <div class="people" id="people"></div>
-      <div class="quick" id="peopleOps" hidden style="margin-top:8px">
-        <button type="button" data-all="1">모두 가리기</button>
-        <button type="button" data-all="0">모두 빼기</button>
-      </div>
-      <p class="note" id="peopleNote">찾지 않으면 영상에 나오는 모든 사람을 가립니다.</p>
-    </section>
-
-  </div>
-
-  <!-- 오른쪽: 카드 · 내보내기 -->
-  <div class="col-cards">
-    <section class="panel" id="cardPanel">
-      <h2><span class="n">3</span>카드 골라 조합하기</h2>
-      <p class="sub">예시 조합을 누르거나 카드를 골라 쌓으세요. 색과 불투명도는 아래에서 바꿉니다.</p>
-      <div class="scope">
-        <span class="xl">이 조합을</span>
-        <div class="seg" id="scopeSeg">
-          <button type="button" data-scope="all">모든 플레이트에</button>
-          <button type="button" data-scope="one">이 플레이트에만</button>
-        </div>
-        <span class="faint" id="scopeNote"></span>
-      </div>
-
-      <div class="quick" id="quick">
-        <button type="button" data-recipe="grid" data-base="original">격자만 (시댄스)</button>
-        <button type="button" data-recipe="cover_face,lines,points" data-base="original">가린 표정 가이드</button>
-        <button type="button" data-recipe="cover_face,points,grid" data-base="original">가림 + 점 + 격자</button>
-        <button type="button" data-recipe="lines,points" data-base="black">검은 바탕 선 · 점</button>
-      </div>
-
-      <div class="combo-row">
-        <div class="combo-view">
-          <img class="combo-img" id="comboImg" alt="지금 조합 예시">
-          <div class="combo-title" id="comboTitle"></div>
-          <p class="note" id="galleryNote">예시 캐릭터입니다. 플레이트를 넣으면 그 플레이트로 바뀝니다.</p>
-        </div>
-        <div class="combo-side">
-          <div class="h4" style="margin-top:0">바탕</div>
-          <div class="seg" id="baseSeg">
-            <button type="button" data-base="original">원본 위에</button>
-            <button type="button" data-base="black">검은 바탕</button>
-          </div>
-          <div class="h4">쌓인 순서 <span class="faint">아래 줄이 위에 덮임</span></div>
-          <ul class="stack" id="stack"></ul>
-        </div>
-      </div>
-
-      <div class="h4">카드 <span class="faint">눌러서 쌓기 · 다시 누르면 빠짐</span></div>
-      <div class="lcards" id="layerCards"></div>
-
-      <div id="cardSettings" hidden>
-        <div class="h4">고른 카드 설정 <span class="faint">고른 카드만 보입니다</span></div>
-
-        <div class="cset" data-for="grid">
-          <div class="cset-t">격자</div>
-          <div class="colorfield" data-color="color" data-alpha="alpha" data-label="선 색 · 불투명도"></div>
-          <div class="nums">
-            <label>세로줄 <input type="number" id="cols" min="1" max="32" step="1"></label>
-            <label>가로줄 <input type="number" id="rows" min="1" max="32" step="1"></label>
-            <label title="머리 폭에 대한 % — 가까운 얼굴은 굵게, 먼 얼굴은 가늘게">선 두께 % (머리 폭)<input type="number" id="thickness" min="0.1" max="20" step="0.1"></label>
-            <label>칸 채우기 % <input type="number" id="fill_alpha" data-pct min="0" max="100" step="5"></label>
-            <label style="grid-column: 1 / -1">덮는 모양
-              <select id="clip"><option value="box">네모로 덮기</option><option value="mask">타원으로 자르기</option></select></label>
-          </div>
-          <div class="h4">격자 모양</div>
-          <div class="cards" id="patternCards"></div>
-          <div class="btns"><button class="btn small" id="reset" type="button">격자 기본값으로</button></div>
-        </div>
-
-        <div class="cset" data-for="cover_face">
-          <div class="cset-t">가림 · 얼굴 윤곽</div>
-          <div class="colorfield" data-color="cover_color" data-alpha="cover_alpha" data-label="가림 색 · 불투명도"></div>
-          <div class="nums">
-            <label style="grid-column: 1 / -1">얼굴 윤곽 넓히기 % <input type="number" id="mask_grow" data-pct min="0" max="100" step="2"></label>
-          </div>
-        </div>
-
-        <div class="cset" data-for="cover_head">
-          <div class="cset-t">가림 · 머리 전체</div>
-          <div class="colorfield" data-color="head_cover_color" data-alpha="head_cover_alpha" data-label="가림 색 · 불투명도"></div>
-          <div class="nums">
-            <label style="grid-column: 1 / -1">따로 저장(_cover) 모양
-              <select id="mask_shape"><option value="oval">타원</option><option value="box">네모</option></select></label>
-          </div>
-        </div>
-
-        <div class="cset" data-for="lines,points">
-          <div class="cset-t">표정 선 · 점</div>
-          <div class="colorfield" data-color="guide_color" data-alpha="guide_alpha" data-label="선 · 점 색 · 불투명도"></div>
-        </div>
-
-        <p class="note" id="opacityNote">불투명도를 100%보다 낮추면 원본 얼굴이 비칩니다. 얼굴이 보이면 시댄스가 거절할 수 있습니다.</p>
-        <input type="hidden" id="mask_source" value="face">
-      </div>
-
-      <details class="sec">
-        <summary>머리 찾기 · 넓히기 · 흔들림 <span class="faint">잘 안 잡힐 때만</span></summary>
-        <div class="nums">
-          <label style="grid-column: 1 / -1">머리 검출 모델
-            <select id="model">
-              <option value="fast">빠름 · YOLO11s head (기본)</option>
-              <option value="accurate">정확 · YOLO11m head (작은 머리, 겹친 사람에 강함 · 2~3배 느림)</option>
-            </select></label>
-          <label>검출 민감도 <input type="number" id="threshold" min="0.01" max="0.95" step="0.01"></label>
-          <label>놓쳐도 유지 (프레임) <input type="number" id="hold" min="0" max="240" step="1"></label>
-          <label>위로 넓히기 % <input type="number" id="expand_top" data-pct min="-50" max="200" step="5"></label>
-          <label>옆으로 넓히기 % <input type="number" id="expand_x" data-pct min="-50" max="200" step="5"></label>
-          <label>아래로 넓히기 % <input type="number" id="expand_bottom" data-pct min="-50" max="200" step="5"></label>
-          <label>흔들림 완화 % <input type="number" id="smooth" data-pct min="0" max="95" step="5"></label>
-        </div>
-        <p class="note">민감도는 낮을수록 많이 잡습니다. 머리를 놓치면 0.15, 엉뚱한 곳이 잡히면 0.35로 바꿔 보세요.</p>
-      </details>
-    </section>
-
-
-    <section class="panel" id="exportPanel">
-      <h2><span class="n">4</span>내보내기</h2>
-
-      <div class="xlist" id="xcards"></div>
-
-      <div class="xset" id="videoSet">
-        <div class="xset-t">조합 영상 설정 <span class="faint">H.264 · .mp4</span></div>
-        <div class="xrow">
-          <span class="xl">원본에 맞춤</span>
-          <div class="chips" id="matchChips"></div>
-        </div>
-        <div class="xrow">
-          <span class="xl">비트레이트</span>
+  <section class="dock center" id="dockCenter">
+    <div class="monitor">
+      <div class="dhead"><span class="dtitle">모니터</span><span class="faint">원본 | 결과</span></div>
+      <div class="dbody mbody">
+        <div class="stage">
           <div>
-            <div class="seg" id="rateSeg">
-              <button type="button" data-mode="fixed">해상도 기준</button>
-              <button type="button" data-mode="source">원본과 같게</button>
-            </div>
-            <div class="xhint" id="rateHint"></div>
+            <div class="viewhead"><span class="t">원본</span></div>
+            <div class="view" id="srcView"><span class="ph">플레이트를 넣으면 여기 나옵니다</span></div>
+            <div class="cap" id="srcCap">영상을 멈춘 곳의 프레임으로 미리보기를 만듭니다.</div>
+            <div class="notes" id="srcNotes"></div>
+          </div>
+          <div>
+            <div class="viewhead"><span class="t">결과</span><div class="tabs" id="resultTabs"></div></div>
+            <div class="view" id="outView"><span class="ph">카드를 고르고 [이 프레임 미리보기]</span></div>
+            <div class="cap" id="outCap"></div>
           </div>
         </div>
-        <div class="xrow">
-          <span class="xl">예상 크기</span>
-          <div><b id="sizeEst">-</b> <span class="xhint" id="sizeNote"></span></div>
+      </div>
+      <div class="runbar">
+        <span class="dtitle"><span class="n">5</span></span>
+        <div class="summary" id="summary"></div>
+        <div class="btns">
+          <button class="btn" id="previewBtn" type="button" disabled>이 프레임 미리보기</button>
+          <button class="btn primary" id="runBtn" type="button" disabled>전체 실행</button>
         </div>
-        <select id="bitrate" hidden>
-          <option value="fixed">fixed</option>
-          <option value="source">source</option>
-        </select>
       </div>
-
-      <div id="layerBox" hidden>
-        <div class="h4">투명 레이어 파일 <span class="faint">편집기에서 원본 위에 이 순서로 쌓으면 조합과 같은 그림</span></div>
-        <ol class="lfiles" id="layerFiles"></ol>
+    </div>
+    <div class="splitter h" data-split="hb" role="separator" aria-orientation="horizontal" title="끌어서 높이 바꾸기 · 두 번 누르면 처음대로"></div>
+    <div class="dock sub" id="dockBottom">
+      <div class="dhead dtabs" data-group="bottom">
+        <button type="button" class="dtab" data-pane="platePane"><span class="n">1</span>플레이트 <span class="faint" id="plateCount"></span></button>
+        <button type="button" class="dtab" data-pane="runPane">실행 · 결과</button>
+        <span class="dspace"></span>
+        <button class="btn small" id="openOut" type="button">results 폴더 열기</button>
+        <button class="btn small" id="clear" type="button">목록 비우기</button>
       </div>
-
-      <div class="xsum" id="exportSum"></div>
-
-      <details class="sec" id="specBox">
-        <summary>규격 자세히 <span class="faint" id="specNote"></span></summary>
-        <p class="note" id="specState"></p>
-        <div class="spec" id="specTable"></div>
-      </details>
-
-      <details class="sec">
-        <summary>그 밖의 결과물 <span class="faint" id="filesCount"></span></summary>
-        <p class="sub" style="margin-top:8px">확인용 파일과 예전 양식 파일을 하나씩 고릅니다.</p>
-        <div class="files" id="files"></div>
-      </details>
-      <p class="faint" style="margin:12px 0 0">설정은 이름_settings.json 에 함께 남습니다. results 폴더에 저장하면 전체 요약이 verification.json 에 쌓입니다.</p>
-    </section>
-
-    <details class="how" id="howBox">
-      <summary class="how-sum">작동 흐름 · 쓰는 모델 · 이 PC 점검 <span class="faint" id="howSum"></span></summary>
-      <div class="how-row">
-        <div class="how-t">지금 이렇게<br>돌아갑니다<br><span class="faint" style="font-weight:400">고르는 대로 바뀜</span></div>
-        <div class="flow" id="flow" style="flex:1"></div>
+      <div class="dbody pane" id="platePane" data-title="① 플레이트">
+        <div id="drop" tabindex="0" role="button" aria-label="플레이트 파일 선택">
+          <b>클릭해서 고르기 · 끌어다 놓기</b>mp4, mov, png, jpg · 한 번에 여러 개
+          <input type="file" id="file" accept="video/*,image/*" multiple hidden></div>
+        <ul class="bin" id="plates"></ul>
       </div>
-      <details class="how-row models">
-        <summary class="how-t" style="cursor:pointer">단계 설명</summary>
-        <ol>
-          <li><b>사람 찾기</b><span>영상 전체에서 머리를 찾아 사람마다 번호를 붙입니다. 옆모습과 뒤통수도 찾습니다.</span></li>
-          <li><b>표정 찾기</b><span>표정 카드를 고르면 머리를 크게 키워 얼굴 점 478개를 찍습니다.</span></li>
-          <li><b>카드 겹치기</b><span>고른 순서대로 원본이나 검은 바탕 위에 겹칩니다. 나중에 고른 카드가 위로 갑니다.</span></li>
-          <li><b>저장</b><span>원본과 같은 해상도, fps, 색공간, 소리로 mp4를 만듭니다. 카드별 투명 레이어(MOV)도 뺄 수 있습니다. 모든 처리는 이 PC에서 합니다.</span></li>
-        </ol>
-      </details>
-      <details class="how-row models">
-        <summary class="how-t" style="cursor:pointer">쓰는 모델 자세히</summary>
-        <div class="list" id="models"></div>
-      </details>
-      <details class="how-row models" id="syscheckBox">
-        <summary class="how-t" style="cursor:pointer">이 PC 점검 <span class="faint" id="syscheckSum"></span></summary>
-        <div class="list" id="syscheck"></div>
-      </details>
-    </details>
-  </div>
+      <div class="dbody pane" id="runPane" data-title="⑤ 실행 · 결과">
+        <div class="rerun">저장 위치
+          <div class="seg" id="placeSeg">
+            <button type="button" data-place="source">원본 폴더 (이름 뒤에 붙임)</button>
+            <button type="button" data-place="results">results 폴더</button>
+          </div>
+        </div>
+        <div class="rerun">다시 실행하면
+          <div class="seg" id="saveSeg">
+            <button type="button" data-mode="version">새 버전으로 쌓기 (_v2 · _v3)</button>
+            <button type="button" data-mode="overwrite">덮어쓰기</button>
+          </div>
+        </div>
+        <p class="note" id="placeNote"></p>
+        <div class="bar"><i id="bar"></i></div>
+        <div id="msg"></div>
+        <div class="versions" id="versions" hidden><span class="xl">버전</span><div class="chips" id="versionChips"></div></div>
+        <div class="rfiles" id="outFiles"></div>
+      </div>
+    </div>
+  </section>
+  <div class="splitter v" data-split="wr" role="separator" aria-orientation="vertical" title="끌어서 폭 바꾸기 · 두 번 누르면 처음대로"></div>
+
+  <section class="dock" id="dockRight">
+    <div class="dhead dtabs" data-group="right">
+      <button type="button" class="dtab" data-pane="cardPanel"><span class="n">3</span>카드</button>
+      <button type="button" class="dtab" data-pane="setPane">설정</button>
+      <button type="button" class="dtab" data-pane="exportPanel"><span class="n">4</span>내보내기</button>
+    </div>
+    <div class="dbody pane" id="cardPanel" data-title="③ 카드 골라 조합하기">
+        <p class="sub">예시 조합을 누르거나 카드를 골라 쌓으세요. 색과 불투명도는 아래에서 바꿉니다.</p>
+        <div class="scope">
+          <span class="xl">이 조합을</span>
+          <div class="seg" id="scopeSeg">
+            <button type="button" data-scope="all">모든 플레이트에</button>
+            <button type="button" data-scope="one">이 플레이트에만</button>
+          </div>
+          <span class="faint" id="scopeNote"></span>
+        </div>
+
+        <div class="quick" id="quick">
+          <button type="button" data-recipe="grid" data-base="original">격자만 (시댄스)</button>
+          <button type="button" data-recipe="cover_face,lines,points" data-base="original">가린 표정 가이드</button>
+          <button type="button" data-recipe="cover_face,points,grid" data-base="original">가림 + 점 + 격자</button>
+          <button type="button" data-recipe="lines,points" data-base="black">검은 바탕 선 · 점</button>
+        </div>
+
+        <div class="combo-row">
+          <div class="combo-view">
+            <img class="combo-img" id="comboImg" alt="지금 조합 예시">
+            <div class="combo-title" id="comboTitle"></div>
+            <p class="note" id="galleryNote">예시 캐릭터입니다. 플레이트를 넣으면 그 플레이트로 바뀝니다.</p>
+          </div>
+          <div class="combo-side">
+            <div class="h4" style="margin-top:0">바탕</div>
+            <div class="seg" id="baseSeg">
+              <button type="button" data-base="original">원본 위에</button>
+              <button type="button" data-base="black">검은 바탕</button>
+            </div>
+            <div class="h4">쌓인 순서 <span class="faint">아래 줄이 위에 덮임</span></div>
+            <ul class="stack" id="stack"></ul>
+          </div>
+        </div>
+
+        <div class="h4">카드 <span class="faint">눌러서 쌓기 · 다시 누르면 빠짐</span></div>
+        <div class="lcards" id="layerCards"></div>
+    </div>
+    <div class="dbody pane" id="setPane" data-title="설정">
+        <div id="cardSettings" hidden>
+          <div class="h4">고른 카드 설정 <span class="faint">고른 카드만 보입니다</span></div>
+
+          <div class="cset" data-for="grid">
+            <div class="cset-t">격자</div>
+            <div class="colorfield" data-color="color" data-alpha="alpha" data-label="선 색 · 불투명도"></div>
+            <div class="nums">
+              <label>세로줄 <input type="number" id="cols" min="1" max="32" step="1"></label>
+              <label>가로줄 <input type="number" id="rows" min="1" max="32" step="1"></label>
+              <label title="머리 폭에 대한 % — 가까운 얼굴은 굵게, 먼 얼굴은 가늘게">선 두께 % (머리 폭)<input type="number" id="thickness" min="0.1" max="20" step="0.1"></label>
+              <label>칸 채우기 % <input type="number" id="fill_alpha" data-pct min="0" max="100" step="5"></label>
+              <label style="grid-column: 1 / -1">덮는 모양
+                <select id="clip"><option value="box">네모로 덮기</option><option value="mask">타원으로 자르기</option></select></label>
+            </div>
+            <div class="h4">격자 모양</div>
+            <div class="cards" id="patternCards"></div>
+            <div class="btns"><button class="btn small" id="reset" type="button">격자 기본값으로</button></div>
+          </div>
+
+          <div class="cset" data-for="cover_face">
+            <div class="cset-t">가림 · 얼굴 윤곽</div>
+            <div class="colorfield" data-color="cover_color" data-alpha="cover_alpha" data-label="가림 색 · 불투명도"></div>
+            <div class="nums">
+              <label style="grid-column: 1 / -1">얼굴 윤곽 넓히기 % <input type="number" id="mask_grow" data-pct min="0" max="100" step="2"></label>
+            </div>
+          </div>
+
+          <div class="cset" data-for="cover_head">
+            <div class="cset-t">가림 · 머리 전체</div>
+            <div class="colorfield" data-color="head_cover_color" data-alpha="head_cover_alpha" data-label="가림 색 · 불투명도"></div>
+            <div class="nums">
+              <label style="grid-column: 1 / -1">따로 저장(_cover) 모양
+                <select id="mask_shape"><option value="oval">타원</option><option value="box">네모</option></select></label>
+            </div>
+          </div>
+
+          <div class="cset" data-for="lines,points">
+            <div class="cset-t">표정 선 · 점</div>
+            <div class="colorfield" data-color="guide_color" data-alpha="guide_alpha" data-label="선 · 점 색 · 불투명도"></div>
+          </div>
+
+          <p class="note" id="opacityNote">불투명도를 100%보다 낮추면 원본 얼굴이 비칩니다. 얼굴이 보이면 시댄스가 거절할 수 있습니다.</p>
+          <input type="hidden" id="mask_source" value="face">
+        </div>
+
+        <details class="sec">
+          <summary>머리 찾기 · 넓히기 · 흔들림 <span class="faint">잘 안 잡힐 때만</span></summary>
+          <div class="nums">
+            <label style="grid-column: 1 / -1">머리 검출 모델
+              <select id="model">
+                <option value="fast">빠름 · YOLO11s head (기본)</option>
+                <option value="accurate">정확 · YOLO11m head (작은 머리, 겹친 사람에 강함 · 2~3배 느림)</option>
+              </select></label>
+            <label>검출 민감도 <input type="number" id="threshold" min="0.01" max="0.95" step="0.01"></label>
+            <label>놓쳐도 유지 (프레임) <input type="number" id="hold" min="0" max="240" step="1"></label>
+            <label>위로 넓히기 % <input type="number" id="expand_top" data-pct min="-50" max="200" step="5"></label>
+            <label>옆으로 넓히기 % <input type="number" id="expand_x" data-pct min="-50" max="200" step="5"></label>
+            <label>아래로 넓히기 % <input type="number" id="expand_bottom" data-pct min="-50" max="200" step="5"></label>
+            <label>흔들림 완화 % <input type="number" id="smooth" data-pct min="0" max="95" step="5"></label>
+          </div>
+          <p class="note">민감도는 낮을수록 많이 잡습니다. 머리를 놓치면 0.15, 엉뚱한 곳이 잡히면 0.35로 바꿔 보세요.</p>
+        </details>
+        <details class="how" id="howBox">
+          <summary class="how-sum">작동 흐름 · 쓰는 모델 · 이 PC 점검 <span class="faint" id="howSum"></span></summary>
+          <div class="how-row">
+            <div class="how-t">지금 이렇게<br>돌아갑니다<br><span class="faint" style="font-weight:400">고르는 대로 바뀜</span></div>
+            <div class="flow" id="flow" style="flex:1"></div>
+          </div>
+          <details class="how-row models">
+            <summary class="how-t" style="cursor:pointer">단계 설명</summary>
+            <ol>
+              <li><b>사람 찾기</b><span>영상 전체에서 머리를 찾아 사람마다 번호를 붙입니다. 옆모습과 뒤통수도 찾습니다.</span></li>
+              <li><b>표정 찾기</b><span>표정 카드를 고르면 머리를 크게 키워 얼굴 점 478개를 찍습니다.</span></li>
+              <li><b>카드 겹치기</b><span>고른 순서대로 원본이나 검은 바탕 위에 겹칩니다. 나중에 고른 카드가 위로 갑니다.</span></li>
+              <li><b>저장</b><span>원본과 같은 해상도, fps, 색공간, 소리로 mp4를 만듭니다. 카드별 투명 레이어(MOV)도 뺄 수 있습니다. 모든 처리는 이 PC에서 합니다.</span></li>
+            </ol>
+          </details>
+          <details class="how-row models">
+            <summary class="how-t" style="cursor:pointer">쓰는 모델 자세히</summary>
+            <div class="list" id="models"></div>
+          </details>
+          <details class="how-row models" id="syscheckBox">
+            <summary class="how-t" style="cursor:pointer">이 PC 점검 <span class="faint" id="syscheckSum"></span></summary>
+            <div class="list" id="syscheck"></div>
+          </details>
+        </details>
+    </div>
+    <div class="dbody pane" id="exportPanel" data-title="④ 내보내기">
+        <div class="xlist" id="xcards"></div>
+
+        <div class="xset" id="videoSet">
+          <div class="xset-t">조합 영상 설정 <span class="faint">H.264 · .mp4</span></div>
+          <div class="xrow">
+            <span class="xl">원본에 맞춤</span>
+            <div class="chips" id="matchChips"></div>
+          </div>
+          <div class="xrow">
+            <span class="xl">비트레이트</span>
+            <div>
+              <div class="seg" id="rateSeg">
+                <button type="button" data-mode="fixed">해상도 기준</button>
+                <button type="button" data-mode="source">원본과 같게</button>
+              </div>
+              <div class="xhint" id="rateHint"></div>
+            </div>
+          </div>
+          <div class="xrow">
+            <span class="xl">예상 크기</span>
+            <div><b id="sizeEst">-</b> <span class="xhint" id="sizeNote"></span></div>
+          </div>
+          <select id="bitrate" hidden>
+            <option value="fixed">fixed</option>
+            <option value="source">source</option>
+          </select>
+        </div>
+
+        <div id="layerBox" hidden>
+          <div class="h4">투명 레이어 파일 <span class="faint">편집기에서 원본 위에 이 순서로 쌓으면 조합과 같은 그림</span></div>
+          <ol class="lfiles" id="layerFiles"></ol>
+        </div>
+
+        <div class="xsum" id="exportSum"></div>
+
+        <details class="sec" id="specBox">
+          <summary>규격 자세히 <span class="faint" id="specNote"></span></summary>
+          <p class="note" id="specState"></p>
+          <div class="spec" id="specTable"></div>
+        </details>
+
+        <details class="sec">
+          <summary>그 밖의 결과물 <span class="faint" id="filesCount"></span></summary>
+          <p class="sub" style="margin-top:8px">확인용 파일과 예전 양식 파일을 하나씩 고릅니다.</p>
+          <div class="files" id="files"></div>
+        </details>
+        <p class="faint" style="margin:12px 0 0">설정은설정은 이름_settings.json 에 함께 남습니다. results 폴더에 저장하면 전체 요약이 verification.json 에 쌓입니다.</p>
+    </div>
+  </section>
 </main>
 
 
@@ -686,7 +744,7 @@ const $ = (id) => document.getElementById(id);
 class I18n {
   static KEY = "griding-lang";
   static SEPS = [" · ", " → ", " + ", " | ", ": ", " — "];
-  static ATTRS = ["title", "alt", "aria-label", "placeholder"];
+  static ATTRS = ["title", "alt", "aria-label", "placeholder", "data-title"];   // data-title: 좁은 화면의 창 제목
   static KO = /[가-힣]/;
   constructor() {
     this.lang = "ko"; this.exact = new Map(); this.templates = []; this.ko = new WeakMap(); this.attrKo = new WeakMap();
@@ -1645,6 +1703,63 @@ class SystemPanel {
   }
 }
 
+/** 작업 화면 — 창 탭 고르기 · 경계선 끌어 크기 바꾸기. 크기와 고른 탭은 이 브라우저에 기억 (실패해도 동작) */
+class Workspace {
+  static KEY = "griding-ws";
+  static SIZE = { wl: [220, 520, 300], wr: [340, 720, 460], hb: [120, 560, 240] };   // [최소, 최대, 처음]
+  static PANEL = { wl: "dockPeople", wr: "dockRight", hb: "dockBottom" };
+  constructor() {
+    this.state = new Memory(Workspace.KEY).load() || {};
+    this.memory = new Memory(Workspace.KEY);
+    this.state.tabs = this.state.tabs || {};
+    for (const k of Object.keys(Workspace.SIZE)) if (this.state[k]) this.#apply(k, this.state[k]);
+    document.querySelectorAll(".dtabs").forEach(bar => {
+      const tabs = [...bar.querySelectorAll(".dtab")];
+      tabs.forEach(b => b.onclick = () => this.show(b.dataset.pane));
+      const saved = this.state.tabs[bar.dataset.group];
+      this.show(tabs.some(b => b.dataset.pane === saved) ? saved : tabs[0].dataset.pane, false);
+    });
+    document.querySelectorAll(".splitter").forEach(s => this.#drag(s));
+  }
+  /** 그 창(pane)이 든 탭 묶음에서 그 탭을 연다 */
+  show(paneId, remember = true) {
+    const bar = document.querySelector(`.dtab[data-pane="${paneId}"]`)?.closest(".dtabs");
+    if (!bar) return;
+    bar.querySelectorAll(".dtab").forEach(b => {
+      const on = b.dataset.pane === paneId;
+      b.classList.toggle("on", on); b.setAttribute("aria-selected", on);
+      $(b.dataset.pane).hidden = !on;
+    });
+    if (remember) { this.state.tabs[bar.dataset.group] = paneId; this.#save(); }
+  }
+  #apply(key, px) {
+    const [lo, hi] = Workspace.SIZE[key];
+    const v = Math.round(Math.min(Math.max(px, lo), hi));
+    document.documentElement.style.setProperty(`--${key}`, `${v}px`);
+    return v;
+  }
+  #save() { this.memory.save(this.state); }
+  #drag(sp) {
+    const key = sp.dataset.split;
+    sp.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      try { sp.setPointerCapture(e.pointerId); } catch {}   // 끄는 동안 창 밖으로 나가도 계속
+      sp.classList.add("drag");
+      const box = $(Workspace.PANEL[key]).getBoundingClientRect();   // 화면에 실제로 보이는 크기에서 시작 (작은 화면에선 줄어 있음)
+      const start = { x: e.clientX, y: e.clientY, v: key === "hb" ? box.height : box.width };
+      const move = (ev) => {
+        // 왼쪽 열은 오른쪽으로 끌면 넓어지고, 오른쪽 열 · 아래 창은 반대로 끌면 넓어진다
+        const d = key === "wl" ? ev.clientX - start.x : key === "wr" ? start.x - ev.clientX : start.y - ev.clientY;
+        this.state[key] = this.#apply(key, start.v + d);
+      };
+      const up = () => { sp.classList.remove("drag"); sp.removeEventListener("pointermove", move); sp.removeEventListener("pointerup", up); this.#save(); };
+      sp.addEventListener("pointermove", move); sp.addEventListener("pointerup", up);
+    });
+    sp.addEventListener("dblclick", () => { this.state[key] = this.#apply(key, Workspace.SIZE[key][2]); this.#save(); });
+  }
+}
+
 /** 앱 */
 class App {
   constructor() {
@@ -1652,6 +1767,7 @@ class App {
     this.busy = false; this.galleryTimer = null; this.ticket = 0;
   }
   async start() {
+    this.ws = new Workspace();
     document.querySelectorAll("#langSeg button").forEach(b => b.onclick = () => i18n.set(b.dataset.lang));
     await i18n.load();
     const info = await this.api.info();
@@ -1925,6 +2041,7 @@ class App {
     if (!todo.length) todo = [...this.list.items];   // 다 끝났으면 전부 다시 (저장 방식대로 새 버전 · 덮어쓰기)
     if (!todo.length) return;
     this.busy = true; $("runBtn").disabled = $("previewBtn").disabled = true; this.stepper.set(5);
+    this.ws.show("runPane");   // 실행하면 아래 창을 실행 · 결과 탭으로
     let k = 0, fail = 0;
     for (const p of todo) {
       k++;
