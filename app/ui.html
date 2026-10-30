@@ -370,7 +370,7 @@
   /* ── 차분한 판: 빨강은 [전체 실행] 하나만, 고른 것은 흰 테두리 · 밝은 회색 ──
        위 규칙들이 고른 상태를 var(--accent) 로 칠하던 것을 여기서 무채색으로 덮는다. */
   :root { --sel: #e6e6e6; --sel-bg: #2b2b2b; --sel-soft: #262626; --hint: #c9a96a; }
-  h2 .n, .stack li .k, .lfiles li .k, .fnode .ft i, .lcard .num, .person .tag { background: #3a3a3a; color: #f2f2f2; }
+  .stack li .k, .lfiles li .k, .fnode .ft i, .lcard .num, .person .tag { background: #3a3a3a; color: #f2f2f2; }   /* 단계 번호(h2 .n)만 빨강 */
   .lcard .num { box-shadow: 0 0 0 2px #111; }
   .seg button.sel, .tab.sel { background: var(--sel); color: #111; border-color: var(--sel); }
   .lcard.sel, .card.sel, .xitem.sel, .xcard.sel { border-color: var(--sel); background: var(--panel2); }
@@ -391,34 +391,9 @@
   .hint { color: var(--hint); }                                   /* '카드를 고르세요' 같은 안내 — 오류(빨강)와 구분 */
   .stack-empty { color: var(--hint); }
 
-  /* ── 한 판을 칸으로만 나누기: 상자 대신 얇은 선 ── */
-  .panel { background: transparent; border: 0; border-radius: 0; padding: 14px 18px; }
-  .panel + .panel { margin-top: 0; border-top: 1px solid var(--line); }
-  .cset { background: transparent; border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 10px 0 0; }
-  .xset { background: transparent; border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 10px 0 0; }
-  .xlist { gap: 0; }
-  .xitem { background: transparent; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 7px 2px; }
-  .xitem:first-child { border-top: 1px solid var(--line); }
-  .xitem.sel { background: transparent; }
-  .xsum { background: transparent; border: 0; padding: 8px 0 0; color: var(--dim); }
-  .bin li { background: transparent; border-color: transparent; border-bottom: 1px solid var(--line); border-radius: 6px; }
-  .how { background: transparent; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
-  @media (min-width: 1500px) {
-    main { gap: 0; padding: 0 22px 14px; }
-    main > .work, main > .col-people, main > .col-cards { background: var(--panel); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    main > .work { border-left: 1px solid var(--line); border-radius: var(--radius) 0 0 var(--radius); }
-    main > .col-people { border-left: 1px solid var(--line); }
-    main > .col-cards { border-left: 1px solid var(--line); border-right: 1px solid var(--line); border-radius: 0 var(--radius) var(--radius) 0; }
-    .work, .col-people, .col-cards { gap: 0 !important; padding-right: 0; }
-    header.top { border-bottom: 0; }
-  }
-  @media (max-width: 1499px) {
-    main { gap: 0; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 0; margin: 14px; }
-    .col-people > .panel, .col-cards > .panel, .work { border-left: 1px solid var(--line); }
-    .work { border-left: 0; }
-  }
-  @media (max-width: 1040px) { .col-people > .panel, .col-cards > .panel { border-left: 0; border-top: 1px solid var(--line); } }
-
+  /* 칸이 내용보다 좁아져도 옆 칸을 덮지 않게 — 긴 파일 이름 · 경로는 칸 안에서 말줄임 */
+  main > *, .work > *, .col-people > *, .col-cards > *, .panel, .stage > div, .bin li .info { min-width: 0; }
+  .panel { overflow-wrap: anywhere; }
   /* ── 한 화면에 들어오게 촘촘히 ── */
   .sub { margin-bottom: 8px; }
   .btn { padding: 10px; }
