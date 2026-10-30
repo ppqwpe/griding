@@ -243,31 +243,33 @@
   header.top { justify-content: center; }
   header.top .inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; width: 100%; max-width: var(--page); }
   .how { margin-left: auto !important; margin-right: auto !important; }
-  /* 100% 배율 한 화면 (넓은 화면): 머리는 고정, 세 열이 각자 스크롤 — 한 열을 내려도 나머지는 그대로
-       ①⑤ 작업대 | ② 사람 · ④ 내보내기 | ③ 카드 · 작동 흐름 */
+  /* 프리미어처럼 (폭 1200px 이상, 100% 배율 한 화면): 머리는 고정, 세 열이 각자 스크롤
+       ② 사람 | ①⑤ 플레이트 · 영상 · 실행 (가운데) | ③ 카드 · ④ 내보내기 · 작동 흐름 */
   .how { margin: 14px 0 0 !important; }
   .people { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); max-height: 34vh; overflow-y: auto; padding-right: 2px; }
-  @media (min-width: 1500px) {
+  @media (min-width: 1200px) {
     body { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     header.top { position: static; flex: none; }
-    main { flex: 1; min-height: 0; width: 100%; margin: 0 auto; padding-bottom: 14px;
-           grid-template-columns: minmax(0, 1.25fr) minmax(330px, .72fr) minmax(400px, 1fr); align-items: stretch; }
+    main { flex: 1; min-height: 0; width: 100%; margin: 0 auto; padding-bottom: 14px; align-items: stretch;
+           grid-template-columns: minmax(230px, .5fr) minmax(0, 1.3fr) minmax(360px, .95fr); grid-template-areas: "people work cards"; }
+    .work { grid-area: work; } .col-people { grid-area: people; } .col-cards { grid-area: cards; }
     .work, .col-people, .col-cards { position: static; min-height: 0; overflow-y: auto; scrollbar-gutter: stable; padding-right: 4px; align-content: start; }
     .work { display: grid; gap: 16px; }
     .col-people, .col-cards { display: grid; gap: 14px; align-content: start; }
     .col-people > .panel, .col-cards > .panel { margin-top: 0; }
+    .col-people .people { max-height: none; overflow: visible; }   /* 왼쪽 열 전체가 사람 목록 — 열이 스크롤 */
     .work::-webkit-scrollbar, .col-people::-webkit-scrollbar, .col-cards::-webkit-scrollbar { width: 8px; }
     .work::-webkit-scrollbar-thumb, .col-people::-webkit-scrollbar-thumb, .col-cards::-webkit-scrollbar-thumb { background: #2c2c2c; border-radius: 4px; }
   }
-  /* 좁은 화면: 페이지 하나로 스크롤 (① ⑤ 옆에 ② ③ ④ 차례로) */
-  @media (max-width: 1499px) {
-    main { grid-template-columns: minmax(0, 1fr) 500px; grid-template-areas: "work people" "work cards" "work export" "work how"; }
+  /* 좁은 화면: 페이지 하나로 스크롤 — 왼쪽 ①⑤, 오른쪽에 ② ③ ④ 차례로 */
+  @media (max-width: 1199px) {
+    main { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); grid-template-areas: "work people" "work cards" "work export" "work how"; }
     .col-people, .col-cards { display: contents; }
     .work { grid-area: work; position: static; } #peoplePanel { grid-area: people; } #cardPanel { grid-area: cards; } #exportPanel { grid-area: export; } #howBox { grid-area: how; }
     #peoplePanel, #cardPanel, #exportPanel, #howBox { margin-top: 0 !important; }
     .people { max-height: 420px; }
   }
-  @media (max-width: 1040px) { main { grid-template-columns: 1fr; grid-template-areas: "work" "people" "cards" "export" "how"; } }
+  @media (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); grid-template-areas: "work" "people" "cards" "export" "how"; } }
   .view { max-height: 34vh; }
   /* ① 플레이트 목록 */
   .phead { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
@@ -400,6 +402,7 @@
   .btns { margin-top: 10px; }
   .lcard .d { display: none; }                                    /* 카드 설명은 마우스를 올리면 (title) */
   .lcard .t { padding: 5px 8px 7px; }
+  .lcard img { aspect-ratio: 16/10; }                             /* 오른쪽 열에 ④ 내보내기까지 들어오게 */
   .combo-img { aspect-ratio: 16/10; }
   .person .d { font-size: 10.5px; }
   .xitem .xd { font-size: 11px; }
@@ -469,7 +472,7 @@
     </section>
   </div>
 
-  <!-- 가운데: 사람 -->
+  <!-- 왼쪽: 사람 (프리미어처럼 가운데가 영상) -->
   <div class="col-people">
     <section class="panel" id="peoplePanel">
       <h2><span class="n">2</span>사람 확인 <span class="faint" id="peopleCount"></span></h2>
@@ -485,60 +488,9 @@
       <p class="note" id="peopleNote">찾지 않으면 영상에 나오는 모든 사람을 가립니다.</p>
     </section>
 
-    <section class="panel" id="exportPanel">
-      <h2><span class="n">4</span>내보내기</h2>
-
-      <div class="xlist" id="xcards"></div>
-
-      <div class="xset" id="videoSet">
-        <div class="xset-t">조합 영상 설정 <span class="faint">H.264 · .mp4</span></div>
-        <div class="xrow">
-          <span class="xl">원본에 맞춤</span>
-          <div class="chips" id="matchChips"></div>
-        </div>
-        <div class="xrow">
-          <span class="xl">비트레이트</span>
-          <div>
-            <div class="seg" id="rateSeg">
-              <button type="button" data-mode="fixed">해상도 기준</button>
-              <button type="button" data-mode="source">원본과 같게</button>
-            </div>
-            <div class="xhint" id="rateHint"></div>
-          </div>
-        </div>
-        <div class="xrow">
-          <span class="xl">예상 크기</span>
-          <div><b id="sizeEst">-</b> <span class="xhint" id="sizeNote"></span></div>
-        </div>
-        <select id="bitrate" hidden>
-          <option value="fixed">fixed</option>
-          <option value="source">source</option>
-        </select>
-      </div>
-
-      <div id="layerBox" hidden>
-        <div class="h4">투명 레이어 파일 <span class="faint">편집기에서 원본 위에 이 순서로 쌓으면 조합과 같은 그림</span></div>
-        <ol class="lfiles" id="layerFiles"></ol>
-      </div>
-
-      <div class="xsum" id="exportSum"></div>
-
-      <details class="sec" id="specBox">
-        <summary>규격 자세히 <span class="faint" id="specNote"></span></summary>
-        <p class="note" id="specState"></p>
-        <div class="spec" id="specTable"></div>
-      </details>
-
-      <details class="sec">
-        <summary>그 밖의 결과물 <span class="faint" id="filesCount"></span></summary>
-        <p class="sub" style="margin-top:8px">확인용 파일과 예전 양식 파일을 하나씩 고릅니다.</p>
-        <div class="files" id="files"></div>
-      </details>
-      <p class="faint" style="margin:12px 0 0">설정은 이름_settings.json 에 함께 남습니다. results 폴더에 저장하면 전체 요약이 verification.json 에 쌓입니다.</p>
-    </section>
   </div>
 
-  <!-- 오른쪽: 카드 (④ 내보내기는 넓은 화면에서 가운데 열 ② 아래로) -->
+  <!-- 오른쪽: 카드 · 내보내기 -->
   <div class="col-cards">
     <section class="panel" id="cardPanel">
       <h2><span class="n">3</span>카드 골라 조합하기</h2>
@@ -643,6 +595,58 @@
       </details>
     </section>
 
+
+    <section class="panel" id="exportPanel">
+      <h2><span class="n">4</span>내보내기</h2>
+
+      <div class="xlist" id="xcards"></div>
+
+      <div class="xset" id="videoSet">
+        <div class="xset-t">조합 영상 설정 <span class="faint">H.264 · .mp4</span></div>
+        <div class="xrow">
+          <span class="xl">원본에 맞춤</span>
+          <div class="chips" id="matchChips"></div>
+        </div>
+        <div class="xrow">
+          <span class="xl">비트레이트</span>
+          <div>
+            <div class="seg" id="rateSeg">
+              <button type="button" data-mode="fixed">해상도 기준</button>
+              <button type="button" data-mode="source">원본과 같게</button>
+            </div>
+            <div class="xhint" id="rateHint"></div>
+          </div>
+        </div>
+        <div class="xrow">
+          <span class="xl">예상 크기</span>
+          <div><b id="sizeEst">-</b> <span class="xhint" id="sizeNote"></span></div>
+        </div>
+        <select id="bitrate" hidden>
+          <option value="fixed">fixed</option>
+          <option value="source">source</option>
+        </select>
+      </div>
+
+      <div id="layerBox" hidden>
+        <div class="h4">투명 레이어 파일 <span class="faint">편집기에서 원본 위에 이 순서로 쌓으면 조합과 같은 그림</span></div>
+        <ol class="lfiles" id="layerFiles"></ol>
+      </div>
+
+      <div class="xsum" id="exportSum"></div>
+
+      <details class="sec" id="specBox">
+        <summary>규격 자세히 <span class="faint" id="specNote"></span></summary>
+        <p class="note" id="specState"></p>
+        <div class="spec" id="specTable"></div>
+      </details>
+
+      <details class="sec">
+        <summary>그 밖의 결과물 <span class="faint" id="filesCount"></span></summary>
+        <p class="sub" style="margin-top:8px">확인용 파일과 예전 양식 파일을 하나씩 고릅니다.</p>
+        <div class="files" id="files"></div>
+      </details>
+      <p class="faint" style="margin:12px 0 0">설정은 이름_settings.json 에 함께 남습니다. results 폴더에 저장하면 전체 요약이 verification.json 에 쌓입니다.</p>
+    </section>
 
     <details class="how" id="howBox">
       <summary class="how-sum">작동 흐름 · 쓰는 모델 · 이 PC 점검 <span class="faint" id="howSum"></span></summary>
