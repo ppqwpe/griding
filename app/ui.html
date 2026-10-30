@@ -244,10 +244,10 @@
   header.top .inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; width: 100%; max-width: var(--page); }
   .how { margin-left: auto !important; margin-right: auto !important; }
   /* ── 작업 화면 (프리미어처럼 창을 붙여 놓음) ──
-       폭 1100px 이상: 창 전체를 채우고 페이지는 스크롤하지 않는다. 창마다 이름 막대 · 탭, 내용은 창 안에서 스크롤.
+       폭 1200px 이상: 창 전체를 채우고 페이지는 스크롤하지 않는다. 창마다 이름 막대 · 탭, 내용은 창 안에서 스크롤.
        창 사이 경계선(.splitter)을 끌어 크기를 바꾸고(Workspace), 크기와 고른 탭은 이 브라우저에 기억한다.
        그보다 좁으면 창을 위아래로 쌓고 탭 대신 모든 내용을 차례로 보여 준다. */
-  :root { --wl: 300px; --wr: 460px; --hb: 240px; --dhead: 34px; }
+  :root { --wl: 280px; --wr: 420px; --we: 340px; --hm: 420px; --hp: 300px; --dhead: 34px; }
   .how { margin: 14px 0 0 !important; }
   .people { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); }
   .dock { background: var(--panel); min-width: 0; min-height: 0; display: flex; flex-direction: column; }
@@ -275,36 +275,42 @@
   .runbar .btn { padding: 8px 18px; white-space: nowrap; }
   .runbar .btn.primary { min-width: 140px; }
   .pane > .sub:first-child { margin-top: 0; }
-  @media (min-width: 1100px) {
+  .seg button, .dhead .btn { white-space: nowrap; }
+  #cardPanel .combo-row { grid-template-columns: minmax(0, 1fr); }      /* 카드 칸이 좁아도 예시 그림 · 바탕 · 쌓인 순서가 안 꺾이게 위아래로 */
+  #cardPanel .combo-img { aspect-ratio: 16/9; }
+  @media (min-width: 1200px) {
     body { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     header.top { position: static; flex: none; padding: 6px 14px; }
     header.top .inner { max-width: none; }
     main.ws { flex: 1; min-height: 0; max-width: none; width: 100%; margin: 0; padding: 0; gap: 0; border-top: 1px solid var(--line);
               display: grid; align-items: stretch; grid-template-rows: minmax(0, 1fr);
-              grid-template-columns: min(var(--wl), 24vw) 5px minmax(0, 1fr) 5px min(var(--wr), 36vw); }   /* 작은 화면에선 양옆이 먼저 줄어든다 */
+              grid-template-columns: min(var(--wl), 20vw) 5px minmax(0, 1fr) 5px min(var(--wr), 27vw) 5px min(var(--we), 21vw); }   /* 작은 화면에선 옆 칸이 먼저 줄어든다 */
     main.ws > *, #dockCenter > *, .monitor, .mbody { min-width: 0; min-height: 0; }
     .mbody .stage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
     .splitter.v { cursor: col-resize; }
     .splitter.h { cursor: row-resize; }
-    #dockCenter { background: #0c0c0c; display: grid; grid-template-rows: minmax(0, 1fr) 5px min(var(--hb), 45vh); }
+    #dockCenter, #colLeft { background: #0c0c0c; display: grid; min-height: 0; min-width: 0; }
+    #dockCenter { grid-template-rows: min(var(--hm), 62vh) 5px minmax(0, 1fr); }   /* 모니터는 정해 둔 높이, 아래 실행 · 결과가 나머지 */
+    #colLeft { grid-template-rows: minmax(0, 1fr) 5px min(var(--hp), 60vh); }
     .monitor { display: flex; flex-direction: column; min-height: 0; background: var(--panel); }
     .mbody { display: flex; padding: 10px 12px; overflow: hidden; }
     .mbody .stage { flex: 1; min-height: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .mbody .stage > div { display: flex; flex-direction: column; min-height: 0; }
     .mbody .view { flex: 1; min-height: 0; max-height: none; aspect-ratio: auto; }
+    .monitor { overflow: hidden; }
     .mbody .cap, .mbody .notes { flex: none; max-height: 4.6em; overflow: auto; }
     .dock .pane[hidden] { display: none; }
     .pane::before { display: none; }
   }
   /* 좁은 화면: 창을 위아래로 쌓는다 — 탭은 숨기고 모든 내용을 제목과 함께 차례로 */
-  @media (max-width: 1099px) {
+  @media (max-width: 1199px) {
     main.ws { display: flex; flex-direction: column; align-items: stretch; gap: 12px; padding: 12px; max-width: none; }
     main.ws > *, #dockCenter > * { min-width: 0; }
     .splitter { display: none; }
     .dock { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
     #dockCenter { order: 1; display: flex; flex-direction: column; gap: 12px; background: transparent; border: 0; border-radius: 0; overflow: visible; }
     #dockCenter > .monitor, #dockCenter > .dock { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--panel); }
-    #dockPeople { order: 2; } #dockRight { order: 3; }
+    #colLeft { order: 2; display: flex; flex-direction: column; gap: 12px; } #dockRight { order: 3; } #dockExport { order: 4; }
     .dtab, .dtabs .dspace { display: none; }
     .dtabs { justify-content: flex-end; }
     .pane { display: block !important; overflow: visible; }
@@ -467,8 +473,9 @@
 
 
 <main class="ws" id="ws">
-  <!-- 프리미어처럼: 왼쪽 ② 사람 | 가운데 모니터 · 실행 막대 · 플레이트/실행 결과 | 오른쪽 ③ 카드 · 설정 · ④ 내보내기
+  <!-- 프리미어처럼: 왼쪽 ② 사람 / ① 플레이트 | 가운데 모니터 · 실행 막대 · ⑤ 실행 결과 | ③ 카드 · 설정 | ④ 내보내기
        창 사이 경계선(.splitter)을 끌어 크기를 바꾼다. 좁은 화면에서는 위아래로 쌓인다. -->
+  <div class="dcol" id="colLeft">
   <section class="dock" id="dockPeople">
     <div class="dhead"><span class="dtitle"><span class="n">2</span>사람</span><span class="faint" id="peopleCount"></span>
       <span class="dspace"></span><button class="btn small" id="scanBtn" type="button" disabled>다시 찾기</button></div>
@@ -482,6 +489,20 @@
         <p class="note" id="peopleNote">찾지 않으면 영상에 나오는 모든 사람을 가립니다.</p>
     </div>
   </section>
+  <div class="splitter h" data-split="hp" role="separator" aria-orientation="horizontal" title="끌어서 높이 바꾸기 · 두 번 누르면 처음대로"></div>
+  <section class="dock" id="dockPlates">
+    <div class="dhead"><span class="dtitle"><span class="n">1</span>플레이트</span><span class="faint" id="plateCount"></span>
+      <span class="dspace"></span>
+      <button class="btn small" id="openOut" type="button" title="results 폴더 열기">results</button>
+      <button class="btn small" id="clear" type="button">비우기</button></div>
+    <div class="dbody pane" id="platePane" data-title="① 플레이트">
+        <div id="drop" tabindex="0" role="button" aria-label="플레이트 파일 선택">
+          <b>클릭해서 고르기 · 끌어다 놓기</b>mp4, mov, png, jpg · 한 번에 여러 개
+          <input type="file" id="file" accept="video/*,image/*" multiple hidden></div>
+        <ul class="bin" id="plates"></ul>
+    </div>
+  </section>
+  </div>
   <div class="splitter v" data-split="wl" role="separator" aria-orientation="vertical" title="끌어서 폭 바꾸기 · 두 번 누르면 처음대로"></div>
 
   <section class="dock center" id="dockCenter">
@@ -511,21 +532,9 @@
         </div>
       </div>
     </div>
-    <div class="splitter h" data-split="hb" role="separator" aria-orientation="horizontal" title="끌어서 높이 바꾸기 · 두 번 누르면 처음대로"></div>
+    <div class="splitter h" data-split="hm" role="separator" aria-orientation="horizontal" title="끌어서 높이 바꾸기 · 두 번 누르면 처음대로"></div>
     <div class="dock sub" id="dockBottom">
-      <div class="dhead dtabs" data-group="bottom">
-        <button type="button" class="dtab" data-pane="platePane"><span class="n">1</span>플레이트 <span class="faint" id="plateCount"></span></button>
-        <button type="button" class="dtab" data-pane="runPane">실행 · 결과</button>
-        <span class="dspace"></span>
-        <button class="btn small" id="openOut" type="button">results 폴더 열기</button>
-        <button class="btn small" id="clear" type="button">목록 비우기</button>
-      </div>
-      <div class="dbody pane" id="platePane" data-title="① 플레이트">
-        <div id="drop" tabindex="0" role="button" aria-label="플레이트 파일 선택">
-          <b>클릭해서 고르기 · 끌어다 놓기</b>mp4, mov, png, jpg · 한 번에 여러 개
-          <input type="file" id="file" accept="video/*,image/*" multiple hidden></div>
-        <ul class="bin" id="plates"></ul>
-      </div>
+      <div class="dhead"><span class="dtitle"><span class="n">5</span>실행 · 결과</span></div>
       <div class="dbody pane" id="runPane" data-title="⑤ 실행 · 결과">
         <div class="rerun">저장 위치
           <div class="seg" id="placeSeg">
@@ -553,7 +562,6 @@
     <div class="dhead dtabs" data-group="right">
       <button type="button" class="dtab" data-pane="cardPanel"><span class="n">3</span>카드</button>
       <button type="button" class="dtab" data-pane="setPane">설정</button>
-      <button type="button" class="dtab" data-pane="exportPanel"><span class="n">4</span>내보내기</button>
     </div>
     <div class="dbody pane" id="cardPanel" data-title="③ 카드 골라 조합하기">
         <p class="sub">예시 조합을 누르거나 카드를 골라 쌓으세요. 색과 불투명도는 아래에서 바꿉니다.</p>
@@ -681,6 +689,11 @@
           </details>
         </details>
     </div>
+  </section>
+  <div class="splitter v" data-split="we" role="separator" aria-orientation="vertical" title="끌어서 폭 바꾸기 · 두 번 누르면 처음대로"></div>
+
+  <section class="dock" id="dockExport">
+    <div class="dhead"><span class="dtitle"><span class="n">4</span>내보내기</span></div>
     <div class="dbody pane" id="exportPanel" data-title="④ 내보내기">
         <div class="xlist" id="xcards"></div>
 
@@ -728,7 +741,7 @@
           <p class="sub" style="margin-top:8px">확인용 파일과 예전 양식 파일을 하나씩 고릅니다.</p>
           <div class="files" id="files"></div>
         </details>
-        <p class="faint" style="margin:12px 0 0">설정은설정은 이름_settings.json 에 함께 남습니다. results 폴더에 저장하면 전체 요약이 verification.json 에 쌓입니다.</p>
+        <p class="faint" style="margin:12px 0 0">설정은 이름_settings.json 에 함께 남습니다. results 폴더에 저장하면 전체 요약이 verification.json 에 쌓입니다.</p>
     </div>
   </section>
 </main>
@@ -1706,8 +1719,9 @@ class SystemPanel {
 /** 작업 화면 — 창 탭 고르기 · 경계선 끌어 크기 바꾸기. 크기와 고른 탭은 이 브라우저에 기억 (실패해도 동작) */
 class Workspace {
   static KEY = "griding-ws";
-  static SIZE = { wl: [220, 520, 300], wr: [340, 720, 460], hb: [120, 560, 240] };   // [최소, 최대, 처음]
-  static PANEL = { wl: "dockPeople", wr: "dockRight", hb: "dockBottom" };
+  static SIZE = { wl: [220, 520, 280], wr: [320, 640, 420], we: [280, 560, 340], hm: [220, 900, 420], hp: [140, 700, 300] };   // [최소, 최대, 처음]
+  static PANEL = { wl: "#colLeft", wr: "#dockRight", we: "#dockExport", hm: "#dockCenter .monitor", hp: "#dockPlates" };
+  static GROW = { wl: [1, 0], wr: [-1, 0], we: [-1, 0], hm: [0, 1], hp: [0, -1] };   // 오른쪽 · 아래로 끌 때 커지면 1, 작아지면 -1
   constructor() {
     this.state = new Memory(Workspace.KEY).load() || {};
     this.memory = new Memory(Workspace.KEY);
@@ -1746,11 +1760,12 @@ class Workspace {
       e.preventDefault();
       try { sp.setPointerCapture(e.pointerId); } catch {}   // 끄는 동안 창 밖으로 나가도 계속
       sp.classList.add("drag");
-      const box = $(Workspace.PANEL[key]).getBoundingClientRect();   // 화면에 실제로 보이는 크기에서 시작 (작은 화면에선 줄어 있음)
-      const start = { x: e.clientX, y: e.clientY, v: key === "hb" ? box.height : box.width };
+      const box = document.querySelector(Workspace.PANEL[key]).getBoundingClientRect();   // 화면에 실제로 보이는 크기에서 시작 (작은 화면에선 줄어 있음)
+      const start = { x: e.clientX, y: e.clientY, v: key[0] === "h" ? box.height : box.width };
       const move = (ev) => {
-        // 왼쪽 열은 오른쪽으로 끌면 넓어지고, 오른쪽 열 · 아래 창은 반대로 끌면 넓어진다
-        const d = key === "wl" ? ev.clientX - start.x : key === "wr" ? start.x - ev.clientX : start.y - ev.clientY;
+        // 끈 거리만큼 크기를 바꾼다 (GROW: 끄는 방향에 따라 커지거나 작아짐)
+        const [gx, gy] = Workspace.GROW[key];
+        const d = gx * (ev.clientX - start.x) + gy * (ev.clientY - start.y);
         this.state[key] = this.#apply(key, start.v + d);
       };
       const up = () => { sp.classList.remove("drag"); sp.removeEventListener("pointermove", move); sp.removeEventListener("pointerup", up); this.#save(); };

@@ -15,16 +15,16 @@ Switch the language with **[한국어 | English]** at the top right.
 
 ## Screen layout
 
-Griding is laid out like an editing workspace (think Premiere). From 1100 px wide it fills the whole window, with docked panels and no page scroll:
+Griding is laid out like an editing workspace (think Premiere). From 1200 px wide it fills the whole window, with docked panels and no page scroll:
 
-| Left | Center | Right |
-|---|---|---|
-| ② People | **Monitor** (source \| result), the run bar (⑤ Preview this frame · Run all), and below it tabs **① Plates** \| **Run · Results** | Tabs **③ Cards** \| **Settings** (card colors and opacity, head detection, how it works) \| **④ Export** |
+| Left | Center | Cards | Export |
+|---|---|---|---|
+| ② People, and below it ① Plates (drop box and plate list) | **Monitor** (source \| result), the run bar (⑤ Preview this frame · Run all), and below it ⑤ Run · Results | Tabs **③ Cards** \| **Settings** (card colors and opacity, head detection, how it works) | **④ Export** |
 
-- Drag the thin lines between panels to resize them (left and right columns, and the height of the plates/results panel). Double-click a line to reset it.
-- Panel sizes and the open tabs are remembered in this browser.
-- Pressing **Run all** switches the bottom panel to **Run · Results**.
-- Below 1100 px the panels stack and every section is shown in order, without tabs.
+- Drag the thin lines between panels to resize them: the widths of the left, cards and export columns, the monitor height, and the height of the plates panel. Double-click a line to reset it.
+- Panel sizes and the open tab are remembered in this browser.
+- On smaller screens the side columns shrink first so the monitor keeps its room.
+- Below 1200 px the panels stack and every section is shown in order, without tabs.
 
 ## Steps
 
