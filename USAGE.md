@@ -13,7 +13,7 @@ Keep the console window open while you work. If the browser does not open, paste
 (something like `http://127.0.0.1:7860/`) into Chrome or Edge.
 Switch the language with **[한국어 | English]** at the top right.
 
-### macOS (not yet tested on a real Mac)
+### macOS
 
 There are two Mac zips: **`Griding_1.0_mac_arm64.zip`** for Apple silicon (M1 and later) and **`Griding_1.0_mac_intel.zip`** for Intel Macs. Both need **macOS 14 (Sonoma) or later**.
 

@@ -8,7 +8,7 @@ It starts from a single `Griding.bat` (Windows) or `Griding.command` (Mac) with 
 ## Using it
 
 **Windows:** download the zip from [Releases](../../releases), extract it, and double-click `Griding.bat`. If it freezes because of the graphics card, start `Griding_CPU.bat` instead.
-**macOS:** see [USAGE.md › macOS](USAGE.md#macos-not-yet-tested-on-a-real-mac). Unzip, then the first time right-click `Griding.command` → Open.
+**macOS:** download `Griding_1.0_mac_arm64.zip` (Apple silicon) or `Griding_1.0_mac_intel.zip` (Intel) from the same page, see [USAGE.md › macOS](USAGE.md#macos). Unzip, then the first time right-click `Griding.command` → Open.
 On first launch it puts a Griding shortcut with the app icon on your desktop. The step-by-step guide is in [USAGE.md](USAGE.md), and measured test results are in [VERIFICATION.md](VERIFICATION.md).
 
 What it does:

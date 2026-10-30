@@ -74,10 +74,10 @@ Spec · bitrate · mask opacity · shortcut · color round trip (709/601) · var
 
 Run: `app\python\python.exe app\tests\run_tests.py`
 
-## 7. macOS builds (built on Windows, not yet run on a Mac)
+## 7. macOS builds (built on Windows, run on a Mac 2026-10-30)
 
 - `Griding_1.0_mac_arm64.zip` (Apple silicon, 284 MB): Python 3.12.16 (python-build-standalone) and all 21 libraries at the same versions as Windows (onnxruntime instead of onnxruntime-directml)
 - `Griding_1.0_mac_intel.zip` (244 MB): onnxruntime 1.23.2 (the last Intel-Mac build) and no MediaPipe, so the face cards are off
 - Checked on Windows: every native file is a Mach-O binary for the right CPU; `Griding.command`, `python3.12` and `ffmpeg` carry execute bits; symlinks are stored as symlinks; the launchers pass `bash -n`; all needed modules are present; wheel tags match the target
 - Minimum macOS 14, because onnxruntime 1.24 (Apple silicon) and OpenCV 5 (Intel) need it
-- Not done yet: starting it on a real Mac
+- Run on a real Mac by the user (2026-10-30): starts and works
