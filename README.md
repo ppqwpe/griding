@@ -1,13 +1,14 @@
 # Griding
 
-A Windows app that covers the faces in live-action plates with a grid or a solid mask, so the footage can go into Seedance.
-It starts from a single `Griding.bat` with no ComfyUI, and everything runs on your own PC.
+An app for Windows and macOS that covers the faces in live-action plates with a grid or a solid mask, so the footage can go into Seedance.
+It starts from a single `Griding.bat` (Windows) or `Griding.command` (Mac) with no ComfyUI, and everything runs on your own computer.
 
 ![Griding](logo/griding_logo_dark.png)
 
 ## Using it
 
-Download the zip from [Releases](../../releases), extract it, and double-click `Griding.bat`. If it freezes because of the graphics card, start `Griding_CPU.bat` instead.
+**Windows:** download the zip from [Releases](../../releases), extract it, and double-click `Griding.bat`. If it freezes because of the graphics card, start `Griding_CPU.bat` instead.
+**macOS:** see [USAGE.md › macOS](USAGE.md#macos-not-yet-tested-on-a-real-mac). Unzip, then the first time right-click `Griding.command` → Open.
 On first launch it puts a Griding shortcut with the app icon on your desktop. The step-by-step guide is in [USAGE.md](USAGE.md), and measured test results are in [VERIFICATION.md](VERIFICATION.md).
 
 What it does:
@@ -30,7 +31,7 @@ git clone https://github.com/ppqwpe/griding.git Griding
 Griding\Griding.bat
 ```
 
-Run the tests after any change. All 164 should pass.
+Run the tests after any change. All 176 should pass (the macOS code paths are tested with mocks, so they run on Windows too).
 
 ```
 app\python\python.exe app\tests\run_tests.py
@@ -42,11 +43,19 @@ Build a new release zip like this. It lands next to the repo folder as `Griding_
 app\python\python.exe app\tools\build_zip.py
 ```
 
+The Mac zips can be built on Windows too. `fetch_mac.py` downloads a standalone Python 3.12 for macOS and the macOS wheels of the same library versions into `mac_runtime/` (not in Git). `build_zip.py --mac` then writes `Griding_1.0_mac_arm64.zip` or `Griding_1.0_mac_intel.zip` and keeps the Unix execute bits and symlinks.
+
+```
+python app\tools\fetch_mac.py
+app\python\python.exe app\tools\build_zip.py --mac arm64
+app\python\python.exe app\tools\build_zip.py --mac x86_64
+```
+
 ### Layout
 
 | Path | What's there |
 |---|---|
-| `app/facegrid/` | The app itself (the Python package keeps the old name `facegrid`) |
+| `app/facegrid/` | The app itself (the Python package keeps the old name `facegrid`). `platforms.py` holds everything that differs between Windows and macOS |
 | `app/ui.html` | The whole browser UI in one file (HTML, CSS, JS) |
 | `app/tests/` | Automated tests |
 | `app/model/` | Two head-detection models, the face landmark model, the sample character images |

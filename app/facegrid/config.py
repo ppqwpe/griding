@@ -1,10 +1,13 @@
 """경로와 상수. 앱 폴더를 어디로 옮겨도 이 파일 기준으로 찾는다.
 
 앱 폴더에 쓸 수 없는 곳(Program Files · 읽기 전용 USB · 네트워크 드라이브 등)에 두면
-결과는 문서\\Griding results, 임시 파일은 %LOCALAPPDATA%\\Griding 로 자동으로 옮긴다.
+결과는 문서\\Griding results, 임시 파일은 운영체제의 앱 데이터 폴더로 자동으로 옮긴다
+(Windows %LOCALAPPDATA%\\Griding · macOS ~/Library/Caches/Griding — platforms.py).
 """
 import os
 from pathlib import Path
+
+from .platforms import current as _platform
 
 APP_DIR = Path(__file__).resolve().parent.parent  # .../FaceGrid_Lite/app
 ROOT_DIR = APP_DIR.parent                         # .../FaceGrid_Lite
@@ -30,7 +33,7 @@ def pick_dir(*candidates: Path) -> Path:
     return next((c for c in candidates if writable(c)), candidates[0])
 
 
-_LOCAL = Path(os.environ.get("LOCALAPPDATA") or Path.home() / "AppData" / "Local") / "Griding"
+_LOCAL = _platform().local_dir()
 WORK_DIR = pick_dir(APP_DIR / "work", _LOCAL / "work")
 RESULT_DIR = pick_dir(ROOT_DIR / "results", Path.home() / "Documents" / "Griding results", _LOCAL / "results")
 

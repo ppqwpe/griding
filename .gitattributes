@@ -3,3 +3,4 @@
 *.task binary
 *.png binary
 *.ico binary
+*.command text eol=lf

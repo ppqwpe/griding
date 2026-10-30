@@ -1369,7 +1369,7 @@ class FlowView {
       this.node("입", "넣은 파일", s.plate ? s.plate.name : "아직 없음",
                 spec ? spec.summary : (s.plate ? "규격 읽는 중…" : "영상 · 이미지를 넣으면 규격이 여기"), "io"),
       this.node(1, "머리 찾기", s.model === "accurate" ? "YOLO11m head (정확)" : "YOLO11s head (빠름)",
-                `ONNX Runtime · ${s.device === "GPU" ? "그래픽카드" : "CPU"} · 옆모습 · 뒤통수도`),
+                `ONNX Runtime · ${s.device === "GPU" ? (s.accel || "그래픽카드") : "CPU"} · 옆모습 · 뒤통수도`),
       this.node(2, "사람 잇기", "ByteTrack 방식 (모델 없음)", s.people || "프레임 사이 같은 사람에 같은 번호"),
       this.node(3, "표정 찾기", "MediaPipe Face Landmarker", s.needsFaces ? "얼굴 점 478개 · CPU" : "안 씀 — 표정 카드를 안 골랐음", s.needsFaces ? "" : "off"),
       this.node(4, "카드 겹치기", s.recipe.length ? `${s.base} 위에 ${s.recipe.length}장` : "카드를 고르세요", s.recipe.join(" → ") || "-", s.recipe.length ? "" : "off"),
@@ -1843,8 +1843,8 @@ class App {
     await this.refreshGallery();
   }
   status(info) {
-    if (info) { $("status").textContent = "준비됨 · " + (info.device === "GPU" ? "그래픽카드로 처리" : "CPU로 처리"); $("status").className = "on"; }
-    else { $("status").textContent = "앱이 꺼졌습니다 · Griding.bat 을 다시 실행하세요"; $("status").className = "off"; }
+    if (info) { $("status").textContent = "준비됨 · " + (info.device === "GPU" ? `${info.accel || "그래픽카드"}로 처리` : "CPU로 처리"); $("status").className = "on"; }
+    else { $("status").textContent = `앱이 꺼졌습니다 · ${(this.info && this.info.launcher) || "Griding.bat"} 을 다시 실행하세요`; $("status").className = "off"; }
   }
   scanKey() { const v = this.form.values(); return JSON.stringify(SettingsForm.DETECT.map(k => v[k])); }
   settings() {
@@ -1955,7 +1955,7 @@ class App {
     const checkN = ["compare", "preview", "contact"].filter(k => keys.includes(k)).length;
     const otherN = keys.filter(k => !["combo", "layers", "compare", "preview", "contact"].includes(k)).length;
     this.flow.render({
-      plate: p, model: this.form.values().model, device: this.info.device, needsFaces: this.recipe.needsFaces(),
+      plate: p, model: this.form.values().model, device: this.info.device, accel: this.info.accel, needsFaces: this.recipe.needsFaces(),
       base: this.recipe.base === "black" ? "검은 바탕" : "원본",
       recipe: this.recipe.recipe.map(k => this.recipe.layers[k].label),
       people: r ? `${r.count}명 찾음 · 한 화면 최대 ${r.max_together}명` + (p.people(this.scanKey()).length ? ` · #${p.people(this.scanKey()).join(", #")}만 가림` : " · 모두 가림") : "",

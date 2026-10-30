@@ -6,7 +6,6 @@ RequestHandler 는 주소(경로)마다 FaceGridApp 의 메서드 하나로 넘�
 from __future__ import annotations
 
 import json
-import os
 import socket
 import sys
 import threading
@@ -30,6 +29,7 @@ from .scan import TrackScan
 from .settings import GridSettings
 from .shortcut import DesktopShortcut
 from .picker import NativeFilePicker, PickerError
+from .platforms import current as current_platform
 from .store import SAVE_MODES, BesideSource, ResultStore, UploadError, UploadStore
 from .syscheck import SystemCheck
 
@@ -95,12 +95,12 @@ class FaceGridApp:
         return {"version": __version__, "device": self.detector.device, "out": str(self.results.root),
                 "defaults": GridSettings().to_dict(), "limits": GridSettings.LIMITS,
                 "patterns": REGISTRY.describe(), "outputs": self.catalog.describe(), "layers": Recipe.describe(),
-                "models": self.models(), "detect_models": self.detectors.available(), "waiting": self.jobs.waiting(),
+                "models": self.models(), "detect_models": self.detectors.available(), "waiting": self.jobs.waiting(), "launcher": current_platform().launcher, "accel": current_platform().accel_name,
                 "system": self.system}
 
     def models(self) -> list[dict]:
         """화면에 보여 줄 '어떤 모델로 돌아가나'"""
-        dev = "그래픽카드 (DirectML)" if self.detector.device == "GPU" else "CPU"
+        dev = f"그래픽 가속 ({current_platform().gpu_label})" if self.detector.device == "GPU" else "CPU"
         return [
             {"name": "머리 검출", "model": "YOLO11s head (빠름) · YOLO11m head (정확)",
              "source": "deepghs/real_head_detection · head_detect_v0_s_yv11 / _m_yv11 (Hugging Face)",
@@ -271,8 +271,7 @@ class FaceGridApp:
 
     def open_folder(self, body: dict) -> dict:
         path = self.results.folder(str(body.get("folder") or ""))
-        if hasattr(os, "startfile"):
-            os.startfile(str(path))
+        current_platform().open_folder(path)   # 탐색기 · Finder
         return {"ok": True, "path": str(path)}
 
 
@@ -469,7 +468,7 @@ def main(open_browser: bool = True, make_shortcut: bool = True, first_port: int 
     port = free_port(first=first_port)   # 쓰는 중이면 다음 번호
     srv = make_server(app, port)
     url = f"http://{config.HOST}:{port}/"
-    print(f"  처리 장치: {'그래픽카드' if detector.device == 'GPU' else 'CPU'}")
+    print(f"  처리 장치: {current_platform().accel_name if detector.device == 'GPU' else 'CPU'}")
     print(f"\n  준비 완료 → {url}")
     print("  (브라우저가 안 열리면 위 주소를 크롬이나 엣지 주소창에 붙여넣으세요)")
     print(f"  결과 저장 폴더: {config.RESULT_DIR}")

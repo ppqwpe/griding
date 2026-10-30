@@ -20,6 +20,7 @@ import cv2
 import numpy as np
 
 from . import config
+from .platforms import current as current_platform
 from .geometry import Rect
 
 
@@ -50,7 +51,7 @@ _GPU_LOCK = threading.Lock()
 
 
 class HeadDetector(Detector):
-    _PROVIDERS = ("DmlExecutionProvider", "CPUExecutionProvider")
+    GPU = current_platform().gpu_provider   # Windows DirectML · macOS Core ML (없으면 CPU 만)
 
     def __init__(self, model_path: Path = config.MODEL_PATH, size: int = config.DETECT_SIZE):
         import onnxruntime as ort
@@ -63,14 +64,13 @@ class HeadDetector(Detector):
         self._opts.log_severity_level = 3
         self._opts.enable_mem_pattern = False                              # DirectML 권장 설정
         self._opts.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
-        wanted = [p for p in self._PROVIDERS if p in ort.get_available_providers()]
-        if config.FORCE_CPU or "DmlExecutionProvider" not in wanted:
+        if config.FORCE_CPU or not self.GPU or self.GPU not in ort.get_available_providers():
             self._use_cpu()
             return
         try:
-            self._open(wanted)
+            self._open([self.GPU, "CPUExecutionProvider"])
             self._warm_up()
-            self.device = "GPU" if self._sess.get_providers()[0] == "DmlExecutionProvider" else "CPU"
+            self.device = "GPU" if self._sess.get_providers()[0] == self.GPU else "CPU"
         except Exception:  # GPU 드라이버 문제 · 지원 안 되는 연산 → CPU 로
             self._use_cpu()
 

@@ -68,8 +68,16 @@ Seedance 2.5 · reference-to-video · 480p · 9-second Paris plate, 23 people
 - Checked: extracted into a folder with Korean characters and spaces on a clean environment; starts in both GPU and CPU mode; 155 tests pass
 - Not done yet: running on an actual second PC
 
-## 6. Automated tests (164)
+## 6. Automated tests (176)
 
-Spec · bitrate · mask opacity · shortcut · color round trip (709/601) · variable fps · rotation · 10-bit · odd sizes · transparent layers · people tracking · face landmarks · server · PC check · blending speed · sample character cards · result versioning · saving next to the source · file picker · face line/point opacity
+Spec · bitrate · mask opacity · shortcut · color round trip (709/601) · variable fps · rotation · 10-bit · odd sizes · transparent layers · people tracking · face landmarks · server · PC check · blending speed · sample character cards · result versioning · saving next to the source · file picker · face line/point opacity · tracking box color · macOS code paths with mocks (file dialog, Finder, Core ML, system check, launchers, Mac zip permissions)
 
 Run: `app\python\python.exe app\tests\run_tests.py`
+
+## 7. macOS builds (built on Windows, not yet run on a Mac)
+
+- `Griding_1.0_mac_arm64.zip` (Apple silicon, 284 MB): Python 3.12.16 (python-build-standalone) and all 21 libraries at the same versions as Windows (onnxruntime instead of onnxruntime-directml)
+- `Griding_1.0_mac_intel.zip` (244 MB): onnxruntime 1.23.2 (the last Intel-Mac build) and no MediaPipe, so the face cards are off
+- Checked on Windows: every native file is a Mach-O binary for the right CPU; `Griding.command`, `python3.12` and `ffmpeg` carry execute bits; symlinks are stored as symlinks; the launchers pass `bash -n`; all needed modules are present; wheel tags match the target
+- Minimum macOS 14, because onnxruntime 1.24 (Apple silicon) and OpenCV 5 (Intel) need it
+- Not done yet: starting it on a real Mac

@@ -22,6 +22,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from . import __version__, config
+from .platforms import current as current_platform
 
 _NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 MARK = {"ok": "✓", "warn": "!", "fail": "✗"}
@@ -60,6 +61,31 @@ class WindowsCheck(Check):
         return self.result("ok", label)
 
 
+class MacCheck(Check):
+    name = "운영체제"
+    MIN = {"arm64": 14, "x86_64": 14}   # 묶은 부품이 요구: Apple 칩 onnxruntime 1.24 · Intel OpenCV 5 → 둘 다 macOS 14+
+
+    def __init__(self, version: str = "", machine: str = ""):
+        self._version = version or platform.mac_ver()[0]
+        self._machine = machine or platform.machine()
+
+    def run(self):
+        chip = "Apple 칩" if self._machine == "arm64" else "Intel" if self._machine == "x86_64" else self._machine
+        label = f"macOS {self._version or '?'} · {chip}"
+        major = int(self._version.split(".")[0]) if self._version.split(".")[0].isdigit() else 0
+        need = self.MIN.get(self._machine, 14)
+        if major and major < need:
+            return self.result("fail", label, f"macOS {need} 이상이 필요합니다", fatal=True)
+        return self.result("ok", label)
+
+
+def _sysctl(key: str) -> str:
+    try:
+        return subprocess.run(["sysctl", "-n", key], capture_output=True, text=True, timeout=5).stdout.strip()
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+
+
 class _MemStatus(ctypes.Structure):
     _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong), ("ullTotalPhys", ctypes.c_ulonglong),
                 ("ullAvailPhys", ctypes.c_ulonglong), ("ullTotalPageFile", ctypes.c_ulonglong),
@@ -70,17 +96,30 @@ class _MemStatus(ctypes.Structure):
 class CpuMemoryCheck(Check):
     name = "CPU · 메모리"
 
-    def run(self):
-        cpu = os.environ.get("PROCESSOR_IDENTIFIER") or platform.processor() or "?"
-        cores = os.cpu_count() or 1
-        gb = 0.0
+    @staticmethod
+    def memory_gb() -> float:
+        if current_platform().name == "mac":
+            raw = _sysctl("hw.memsize")
+            return int(raw) / 1024 ** 3 if raw.isdigit() else 0.0
         try:
             m = _MemStatus()
             m.dwLength = ctypes.sizeof(_MemStatus)
             if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m)):
-                gb = m.ullTotalPhys / 1024 ** 3
+                return m.ullTotalPhys / 1024 ** 3
         except (AttributeError, OSError):
             pass
+        return 0.0
+
+    @staticmethod
+    def cpu_name() -> str:
+        if current_platform().name == "mac":
+            return _sysctl("machdep.cpu.brand_string") or platform.processor() or "?"
+        return os.environ.get("PROCESSOR_IDENTIFIER") or platform.processor() or "?"
+
+    def run(self):
+        cpu = self.cpu_name()
+        cores = os.cpu_count() or 1
+        gb = self.memory_gb()
         detail = f"{cpu} · {cores}스레드 · 메모리 {gb:.0f}GB" if gb else f"{cpu} · {cores}스레드"
         if gb and gb < 7.5:
             return self.result("warn", detail, "메모리 8GB 미만 — 4K · 긴 영상은 느리거나 멈출 수 있음")
@@ -105,7 +144,8 @@ class LibrariesCheck(Check):
             fatal = any(m.split()[0] != "mediapipe" for m in missing)
             return self.result("fail" if fatal else "warn", "없음: " + ", ".join(missing),
                                "Griding 폴더를 통째로 다시 복사하세요 (일부만 옮기면 이렇게 됩니다). "
-                               "그래도 안 되면 'Microsoft Visual C++ 재배포 패키지(x64)'를 설치하세요", fatal=fatal)
+                               + ("그래도 안 되면 'Microsoft Visual C++ 재배포 패키지(x64)'를 설치하세요" if current_platform().name == "windows"
+                                  else "표정 인식(mediapipe)만 없으면 표정 카드만 못 씁니다"), fatal=fatal)
         return self.result("ok", " · ".join(found))
 
 
@@ -178,6 +218,8 @@ class GpuCheck(Check):
 
     @staticmethod
     def names() -> list[str]:
+        if current_platform().name == "mac":   # Apple 칩은 CPU 이름이 곧 그래픽 (예: Apple M2)
+            return [n for n in [_sysctl("machdep.cpu.brand_string")] if n]
         # PATH 가 비어 있는 PC 도 있어서 윈도우 폴더의 PowerShell 을 직접 부른다
         ps = Path(os.environ.get("SystemRoot", r"C:\Windows")) / "System32" / "WindowsPowerShell" / "v1.0" / "powershell.exe"
         try:
@@ -189,19 +231,21 @@ class GpuCheck(Check):
             return []
 
     def run(self):
+        pf = current_platform()
         try:
             import onnxruntime as ort
-            dml = "DmlExecutionProvider" in ort.get_available_providers()
+            has_gpu = bool(pf.gpu_provider) and pf.gpu_provider in ort.get_available_providers()
         except Exception:
-            dml = False
+            has_gpu = False
         cards = ", ".join(self.names()) or "이름을 못 읽음"
         if config.FORCE_CPU:
-            return self.result("warn", f"{cards} · CPU 로만 실행 (Griding_CPU.bat)", "그래픽카드를 쓰려면 Griding.bat 으로 켜세요")
+            return self.result("warn", f"{cards} · CPU 로만 실행 ({pf.cpu_launcher})", f"그래픽 가속을 쓰려면 {pf.launcher} 로 켜세요")
         if self._device == "GPU":
-            return self.result("ok", f"{cards} · DirectML 로 머리 찾기")
-        why = "DirectML 없음" if not dml else "그래픽카드 실행 시험 실패 → CPU"
+            return self.result("ok", f"{cards} · {pf.gpu_label} 로 머리 찾기")
+        why = f"{pf.gpu_label or '그래픽 가속'} 없음" if not has_gpu else "그래픽 가속 실행 시험 실패 → CPU"
         return self.result("warn", f"{cards} · {why}",
-                           "CPU 로도 결과는 같고 느리기만 합니다. 그래픽카드 드라이버를 최신으로 올리면 빨라질 수 있어요")
+                           "CPU 로도 결과는 같고 느리기만 합니다."
+                           + (" 그래픽카드 드라이버를 최신으로 올리면 빨라질 수 있어요" if pf.name == "windows" else ""))
 
 
 class FaceModelCheck(Check):
@@ -286,8 +330,9 @@ class SystemCheck:
 
     @staticmethod
     def checks(device: str = "") -> list[Check]:
-        return [WindowsCheck(), CpuMemoryCheck(), RuntimeDllCheck(), LibrariesCheck(), FfmpegCheck(),
-                ModelFilesCheck(), GpuCheck(device), FaceModelCheck(), StorageCheck()]
+        mac = current_platform().name == "mac"
+        first = [MacCheck(), CpuMemoryCheck()] if mac else [WindowsCheck(), CpuMemoryCheck(), RuntimeDllCheck()]   # Visual C++ 는 윈도우만
+        return first + [LibrariesCheck(), FfmpegCheck(), ModelFilesCheck(), GpuCheck(device), FaceModelCheck(), StorageCheck()]
 
     @classmethod
     def run(cls, device: str = "", checks: list[Check] | None = None) -> SystemReport:

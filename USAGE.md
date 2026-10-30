@@ -1,7 +1,7 @@
 # Griding 1.0 — How to use
 
 Griding covers the faces in live-action plates with a grid or a solid mask so the footage can go into Seedance.
-Nothing to install. Windows 10/11.
+Nothing to install. Windows 10/11, or macOS 14 (Sonoma) or later.
 
 ## Start
 
@@ -12,6 +12,24 @@ If the graphics card makes it hang or crash, start `Griding_CPU.bat` instead. Sa
 Keep the console window open while you work. If the browser does not open, paste the address shown in the console
 (something like `http://127.0.0.1:7860/`) into Chrome or Edge.
 Switch the language with **[한국어 | English]** at the top right.
+
+### macOS (not yet tested on a real Mac)
+
+There are two Mac zips: **`Griding_1.0_mac_arm64.zip`** for Apple silicon (M1 and later) and **`Griding_1.0_mac_intel.zip`** for Intel Macs. Both need **macOS 14 (Sonoma) or later**.
+
+1. Unzip the whole zip (double-click it in Finder).
+2. The first time, macOS blocks the launcher because it came from the internet: **right-click `Griding.command` → Open → Open** (or System Settings → Privacy & Security → Open Anyway). After that a double-click is enough.
+3. A Terminal window opens, runs the system check and opens the browser. Keep that window open while you work.
+
+If it still refuses to start, run this once in Terminal and try again. It only clears the download mark from the Griding folder:
+
+```
+xattr -dr com.apple.quarantine ~/Downloads/Griding
+```
+
+- Head detection uses Core ML when it can and the CPU otherwise. Results are the same; only speed differs. `Griding_CPU.command` starts with the CPU only.
+- **Intel Macs: the face cards (face outline cover, face lines, face points) are not available.** MediaPipe no longer ships an Intel-Mac build that works with the bundled libraries. Grid, whole-head cover and tracking boxes work.
+- The file dialog is the standard macOS one, so results can be saved next to the source as on Windows. Folders open in Finder.
 
 ## Screen layout
 
@@ -172,7 +190,7 @@ The PC is checked on every launch ("PC check" at the bottom of the screen, `work
 | App folder is not writable | Results move to `Documents\Griding results` automatically |
 | Run straight from inside the zip | Tells you to extract first |
 
-If it still fails, run the self-test: `app\python\python.exe app\tests\run_tests.py` (164 tests)
+If it still fails, run the self-test: `app\python\python.exe app\tests\run_tests.py` (176 tests)
 
 ## Moving to another PC
 
