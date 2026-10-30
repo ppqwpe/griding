@@ -24,10 +24,6 @@
   .brand img { width: 28px; height: 28px; }
   .brand img.name { width: auto; height: 27px; image-rendering: pixelated; margin-right: 4px; }
   .brand span { color: var(--dim); font-size: 13px; }
-  .steps { display: flex; gap: 6px; flex-wrap: wrap; }
-  .step { padding: 4px 12px; border-radius: 999px; background: var(--panel2); color: var(--dim); font-size: 13px; border: 1px solid var(--line); }
-  .step.now { background: var(--accent-soft); color: #fff; border-color: var(--accent); }
-  .step.done { color: var(--ok); border-color: #24442b; }
   #status { margin-left: auto; color: var(--dim); font-size: 12px; white-space: nowrap; }
   #status.on::before { content: "● "; color: var(--ok); }
   #status.off::before { content: "● "; color: var(--accent); }
@@ -55,12 +51,6 @@
 
   /* ── 틀 ── */
   main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(380px, 480px); gap: 18px; padding: 18px 22px 40px; align-items: start; }
-  .work { position: sticky; top: 72px; display: grid; gap: 16px; }
-  @media (max-width: 1040px) { main { grid-template-columns: 1fr; padding: 14px 16px 40px; } .work { position: static; } }
-  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
-  .panel + .panel { margin-top: 14px; }
-  h2 { font-size: 15px; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
-  h2 .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; flex: none; }
   .sub { color: var(--dim); font-size: 12.5px; margin: 0 0 12px; }
   .faint { color: var(--faint); font-size: 12px; }
   .note { font-size: 12px; color: var(--dim); margin: 6px 0 0; min-height: 18px; }
@@ -97,10 +87,6 @@
   .summary b { color: var(--text); }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   td { padding: 8px 6px; border-top: 1px solid var(--line); vertical-align: middle; }
-  tr.sel td { background: #241f1e; }
-  td.name { word-break: break-all; cursor: pointer; }
-  td.st { width: 170px; color: var(--dim); font-size: 12px; }
-  td.st.ok { color: var(--ok); } td.st.err { color: #ff7b72; } td.st.warn { color: var(--warn); }
   td.act { width: 1%; white-space: nowrap; text-align: right; }
   td.act a { color: var(--text); font-size: 12px; margin-left: 10px; }
   .empty { color: #666; font-size: 13px; padding: 8px 2px; }
@@ -152,8 +138,6 @@
   details.sec > summary::before { content: "▸"; color: var(--dim); transition: transform .15s; }
   details.sec[open] > summary::before { transform: rotate(90deg); }
   details.sec > summary .faint { font-weight: 400; }
-  details.sec .used { font-size: 11px; padding: 0 7px; border-radius: 999px; background: var(--accent-soft); color: #ffb3ae; border: 1px solid #5a2522; font-weight: 600; display: none; }
-  details.sec.active .used { display: inline-block; }
   .nums { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
   .nums label { display: grid; gap: 4px; font-size: 12px; color: var(--dim); }
   .nums input, .nums select { width: 100%; background: #101010; color: var(--text); border: 1px solid var(--line2); border-radius: 7px; padding: 8px 9px; font-size: 15px; font-variant-numeric: tabular-nums; }
@@ -186,20 +170,9 @@
   .fouts { display: grid; gap: 4px; margin-top: 4px; }
   .fout { font-size: 11px; color: var(--text); background: #232f27; border: 1px solid #2c4434; border-radius: 6px; padding: 2px 6px; }
   .fout.off { color: var(--faint); background: transparent; border-style: dashed; }
-  .tag2 { display: inline-block; font-size: 10.5px; padding: 0 6px; border-radius: 999px; background: #2a2a2a; border: 1px solid var(--line2); color: #cfcfcf; margin: 2px 2px 0 0; }
   @media (max-width: 1040px) { .farrow { display: none; } .fnode { flex-basis: 45%; margin: 0 4px; } }
 
   /* ── 내보내기 ── */
-  .xcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  @media (max-width: 480px) { .xcards { grid-template-columns: 1fr; } }
-  .xcard { text-align: left; background: var(--panel2); border: 2px solid var(--line2); border-radius: 10px; padding: 10px; cursor: pointer; color: var(--text); position: relative; }
-  .xcard.sel { border-color: var(--accent); background: #2a1c1b; }
-  .xcard .xt { font-size: 13px; font-weight: 700; padding-right: 22px; }
-  .xcard .xf { font-family: Consolas, monospace; font-size: 11px; color: #ffb3ae; margin-top: 2px; word-break: break-all; }
-  .xcard .xd { font-size: 11.5px; color: var(--dim); margin-top: 4px; line-height: 1.4; }
-  .xcard .xs { font-size: 11px; color: #cfcfcf; margin-top: 6px; }
-  .xcard .tick { position: absolute; top: 8px; right: 8px; width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--line2); display: grid; place-items: center; font-size: 12px; color: transparent; }
-  .xcard.sel .tick { background: var(--accent); border-color: var(--accent); color: #fff; }
   .lfiles { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
   .lfiles li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: center; font-size: 12.5px; background: #161616;
                border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
@@ -225,10 +198,6 @@
   .rfile a { color: var(--text); font-size: 12px; margin-left: 8px; }
   code { font-family: Consolas, monospace; font-size: 11.5px; color: #c9c9c9; background: #262626; padding: 0 4px; border-radius: 4px; }
   /* ── 상태 캡슐 — 단계 · 연결 · 흐름 · 쌓인 순서 · 결과 파일을 둥근 캡슐로 (색은 위 그대로) ── */
-  .step { display: inline-flex; align-items: center; gap: 6px; }
-  .step::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--line2); flex: none; }
-  .step.now::before { background: var(--accent); }
-  .step.done::before { background: var(--ok); }
   #status { padding: 4px 12px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line); }
   .fnode { border-radius: 16px; }
   .stack li, .lfiles li { border-radius: 999px; }
@@ -256,6 +225,13 @@
   .dtitle { font-weight: 700; color: var(--text); display: inline-flex; align-items: center; gap: 6px; }
   .dhead .n, .dtab .n, .runbar .n { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; }
   .dspace { flex: 1; }
+  .dhead > .faint { min-width: 0; overflow: hidden; text-overflow: ellipsis; }   /* 인원 같은 긴 글이 버튼을 밀어내지 않게 */
+  .dhead > .btn { flex: none; }
+  /* 좁은 카드 칸 안의 작동 흐름 · 모델 · PC 점검: 한 줄에 하나씩 */
+  #rightBody .how-row { flex-direction: column; gap: 8px; }
+  #rightBody .how ol, #rightBody .models .list { grid-template-columns: minmax(0, 1fr); }
+  #rightBody .fnode { flex-basis: 100%; }
+  #rightBody .farrow { display: none; }
   .dhead .btn.small { padding: 3px 9px; font-size: 11.5px; }
   .dtab { height: 100%; display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; background: none; border: 0; border-bottom: 2px solid transparent;
           color: var(--dim); font-size: 12.5px; font-weight: 600; cursor: pointer; }
@@ -283,8 +259,11 @@
   .lcard img { padding: 6px 6px 0; }
   /* 모니터 위 넣는 칸 — 한 줄로 얇게 */
   .dropbar { padding: 8px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
-  .dropbar #drop { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 7px 12px; font-size: 12.5px; }
-  .dropbar #drop b { display: inline; margin: 0; font-size: 13px; }
+  .dropbar #drop { display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 76px; padding: 14px 18px; font-size: 13.5px; }
+  .dropbar #drop::before { content: "+"; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--line2);
+                           font-size: 26px; font-weight: 300; color: var(--text); flex: none; }
+  .dropbar #drop:hover::before, .dropbar #drop.over::before { border-color: var(--sel); }
+  .dropbar #drop b { display: inline; margin: 0; font-size: 17px; }
   #rightBody > .pane + .pane { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 12px; }
   #rightBody > .pane::before { display: none; }
   #setPane > #cardSettings > .h4:first-child { margin-top: 0; }
@@ -345,8 +324,6 @@
   }
   .view { max-height: 34vh; }
   /* ① 플레이트 목록 */
-  .phead { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
-  .phead h2 { margin: 0; flex: 1; }
   #drop { padding: 12px 16px; }
   #drop b { font-size: 14px; }
   .bin { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; max-height: 196px; overflow-y: auto; }
@@ -422,7 +399,7 @@
   .how[open] > .how-sum::before { content: "▾ "; }
   /* ── ④ 내보내기 (어도비 내보내기 창처럼: 출력 목록 → 영상 설정 → 요약) ── */
   .xlist { display: grid; gap: 6px; }
-  .xitem { display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: center; background: var(--panel2); border: 1px solid var(--line2);
+  .xitem { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 10px; align-items: center; background: var(--panel2); border: 1px solid var(--line2);
            border-radius: 10px; padding: 9px 12px; cursor: pointer; }
   .xitem.sel { border-color: var(--accent); }
   .xitem input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
@@ -445,10 +422,10 @@
   /* ── 차분한 판: 빨강은 [전체 실행] 하나만, 고른 것은 흰 테두리 · 밝은 회색 ──
        위 규칙들이 고른 상태를 var(--accent) 로 칠하던 것을 여기서 무채색으로 덮는다. */
   :root { --sel: #e6e6e6; --sel-bg: #2b2b2b; --sel-soft: #262626; --hint: #c9a96a; }
-  .stack li .k, .lfiles li .k, .fnode .ft i, .lcard .num, .person .tag { background: #3a3a3a; color: #f2f2f2; }   /* 단계 번호(h2 .n)만 빨강 */
+  .stack li .k, .lfiles li .k, .fnode .ft i, .lcard .num, .person .tag { background: #3a3a3a; color: #f2f2f2; }   /* 빨강은 창 머리의 단계 번호(.dhead .n)와 [전체 실행]만 */
   .lcard .num { box-shadow: 0 0 0 2px #111; }
   .seg button.sel, .tab.sel { background: var(--sel); color: #111; border-color: var(--sel); }
-  .lcard.sel, .card.sel, .xitem.sel, .xcard.sel { border-color: var(--sel); background: var(--panel2); }
+  .lcard.sel, .card.sel, .xitem.sel { border-color: var(--sel); background: var(--panel2); }
   .person { border-color: var(--sel); }
   .person.off { border-color: var(--line2); }
   .bin li.sel { border-color: var(--line2); background: var(--sel-bg); box-shadow: inset 3px 0 0 var(--sel); }
@@ -462,13 +439,11 @@
   #drop.over { border-color: var(--sel); background: var(--sel-soft); }
   .bar i { background: #d9d9d9; }
   .rfile a:hover { border-color: #888; }
-  .xcard .xf { color: #cfcfcf; }
   .hint { color: var(--hint); }                                   /* '카드를 고르세요' 같은 안내 — 오류(빨강)와 구분 */
   .stack-empty { color: var(--hint); }
 
   /* 칸이 내용보다 좁아져도 옆 칸을 덮지 않게 — 긴 파일 이름 · 경로는 칸 안에서 말줄임 */
-  main > *, .work > *, .col-people > *, .col-cards > *, .panel, .stage > div, .bin li .info { min-width: 0; }
-  .panel { overflow-wrap: anywhere; }
+  main > *, .stage > div, .bin li .info { min-width: 0; }
   /* ── 한 화면에 들어오게 촘촘히 ── */
   .sub { margin-bottom: 8px; }
   .btn { padding: 10px; }
@@ -1704,13 +1679,6 @@ class Viewer {
   clearResult() { $("resultTabs").innerHTML = ""; $("outView").innerHTML = '<span class="ph">카드를 고르고 [이 프레임 미리보기]</span>'; $("outCap").textContent = ""; }
 }
 
-/** 단계 표시 */
-class Stepper {
-  set(step) {
-    document.querySelectorAll(".step").forEach(s => { const n = +s.dataset.step; s.classList.toggle("now", n === step); s.classList.toggle("done", n < step); });
-  }
-}
-
 /** 쓰는 모델 표시 */
 class ModelPanel {
   render(models) {
@@ -1813,7 +1781,7 @@ class Workspace {
 /** 앱 */
 class App {
   constructor() {
-    this.api = new Api(); this.memory = new Memory("facegrid-v3"); this.stepper = new Stepper(); this.modelPanel = new ModelPanel();
+    this.api = new Api(); this.memory = new Memory("facegrid-v3"); this.modelPanel = new ModelPanel();
     this.busy = false; this.galleryTimer = null; this.ticket = 0;
   }
   async start() {
@@ -1834,11 +1802,10 @@ class App {
     this.shared = this.recipe.snapshot();
     $("scopeSeg").querySelectorAll("button").forEach(b => b.onclick = () => this.setScope(b.dataset.scope));
     this.files = new FilePicker(info.outputs, saved.outputs, saved.known_outputs, () => { this.save(); this.updateSummary(); });
-    this.exporter = new ExportPanel(this.files, () => { this.save(); this.updateSummary(); this.stepper.set(4); });
+    this.exporter = new ExportPanel(this.files, () => { this.save(); this.updateSummary(); });
     this.flow = new FlowView(); this.resultFiles = new ResultFiles(this.api);
     this.viewer = new Viewer(this.api, (k) => this.files.label(k));
     this.patternGrid = new CardGrid($("patternCards"), "key", (it) => this.pickPattern(it));
-    this.coverGrid = null;
     this.patternGrid.selected = this.form.pattern;
     this.list = new PlateList(this.api, (p) => this.onSelect(p), (t) => this.message(t, true),
                               (file) => this.files.label(Viewer.keyOf(file)), (p) => this.runAll(p));
@@ -2047,7 +2014,7 @@ class App {
     d.ondrop = (e) => { e.preventDefault(); d.classList.remove("over"); this.addFiles([...e.dataTransfer.files]); };
   }
   addFiles(files) { if (this.list.add(files)) this.afterAdd(); }
-  afterAdd() { $("previewBtn").disabled = this.busy; this.updateSummary(); this.stepper.set(2); this.autoScan(300); }
+  afterAdd() { $("previewBtn").disabled = this.busy; this.updateSummary(); this.autoScan(300); }
   /** Windows 고르기 창 (서버가 띄움) — 원본 위치를 알아서 원본 옆에 저장할 수 있다. 창을 못 띄우면 브라우저 고르기로 */
   async pickFiles() {
     if (this.picking) return;
@@ -2082,7 +2049,7 @@ class App {
     if (this.busy) return;
     this.list.clear(); this.viewer.showSource(null); this.viewer.clearResult(); this.resultFiles.clear(); this.peoplePanel.show(null, this.scanKey());
     this.recipe.load(this.shared); this.renderVersions(null); this.placeNote();
-    $("previewBtn").disabled = true; this.updateSummary(); this.stepper.set(1); this.refreshGallery();
+    $("previewBtn").disabled = true; this.updateSummary(); this.refreshGallery();
   }
 
   // 실행
@@ -2094,7 +2061,6 @@ class App {
       const url = await p.withUpload(this.api, (id) => this.api.preview({ id, settings: this.settings(), t: this.viewer.currentTime() }));
       this.viewer.showImage(url, "미리보기 (한 프레임) · " + this.recipe.title());
       this.message("마음에 들면 [전체 실행]");
-      this.stepper.set(5);
     } catch (e) { this.message(e.message, true); }
     $("previewBtn").disabled = this.busy;
   }
@@ -2103,13 +2069,12 @@ class App {
     const key = this.scanKey();
     this.busy = true; $("scanBtn").disabled = $("runBtn").disabled = true;
     try {
-      this.message("사람 찾는 중... (영상 전체를 훑습니다)"); this.stepper.set(2);
+      this.message("사람 찾는 중... (영상 전체를 훑습니다)");
       $("peopleCount").textContent = "찾는 중…";
       const job = await p.withUpload(this.api, (id) => this.api.json("/api/scan", { id, settings: this.settings() }));
       const r = await this.follow(job.id, p, 1, 1, false);
       p.scan = { key, result: r }; p.chosen = null;
       this.message(`사람 ${r.count}명을 찾았습니다${r.shots > 1 ? ` (컷 ${r.shots}개)` : ""}. 가릴 사람을 고른 뒤 ③에서 카드를 고르세요.`); this.bar(1);
-      this.stepper.set(3);
     } catch (e) { this.message(e.message, true); }
     this.busy = false; this.peoplePanel.show(p, key); this.updateSummary();
     if (this.scanKey() !== key) this.autoScan(0);      // 찾는 동안 설정이 또 바뀌었으면 다시
@@ -2120,7 +2085,7 @@ class App {
     let todo = only ? [only] : this.list.pending();
     if (!todo.length) todo = [...this.list.items];   // 다 끝났으면 전부 다시 (저장 방식대로 새 버전 · 덮어쓰기)
     if (!todo.length) return;
-    this.busy = true; $("runBtn").disabled = $("previewBtn").disabled = true; this.stepper.set(5);
+    this.busy = true; $("runBtn").disabled = $("previewBtn").disabled = true;
     this.ws.show("runPane");   // 실행하면 아래 창을 실행 · 결과 탭으로
     let k = 0, fail = 0;
     for (const p of todo) {

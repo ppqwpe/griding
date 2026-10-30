@@ -22,7 +22,7 @@ import numpy as np
 
 from .blend import bounds, over_color
 from .composer import Composer
-from .facemesh import FaceLines, FacePoints, FaceShape
+from .facemesh import FaceShape
 from .geometry import Rect
 from .guide import MaskedFaceGuide, REF_WIDTH, draw_guide
 from .renderer import GridRenderer
@@ -187,9 +187,6 @@ class Recipe:
         for layer in self.layers:
             canvas = layer.apply(canvas, scene)
         return canvas
-
-    def title(self) -> str:
-        return ("검은 바탕" if self.base == "black" else "원본") + " + " + " → ".join(l.label for l in self.layers)
 
     @staticmethod
     def describe() -> list[dict]:

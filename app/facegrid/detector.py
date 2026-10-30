@@ -39,10 +39,6 @@ class Detector(ABC):
     def detect(self, frame: np.ndarray, threshold: float) -> list[Rect]:
         return [d.box for d in self.detect_scored(frame, threshold)]
 
-    def largest(self, frame: np.ndarray, threshold: float) -> Rect | None:
-        boxes = self.detect(frame, threshold)
-        return max(boxes, key=lambda b: b.area) if boxes else None
-
 
 class ModelMissingError(RuntimeError):
     pass

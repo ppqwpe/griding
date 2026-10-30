@@ -32,7 +32,7 @@ Griding is laid out like an editing workspace (think Premiere). From 1200 px wid
 
 ### ① Add plates
 
-**Click the box** to open the Windows file dialog, or **drag files** onto it. Up to 20 plates at a time.
+Use the large **+ Click to choose · or drag in** box at the top of the center column: **click it** to open the Windows file dialog, or **drag files** onto it. Up to 20 plates at a time. The plates then appear in the list at the bottom left.
 
 - Files you **choose in the dialog** keep their real location, so results can be saved next to them (see ⑤). They are not copied.
 - Files you **drag in** are uploaded to the app. The browser does not tell the app where they came from, so their results go to the `results` folder.
@@ -43,14 +43,14 @@ Below the source you see resolution, fps, length, color space and audio. Anythin
 ### ② Check people
 
 As soon as a plate is in, the whole video is scanned for people and each one gets a number (#1, #2 …) and a face thumbnail.
-Keep the people you want covered and click the rest to drop them. After a cut, the same person gets a new number.
+Keep the people you want covered and click the rest to drop them (**Cover all** / **Uncover all** do it in one go). After a cut, the same person gets a new number. **Find again** in the panel header scans again, for example after changing head detection settings.
 
 ### ③ Pick and stack cards
 
 - Start from a preset button (Grid only, Masked face guide …) or click cards to stack them.
 - Cards picked later sit on top. Reorder them with ↑↓ under **[Stack order]**.
 - Choose the background: over the source, or black.
-- **[Card settings]** shows settings only for the cards you picked. Masks, the grid, and face lines/points each have their own color palette and opacity.
+- The card settings under the cards show only the cards you picked. Masks, the grid, face lines/points and tracking boxes each have their own color palette and opacity.
 - Before a plate is added, the preview uses the sample character.
 - **[Use this combo for: All plates | This plate only]** — by default every plate uses the same combo. Pick **This plate only** to give the selected plate its own combo; it is marked **Own combo** in the plate list, and switching back to **All plates** returns it to the shared one. Each plate runs with its own combo when you press **[Run all]**.
 
@@ -109,7 +109,7 @@ The line under the buttons shows the actual file name the selected plate will ge
 
 In ③, press **[Grid only (Seedance)]** to use the grid card alone.
 The combined video is the grid over the source, and the transparent layer is a MOV with only the grid.
-For a white grid on black (grid matte), turn on "Grid matte" under ④ › **[More outputs]**.
+For a white grid on black (grid matte), turn on "Grid matte" under ④ › **[Other outputs]**.
 
 ## Compositing the per-card layers
 
@@ -146,7 +146,7 @@ Measured (9-second plate)
 | `name_settings.json` | Settings, input spec, output check, head positions per frame |
 | `results\verification.json` | Summary of all runs |
 
-**[More outputs]** can also write the older file types:
+**[Other outputs]** can also write the older file types:
 grid only (`_facegrid`), tracking check (`_overlay`), grid matte (`_matte`), masked face guide (`_masked`), face guide (`_face`),
 face tracking check (`_face_overlay`), face points (`_points` + coordinates `_points.json`), face points check (`_points_overlay`),
 cover (`_cover`), head mask (`_headmask`).
@@ -155,7 +155,7 @@ cover (`_cover`), head mask (`_headmask`).
 
 | Problem | What to do |
 |---|---|
-| Heads get lost in some shots | In ③ › **[Head detection · padding · smoothing]**, lower detection sensitivity to 0.15 |
+| Heads get lost in some shots | In ③ › **[Head detection · widening · jitter]**, lower detection sensitivity to 0.15 |
 | Wrong things get detected | Raise detection sensitivity to 0.35 |
 | Small heads, overlapping people | Switch the head model to "Accurate (YOLO11m)". 2–3× slower |
 | Hangs on the graphics card | Start with `Griding_CPU.bat`. If the driver stops mid-job, Griding switches to CPU and carries on |
