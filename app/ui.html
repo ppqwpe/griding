@@ -344,6 +344,11 @@
   .bin .ops button:hover, .bin .ops a:hover { border-color: #666; }
   .bin .ops .x { width: 24px; padding: 2px 0; text-align: center; }
   .bin .src { color: var(--faint); font-size: 10.5px; margin-left: 4px; }
+  /* 왼쪽 칸 목록: 좁아서 두 줄로 — 위에 썸네일 · 이름 · 상태, 아래에 버튼 */
+  #platePane .bin li { grid-template-columns: 56px minmax(0, 1fr) auto; row-gap: 4px; }
+  #platePane .bin li .ops { grid-column: 2 / -1; justify-content: flex-end; }
+  #platePane .bin li .ops:empty { display: none; }
+  #platePane .bin .th { width: 56px; height: 32px; }
   .scope { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: -4px 0 12px; }
   .scope .seg button { padding: 5px 11px; font-size: 12.5px; }
   .bin .tag { display: inline-block; font-size: 10.5px; padding: 0 7px; border-radius: 999px; border: 1px solid var(--line2); color: #cfcfcf; margin-left: 6px; }
